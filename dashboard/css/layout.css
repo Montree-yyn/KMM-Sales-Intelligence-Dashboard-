@@ -1,0 +1,250 @@
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ===========================
+   Main Content
+=========================== */
+
+.main-content {
+    flex: 1;
+    margin-left: 240px;
+    padding: 24px;
+}
+
+/* ===========================
+   Header
+=========================== */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.topbar h1 {
+    margin: 0;
+    font-size: 40px;
+    font-weight: 800;
+}
+
+.topbar p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 18px;
+}
+
+.top-meta {
+    display: flex;
+    gap: 16px;
+}
+
+.top-meta div {
+    width: 150px;
+    background: white;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    padding: 16px;
+    text-align: center;
+}
+
+.top-meta span {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.top-meta strong {
+    font-size: 22px;
+}
+
+/* ===========================
+   Filter
+=========================== */
+
+.filter-card {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, 1fr) 130px;
+
+    gap: 14px;
+
+    background: white;
+
+    padding: 22px;
+
+    border-radius: 20px;
+
+    margin-bottom: 24px;
+
+    box-shadow: var(--shadow);
+
+}
+
+.filter-group {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+.filter-group label {
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    margin-bottom: 8px;
+
+}
+
+.filter-group select {
+
+    height: 46px;
+
+    border-radius: 12px;
+
+    border: 1px solid var(--line);
+
+    padding: 0 12px;
+
+    font-size: 15px;
+
+}
+
+.reset-btn {
+
+    border: none;
+
+    background: var(--orange);
+
+    color: white;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    font-weight: 700;
+
+}
+
+/* ===========================
+   Executive Score
+=========================== */
+
+.executive-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        2fr repeat(5, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 24px;
+
+}
+
+.business-health {
+
+    padding: 24px;
+
+}
+
+.business-health span {
+
+    color: var(--orange-dark);
+
+    font-weight: 700;
+
+}
+
+.health-score {
+
+    display: flex;
+
+    align-items: flex-end;
+
+    margin: 16px 0;
+
+}
+
+.health-score strong {
+
+    font-size: 74px;
+
+    line-height: 1;
+
+    color: var(--orange-dark);
+
+}
+
+.health-score b {
+
+    font-size: 36px;
+
+    margin-bottom: 8px;
+
+}
+
+.business-health small {
+
+    display: inline-block;
+
+    background: #e9f8ef;
+
+    color: #169c49;
+
+    padding: 10px 16px;
+
+    border-radius: 30px;
+
+    font-weight: 700;
+
+}
+
+.business-health p {
+
+    color: var(--muted);
+
+}
+
+.score-card {
+
+    padding: 20px;
+
+}
+
+.score-card span {
+
+    display: block;
+
+    margin-bottom: 10px;
+
+    font-weight: 700;
+
+}
+
+.score-card strong {
+
+    font-size: 42px;
+
+    color: var(--teal);
+
+}
+
+.score-card small {
+
+    display: block;
+
+    margin-top: 8px;
+
+    color: var(--green);
+
+}

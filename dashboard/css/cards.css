@@ -1,0 +1,248 @@
+/* ===========================
+   KPI Cards
+=========================== */
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.kpi-card {
+    padding: 22px;
+    min-height: 150px;
+    border-left: 6px solid var(--orange);
+}
+
+.kpi-card span {
+    display: block;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.kpi-card strong {
+    display: block;
+    font-size: 36px;
+    line-height: 1.1;
+    color: var(--text);
+}
+
+.kpi-card small {
+    display: block;
+    margin-top: 12px;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+/* ===========================
+   Dashboard Grid
+=========================== */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.panel {
+    padding: 24px;
+    min-height: 360px;
+}
+
+.panel.large {
+    min-height: 360px;
+}
+
+.panel h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.panel p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+/* ===========================
+   AI Command Center
+=========================== */
+
+.ai-panel {
+    overflow: hidden;
+}
+
+.ai-header {
+    background: var(--orange);
+    color: white;
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ai-header h2 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.ai-header span {
+    background: rgba(255, 255, 255, .25);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.ai-body {
+    padding: 22px;
+}
+
+.ai-body h3 {
+    color: var(--orange-dark);
+    margin: 0 0 10px;
+}
+
+.ai-body ul {
+    margin: 0 0 22px;
+    padding-left: 20px;
+}
+
+.ai-body li {
+    margin-bottom: 10px;
+    line-height: 1.55;
+    font-weight: 700;
+    color: #2f3a4a;
+}
+
+.chart-box {
+    position: relative;
+    height: 260px;
+    margin-top: 18px;
+}
+
+.chart-box canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.ranking-list {
+    margin-top: 18px;
+}
+
+.ranking-item {
+    display: grid;
+    grid-template-columns: 42px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.ranking-rank {
+    font-weight: 900;
+    color: var(--orange-dark);
+}
+
+.ranking-name {
+    font-weight: 900;
+}
+
+.ranking-bar {
+    height: 9px;
+    background: #eef2f6;
+    border-radius: 999px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+.ranking-fill {
+    height: 100%;
+    background: var(--teal);
+    border-radius: 999px;
+}
+
+.ranking-value {
+    font-weight: 900;
+    color: var(--orange-dark);
+}
+
+.insight-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.funnel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    margin-top: 24px;
+}
+
+.funnel div {
+    height: 42px;
+    color: white;
+    font-weight: 900;
+    text-align: center;
+    padding-top: 11px;
+    border-radius: 8px;
+}
+
+.funnel div:nth-child(1) {
+    width: 92%;
+    background: #0097a7;
+}
+
+.funnel div:nth-child(2) {
+    width: 76%;
+    background: #13b99a;
+}
+
+.funnel div:nth-child(3) {
+    width: 58%;
+    background: #f59e0b;
+}
+
+.funnel div:nth-child(4) {
+    width: 42%;
+    background: #dc2626;
+}
+
+.risk-list,
+.quick-insights {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.risk-list div {
+    background: #fff4f1;
+    border: 1px solid #ffd7cf;
+    border-radius: 14px;
+    padding: 14px;
+    font-weight: 800;
+    color: #b42318;
+}
+
+.quick-insights div {
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px;
+    font-weight: 800;
+    color: #2f3a4a;
+}

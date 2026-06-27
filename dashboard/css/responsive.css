@@ -1,0 +1,88 @@
+/* ===========================
+   Responsive
+=========================== */
+
+@media (max-width: 1500px) {
+
+    .executive-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .kpi-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 1100px) {
+
+    .sidebar {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 18px;
+    }
+
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .top-meta {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .filter-card {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .executive-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 640px) {
+
+    .topbar h1 {
+        font-size: 28px;
+    }
+
+    .topbar p {
+        font-size: 14px;
+    }
+
+    .top-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-card {
+        grid-template-columns: 1fr;
+    }
+
+    .health-score strong {
+        font-size: 54px;
+    }
+
+    .health-score b {
+        font-size: 28px;
+    }
+
+    .score-card strong {
+        font-size: 34px;
+    }
+
+}
