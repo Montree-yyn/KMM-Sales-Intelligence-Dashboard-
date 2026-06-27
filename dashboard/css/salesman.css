@@ -1,257 +1,152 @@
 /* ===========================
-
    Salesman Dashboard
-
 =========================== */
 
 .salesman-grid {
-
     display: grid;
-
     grid-template-columns: 1.35fr 0.9fr;
-
     gap: 18px;
-
     margin-bottom: 24px;
-
 }
 
 .commission-card {
-
     border-left-color: var(--green);
-
 }
 
 .salesman-ranking-list {
-
     margin-top: 18px;
-
 }
 
 .salesman-rank-item {
-
     display: grid;
-
     grid-template-columns: 44px 1fr auto;
-
     gap: 14px;
-
     align-items: center;
-
     padding: 14px 0;
-
     border-bottom: 1px solid var(--line);
-
 }
 
 .salesman-rank-no {
-
     width: 34px;
-
     height: 34px;
-
     border-radius: 50%;
-
     background: #fff3e8;
-
     color: var(--orange-dark);
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     font-weight: 900;
-
 }
 
 .salesman-rank-name {
-
     font-weight: 900;
-
     font-size: 16px;
-
 }
 
 .salesman-rank-meta {
-
     margin-top: 4px;
-
     font-size: 12px;
-
     color: var(--muted);
-
     font-weight: 700;
-
 }
 
 .salesman-rank-bar {
-
     height: 9px;
-
     background: #eef2f6;
-
     border-radius: 999px;
-
     margin-top: 8px;
-
     overflow: hidden;
-
 }
 
 .salesman-rank-fill {
-
     height: 100%;
-
     background: var(--teal);
-
     border-radius: 999px;
-
 }
 
 .salesman-rank-value {
-
     text-align: right;
-
     font-weight: 900;
-
     color: var(--orange-dark);
-
 }
 
 .salesman-table-wrap {
-
     width: 100%;
-
     overflow-x: auto;
-
     margin-top: 18px;
-
 }
 
 .salesman-table {
-
     width: 100%;
-
     border-collapse: collapse;
-
     min-width: 980px;
-
 }
 
 .salesman-table th {
-
     text-align: left;
-
     padding: 14px 12px;
-
     font-size: 13px;
-
     color: var(--muted);
-
     border-bottom: 1px solid var(--line);
-
     background: #f8fafc;
-
 }
 
 .salesman-table td {
-
     padding: 14px 12px;
-
     border-bottom: 1px solid var(--line);
-
     font-weight: 700;
-
 }
 
 .salesman-table tbody tr:hover {
-
     background: #fff7ed;
-
 }
 
 .text-right {
-
     text-align: right !important;
-
 }
 
 .salesman-ai {
-
     display: grid;
-
     grid-template-columns: repeat(3, 1fr);
-
     gap: 14px;
-
     margin-top: 18px;
-
 }
 
 .salesman-ai-card {
-
     background: #f8fafc;
-
     border: 1px solid var(--line);
-
     border-radius: 16px;
-
     padding: 16px;
-
 }
 
 .salesman-ai-card span {
-
     display: block;
-
     font-size: 13px;
-
     color: var(--muted);
-
     font-weight: 800;
-
     margin-bottom: 8px;
-
 }
 
 .salesman-ai-card strong {
-
     display: block;
-
     font-size: 22px;
-
     color: var(--orange-dark);
-
 }
 
 .salesman-ai-card p {
-
     margin: 8px 0 0;
-
     font-size: 13px;
-
     color: #2f3a4a;
-
     font-weight: 700;
-
     line-height: 1.5;
-
 }
 
 @media (max-width: 1500px) {
-
     .salesman-grid {
-
         grid-template-columns: 1fr;
-
     }
 
     .salesman-ai {
-
         grid-template-columns: 1fr;
-
     }
-
 }
