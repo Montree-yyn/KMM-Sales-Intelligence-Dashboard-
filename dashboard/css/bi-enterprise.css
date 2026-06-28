@@ -875,6 +875,183 @@ body {
   text-align: center;
 }
 
+.enterprise-intelligence-deck {
+  display: grid;
+  gap: 18px;
+  margin: 0 0 18px;
+  min-width: 0;
+}
+
+.enterprise-kpi-wall {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  min-width: 0;
+}
+
+.intel-value-card,
+.intel-panel,
+.intel-alert-card,
+.intel-action-card,
+.intel-placeholder-card {
+  min-width: 0;
+  border: 1px solid rgba(31, 42, 68, 0.1);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--v5-shadow-soft);
+}
+
+.intel-value-card {
+  display: grid;
+  gap: 7px;
+  min-height: 118px;
+  align-content: center;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.intel-value-card span,
+.intel-alert-card span,
+.intel-action-card span,
+.intel-placeholder-card span {
+  color: var(--v5-orange);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.intel-value-card strong {
+  color: var(--v5-ink);
+  font-size: clamp(20px, 1.7vw, 27px);
+  font-weight: 950;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.intel-value-card small,
+.intel-alert-card p,
+.intel-action-card p,
+.intel-placeholder-card p,
+.intel-row small {
+  margin: 0;
+  color: var(--v5-muted);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.enterprise-intel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  min-width: 0;
+}
+
+.intel-panel {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.intel-panel.wide {
+  grid-column: span 2;
+  background:
+    radial-gradient(circle at 100% 0, rgba(243, 107, 33, 0.13), transparent 35%),
+    rgba(255, 255, 255, 0.96);
+}
+
+.intel-panel h2 {
+  margin: 0;
+  color: var(--v5-ink);
+  font-size: clamp(20px, 2vw, 28px);
+  font-weight: 950;
+  line-height: 1.12;
+}
+
+.intel-panel p {
+  margin: 0;
+  color: var(--v5-muted);
+  font-size: 13px;
+  font-weight: 790;
+  line-height: 1.55;
+}
+
+.intel-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 5px 10px;
+  align-items: center;
+  border-bottom: 1px solid rgba(31, 42, 68, 0.08);
+  padding: 9px 0;
+}
+
+.intel-row:last-child {
+  border-bottom: 0;
+}
+
+.intel-row strong {
+  min-width: 0;
+  color: var(--v5-ink);
+  font-size: 13px;
+  font-weight: 950;
+  overflow-wrap: anywhere;
+}
+
+.intel-row span {
+  color: var(--v5-orange);
+  font-size: 12px;
+  font-weight: 950;
+  text-align: right;
+}
+
+.intel-row small {
+  grid-column: 1 / -1;
+}
+
+.intel-alert-card,
+.intel-action-card,
+.intel-placeholder-card {
+  display: grid;
+  gap: 7px;
+  border-radius: 15px;
+  padding: 13px;
+}
+
+.intel-alert-card {
+  border-color: rgba(183, 121, 31, 0.2);
+  background: #fffaf0;
+}
+
+.intel-action-card {
+  border-color: rgba(22, 143, 114, 0.18);
+  background: #f4fbf8;
+}
+
+.intel-alert-card strong,
+.intel-action-card strong,
+.intel-placeholder-card strong {
+  color: var(--v5-ink);
+  font-size: 14px;
+  font-weight: 950;
+  line-height: 1.2;
+}
+
+.intel-placeholder-card {
+  border-style: dashed;
+  background:
+    linear-gradient(135deg, rgba(39, 100, 197, 0.08), rgba(255, 255, 255, 0.94)),
+    #ffffff;
+}
+
+.intel-placeholder-card b {
+  color: var(--v5-blue);
+  font-size: 28px;
+  font-weight: 950;
+  line-height: 1;
+}
+
 .ai-strip {
   border: 1px solid rgba(243, 107, 33, 0.16);
   border-radius: 18px;
@@ -1010,9 +1187,17 @@ body {
     max-width: none;
   }
 
+  .enterprise-kpi-wall {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .module-pills,
   .export-actions,
   .enterprise-insight-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .enterprise-intel-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1025,6 +1210,13 @@ body {
 
   .enterprise-foundation {
     grid-template-columns: 1fr;
+  }
+
+  .enterprise-kpi-wall,
+  .enterprise-intel-grid,
+  .intel-panel.wide {
+    grid-template-columns: 1fr;
+    grid-column: auto;
   }
 
   .enterprise-header,
@@ -1053,6 +1245,8 @@ body {
 @media (max-width: 640px) {
   .enterprise-actions,
   .filter-bar,
+  .enterprise-kpi-wall,
+  .enterprise-intel-grid,
   .module-pills,
   .export-actions,
   .enterprise-insight-grid {
@@ -1088,11 +1282,13 @@ body {
   }
 
   .score-row,
-  .activity-row {
+  .activity-row,
+  .intel-row {
     grid-template-columns: 1fr;
   }
 
-  .score-row span {
+  .score-row span,
+  .intel-row span {
     text-align: left;
   }
 }
