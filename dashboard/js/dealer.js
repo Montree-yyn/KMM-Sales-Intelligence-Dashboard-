@@ -4,7 +4,7 @@
   const U = BI.utils;
   const F = BI.filters;
   const C = BI.charts;
-  const ids = ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "typeFilter"];
+  const ids = ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "salesmanFilter", "typeFilter"];
 
   window.addEventListener("DOMContentLoaded", async () => {
     await U.loadDashboardData();
