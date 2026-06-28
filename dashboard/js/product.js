@@ -1,18 +1,134 @@
-let productTrendChart=null,typeMixChart=null,stockAgeChart=null;
-window.addEventListener('DOMContentLoaded',async()=>{await loadDashboardData();initProductDashboard();});
-const $=id=>document.getElementById(id);const n=v=>Number(v||0);const txt=v=>(v??'').toString().trim();
-function core(){return typeof getCoreProductData==='function'?getCoreProductData():(window.dashboardData||[]);}function money(v){return typeof formatMoney==='function'?formatMoney(v):(v/1e9).toFixed(1)+'B';}function last(){return typeof getLastRefresh==='function'?getLastRefresh():new Date().toLocaleString();}
-function weekNo(v){const m=String(v||'').match(/\d+/);return m?+m[0]:0;}function uniq(a){return [...new Set(a.filter(x=>txt(x)))];}
-function fill(id,vals,label,fmt){const el=$(id);if(!el)return;el.innerHTML='<option value="">'+label+'</option>';vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=fmt?fmt(v):v;el.appendChild(o);});}
-function initProductDashboard(){populateFilters();['yearFilter','monthFilter','weekFilter','dealerFilter','typeFilter'].forEach(id=>$(id)?.addEventListener('change',update));$('resetFilter')?.addEventListener('click',()=>{['yearFilter','monthFilter','weekFilter','dealerFilter','typeFilter'].forEach(id=>{if($(id))$(id).value='';});update();});update();}
-function populateFilters(){const d=core();fill('yearFilter',uniq(d.map(x=>x.year)).sort(),'All years');fill('monthFilter',uniq(d.map(x=>x.month)).sort((a,b)=>a-b),'All months');fill('weekFilter',uniq(d.map(x=>x.week)).sort((a,b)=>weekNo(a)-weekNo(b)),'All weeks');fill('dealerFilter',uniq(d.map(x=>x.dealer)).sort(),'All dealers');fill('typeFilter',uniq(d.map(x=>x.type)).sort(),'All types');}
-function filtered(){const y=$('yearFilter')?.value||'',m=$('monthFilter')?.value||'',w=$('weekFilter')?.value||'',de=$('dealerFilter')?.value||'',t=$('typeFilter')?.value||'';return core().filter(x=>(!y||String(x.year)===String(y))&&(!m||String(x.month)===String(m))&&(!w||weekNo(x.week)===weekNo(w))&&(!de||x.dealer===de)&&(!t||x.type===t));}
-function group(d,getter){const m={};d.forEach(x=>{const k=getter(x)||'Unknown';if(!m[k])m[k]={name:k,units:0,value:0,gp:0};m[k].units++;m[k].value+=n(x.msrp);m[k].gp+=n(x.gp1);});return Object.values(m).map(x=>({...x,gpPct:x.value?x.gp/x.value*100:0,share:d.length?x.units/d.length*100:0})).sort((a,b)=>b.units-a.units);}
-function update(){const d=filtered(),k=calcKPI(d),models=group(d,x=>x.model),types=group(d,x=>x.type);$('recordCount').textContent=d.length.toLocaleString();$('lastRefresh').textContent=last();$('topModelTop').textContent=models[0]?.name||'-';$('kpiUnits').textContent=k.units.toLocaleString();$('kpiValue').textContent=money(k.value);$('kpiGP').textContent=money(k.gp);$('kpiGPMargin').textContent=k.gpPct.toFixed(1)+'%';renderList('topModelList',models.slice(0,5));renderTrend(d);renderTypeMix(types);renderMatrix(models);renderHeatmap(d);renderStockAge();$('aiTopModel').textContent=models[0]?.name||'-';$('aiHighGP').textContent=models.slice().sort((a,b)=>b.gpPct-a.gpPct)[0]?.name||'-';$('aiRisk').textContent=models.slice().sort((a,b)=>a.units-b.units)[0]?.name||'-';$('aiRecommend').textContent=(models[0]?.name||'Top model')+' to key dealers';}
-function calcKPI(d){const units=d.length,value=d.reduce((s,x)=>s+n(x.msrp),0),gp=d.reduce((s,x)=>s+n(x.gp1),0);return{units,value,gp,gpPct:value?gp/value*100:0};}
-function renderList(id,rows){const el=$(id);if(!el)return;const max=rows[0]?.units||1;el.innerHTML=rows.map((r,i)=>`<div class="clean-item"><div class="clean-rank">${i+1}</div><div><div class="clean-name">${r.name}</div><div class="clean-meta">${r.units.toLocaleString()} units | GP ${r.gpPct.toFixed(1)}% | Share ${r.share.toFixed(1)}%</div><div class="clean-bar"><div class="clean-fill" style="width:${r.units/max*100}%"></div></div></div><div class="clean-value">${r.units}</div></div>`).join('')||'<p>No data</p>';}
-function renderTrend(d){const c=$('productTrendChart');if(!c||typeof Chart==='undefined')return;const m={};d.forEach(x=>{const mo=n(x.month);if(!mo)return;m[mo]=(m[mo]||0)+1;});const rows=Object.entries(m).map(([month,units])=>({month:+month,units})).sort((a,b)=>a.month-b.month);productTrendChart?.destroy();productTrendChart=new Chart(c,{type:'line',data:{labels:rows.map(x=>'M'+x.month),datasets:[{label:'Units',data:rows.map(x=>x.units),borderColor:'#ff5a00',backgroundColor:'rgba(255,90,0,.12)',fill:true,tension:.35,borderWidth:3,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}},x:{grid:{display:false}}}}});}
-function renderTypeMix(rows){const c=$('typeMixChart');if(!c||typeof Chart==='undefined')return;typeMixChart?.destroy();typeMixChart=new Chart(c,{type:'doughnut',data:{labels:rows.map(x=>x.name),datasets:[{data:rows.map(x=>x.units),backgroundColor:['#ff5a00','#12b89d','#ffb000','#9aa3af','#d6dbe3'],borderColor:'#fff',borderWidth:5,spacing:3,borderRadius:10}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'right'}}}});}
-function renderStockAge(){const c=$('stockAgeChart');if(!c||typeof Chart==='undefined')return;stockAgeChart?.destroy();stockAgeChart=new Chart(c,{type:'doughnut',data:{labels:['0-30 Days','31-60 Days','61-90 Days','90+ Days'],datasets:[{data:[68,54,38,26],backgroundColor:['#9aa3af','#ffb000','#ff7a18','#ff5a00'],borderColor:'#fff',borderWidth:5}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%'}});}
-function renderMatrix(rows){const el=$('productMatrix');if(!el)return;el.querySelectorAll('.dot').forEach(x=>x.remove());const maxU=Math.max(...rows.map(x=>x.units),1),maxG=Math.max(...rows.map(x=>x.gpPct),1);rows.slice(0,8).forEach(r=>{const d=document.createElement('div');d.className='dot';d.title=r.name;d.style.left=(20+r.units/maxU*70)+'%';d.style.bottom=(20+r.gpPct/maxG*70)+'%';el.appendChild(d);});}
-function renderHeatmap(d){const el=$('regionalHeatmap');if(!el)return;const models=group(d,x=>x.model).slice(0,4).map(x=>x.name),dealers=uniq(d.map(x=>x.dealer)).slice(0,3);let html='<div class="heat-row"><div class="heat-cell heat-head">Model</div>'+dealers.map(x=>`<div class="heat-cell heat-head">${x}</div>`).join('')+'<div class="heat-cell heat-head">Total</div></div>';models.forEach(model=>{const vals=dealers.map(de=>d.filter(x=>x.model===model&&x.dealer===de).length);const total=vals.reduce((a,b)=>a+b,0);html+='<div class="heat-row"><div class="heat-cell heat-head">'+model+'</div>'+vals.map(v=>`<div class="heat-cell heat-${Math.min(4,Math.max(1,Math.ceil(v/20)))}">${v}</div>`).join('')+`<div class="heat-cell heat-4">${total}</div></div>`;});el.innerHTML=html;}
+(function () {
+  "use strict";
+
+  const U = BI.utils;
+  const F = BI.filters;
+  const C = BI.charts;
+  const ids = ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "typeFilter"];
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    await U.loadDashboardData();
+    F.fillFilters(U.getCoreProductData(), { includeType: true, yearLabel: "All years" });
+    F.bindFilters(update, ids);
+    update();
+  });
+
+  function data() {
+    return F.applyFilters(U.getCoreProductData());
+  }
+
+  function update() {
+    const rows = data();
+    const summary = U.kpi(rows);
+    const models = U.groupBy(rows, (item) => item.model);
+    const types = U.groupBy(rows, (item) => item.type);
+
+    U.setText("recordCount", rows.length.toLocaleString());
+    U.setText("lastRefresh", U.lastRefresh());
+    U.setText("topModelTop", models[0]?.name || "-");
+    renderKpis(summary);
+    renderList("topModelList", models.slice(0, 5));
+    renderTrend(rows);
+    renderTypeMix(types);
+    renderMatrix(models);
+    renderHeatmap(rows);
+    renderStockAge();
+
+    U.setText("aiTopModel", models[0]?.name || "-");
+    U.setText("aiHighGP", models.slice().sort((a, b) => b.gpPct - a.gpPct)[0]?.name || "-");
+    U.setText("aiRisk", models.slice().sort((a, b) => a.units - b.units)[0]?.name || "-");
+    U.setText("aiRecommend", (models[0]?.name || "Top model") + " to key dealers");
+  }
+
+  function renderKpis(summary) {
+    U.setText("kpiUnits", summary.units.toLocaleString());
+    U.setText("kpiValue", U.formatMoney(summary.sales));
+    U.setText("kpiGP", U.formatMoney(summary.gp));
+    U.setText("kpiGPMargin", U.formatPercent(summary.gpPct));
+  }
+
+  function renderList(id, rows) {
+    const target = document.getElementById(id);
+    if (!target) return;
+    const max = rows[0]?.units || 1;
+    target.innerHTML = rows.map((row, index) => `
+      <div class="clean-item">
+        <div class="clean-rank">${index + 1}</div>
+        <div>
+          <div class="clean-name">${row.name}</div>
+          <div class="clean-meta">${row.units.toLocaleString()} units | GP ${U.formatPercent(row.gpPct)} | Share ${U.formatPercent(row.share)}</div>
+          <div class="clean-bar"><div class="clean-fill" style="width:${(row.units / max) * 100}%"></div></div>
+        </div>
+        <div class="clean-value">${row.units}</div>
+      </div>`).join("") || "<p>No data</p>";
+  }
+
+  function renderTrend(rows) {
+    const monthly = U.groupBy(rows, (item) => U.monthName(item.month)).reverse();
+    C.renderChart("productTrendChart", {
+      type: "line",
+      data: {
+        labels: monthly.map((item) => item.name),
+        datasets: [{
+          label: "Units",
+          data: monthly.map((item) => item.units),
+          borderColor: "#ff5a00",
+          backgroundColor: "rgba(255,90,0,.12)",
+          fill: true
+        }]
+      },
+      options: { plugins: { legend: { display: false } } }
+    });
+  }
+
+  function renderTypeMix(rows) {
+    C.renderChart("typeMixChart", {
+      type: "doughnut",
+      data: {
+        labels: rows.map((item) => item.name),
+        datasets: [{ data: rows.map((item) => item.units), backgroundColor: C.palette }]
+      },
+      options: { plugins: { legend: { position: "right" } } }
+    });
+  }
+
+  function renderStockAge() {
+    C.renderChart("stockAgeChart", {
+      type: "doughnut",
+      data: {
+        labels: ["0-30 Days", "31-60 Days", "61-90 Days", "90+ Days"],
+        datasets: [{ data: [68, 54, 38, 26], backgroundColor: ["#9aa3af", "#ffb000", "#ff7a18", "#ff5a00"] }]
+      }
+    });
+  }
+
+  function renderMatrix(rows) {
+    const target = document.getElementById("productMatrix");
+    if (!target) return;
+    target.querySelectorAll(".dot").forEach((dot) => dot.remove());
+    const maxUnits = Math.max(...rows.map((row) => row.units), 1);
+    const maxGp = Math.max(...rows.map((row) => row.gpPct), 1);
+    rows.slice(0, 8).forEach((row) => {
+      const dot = document.createElement("div");
+      dot.className = "dot";
+      dot.title = row.name;
+      dot.style.left = 20 + (row.units / maxUnits) * 70 + "%";
+      dot.style.bottom = 20 + (row.gpPct / maxGp) * 70 + "%";
+      target.appendChild(dot);
+    });
+  }
+
+  function renderHeatmap(rows) {
+    const target = document.getElementById("regionalHeatmap");
+    if (!target) return;
+    const models = U.groupBy(rows, (item) => item.model).slice(0, 4).map((item) => item.name);
+    const dealers = U.unique(rows.map((item) => item.dealer)).slice(0, 3);
+    let html = '<div class="heat-row"><div class="heat-cell heat-head">Model</div>' + dealers.map((dealer) => `<div class="heat-cell heat-head">${dealer}</div>`).join("") + '<div class="heat-cell heat-head">Total</div></div>';
+    models.forEach((model) => {
+      const values = dealers.map((dealer) => rows.filter((item) => item.model === model && item.dealer === dealer).length);
+      const total = values.reduce((sum, value) => sum + value, 0);
+      html += '<div class="heat-row"><div class="heat-cell heat-head">' + model + "</div>" + values.map((value) => `<div class="heat-cell heat-${Math.min(4, Math.max(1, Math.ceil(value / 20)))}">${value}</div>`).join("") + `<div class="heat-cell heat-4">${total}</div></div>`;
+    });
+    target.innerHTML = html;
+  }
+})();

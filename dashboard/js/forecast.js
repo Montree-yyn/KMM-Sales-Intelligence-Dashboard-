@@ -1,13 +1,142 @@
-let forecastTrendChart=null,probabilityChart=null,projectionChart=null;
-window.addEventListener('DOMContentLoaded',async()=>{await loadDashboardData();init();});
-const $=id=>document.getElementById(id),n=v=>Number(v||0),txt=v=>(v??'').toString().trim();function core(){return typeof getCoreProductData==='function'?getCoreProductData():(window.dashboardData||[]);}function money(v){return typeof formatMoney==='function'?formatMoney(v):(v/1e9).toFixed(1)+'B';}function last(){return typeof getLastRefresh==='function'?getLastRefresh():new Date().toLocaleString();}function uniq(a){return[...new Set(a.filter(x=>txt(x)))]}function fill(id,vals,label){const el=$(id);if(!el)return;el.innerHTML='<option value="">'+label+'</option>';vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;el.appendChild(o);});}
-function init(){const d=core();fill('yearFilter',uniq(d.map(x=>x.year)).sort(),'All years');fill('monthFilter',uniq(d.map(x=>x.month)).sort((a,b)=>a-b),'All months');fill('dealerFilter',uniq(d.map(x=>x.dealer)).sort(),'All dealers');fill('typeFilter',uniq(d.map(x=>x.type)).sort(),'All types');['yearFilter','monthFilter','dealerFilter','typeFilter','scenarioFilter'].forEach(id=>$(id)?.addEventListener('change',update));$('resetFilter')?.addEventListener('click',()=>{['yearFilter','monthFilter','dealerFilter','typeFilter'].forEach(id=>{if($(id))$(id).value=''});update();});update();}
-function filtered(){const y=$('yearFilter')?.value||'',m=$('monthFilter')?.value||'',de=$('dealerFilter')?.value||'',t=$('typeFilter')?.value||'';return core().filter(x=>(!y||String(x.year)===String(y))&&(!m||String(x.month)===String(m))&&(!de||x.dealer===de)&&(!t||x.type===t));}
-function group(d,getter){const m={};d.forEach(x=>{const k=getter(x)||'Unknown';if(!m[k])m[k]={name:k,units:0,value:0};m[k].units++;m[k].value+=n(x.msrp);});return Object.values(m).sort((a,b)=>b.units-a.units);}
-function update(){const d=filtered();const actual=d.length,forecast=Math.max(363,Math.round(actual*1.08)),target=400,gap=forecast-target,value=d.reduce((s,x)=>s+n(x.msrp),0)*1.08;$('lastRefresh').textContent=last();$('topForecast').textContent=forecast;$('kpiForecast').textContent=forecast;$('kpiAch').textContent=(forecast/target*100).toFixed(1)+'%';$('kpiGap').textContent=gap;$('kpiValue').textContent=money(value);$('aiMonthForecast').textContent='57 Units';$('aiRevenue').textContent='7.8B MMK';$('aiRiskLevel').textContent=gap>=0?'Low':'Medium';renderForecastTrend(d);renderFunnel();renderProbability();renderList('regionForecastList',group(d,x=>x.dealer).slice(0,5),target);renderList('salesmanForecastList',group(d,x=>x['Sales Staff']||x.salesman||'Unknown').slice(0,5),target);renderProjection(d);}
-function renderList(id,rows,target){const el=$(id);if(!el)return;const max=rows[0]?.units||1;el.innerHTML=rows.map((r,i)=>{const fc=Math.round(r.units*1.08),ach=fc/(target/3)*100;return`<div class="clean-item"><div class="clean-rank">${i+1}</div><div><div class="clean-name">${r.name}</div><div class="clean-meta">Forecast ${fc} | Achievement ${ach.toFixed(1)}% | Gap ${fc-Math.round(target/3)}</div><div class="clean-bar"><div class="clean-fill" style="width:${r.units/max*100}%"></div></div></div><div class="clean-value">${fc}</div></div>`}).join('')||'<p>No data</p>';}
-function monthly(d){const m={};d.forEach(x=>{const mo=n(x.month);if(!mo)return;m[mo]=(m[mo]||0)+1;});return Array.from({length:12},(_,i)=>({month:i+1,actual:m[i+1]||0,forecast:Math.round((m[i+1]||0)*1.1)+ (i>5?20+i*3:0),target:i>5?75:0}));}
-function renderForecastTrend(d){const c=$('forecastTrendChart');if(!c||typeof Chart==='undefined')return;const rows=monthly(d);forecastTrendChart?.destroy();forecastTrendChart=new Chart(c,{type:'line',data:{labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],datasets:[{label:'Actual',data:rows.map(x=>x.actual),borderColor:'#151b2d',backgroundColor:'#151b2d',tension:.35},{label:'Forecast',data:rows.map(x=>x.forecast),borderColor:'#ff5a00',backgroundColor:'rgba(255,90,0,.12)',fill:true,tension:.35},{label:'Target',data:rows.map(x=>x.target),borderColor:'#9aa3af',borderDash:[6,6],tension:.2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true}}}});}
-function renderFunnel(){const el=$('forecastFunnel');if(!el)return;el.innerHTML=['Lead|4,852','Quotation|2,986','Booking|1,986','Delivery|2,842'].map(x=>{const[a,b]=x.split('|');return`<div class="funnel-step"><span>${a}</span><strong>${b}</strong></div>`}).join('');}
-function renderProbability(){const c=$('probabilityChart');if(!c||typeof Chart==='undefined')return;probabilityChart?.destroy();probabilityChart=new Chart(c,{type:'bubble',data:{datasets:[{label:'Deals',data:[{x:5,y:70,r:18},{x:9,y:55,r:15},{x:14,y:35,r:22},{x:18,y:78,r:12}],backgroundColor:['#c7d2fe','#bfdbfe','#ddd6fe','#fed7aa']}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{title:{display:true,text:'Forecast Value (MMK)'}},y:{min:0,max:100,title:{display:true,text:'Probability %'}}}}});}
-function renderProjection(d){const c=$('projectionChart');if(!c||typeof Chart==='undefined')return;const rows=monthly(d);projectionChart?.destroy();projectionChart=new Chart(c,{type:'bar',data:{labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],datasets:[{label:'Actual',data:rows.map(x=>x.actual),backgroundColor:'#151b2d'},{label:'Forecast',data:rows.map(x=>x.forecast),backgroundColor:'#ff5a00'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true}}}});}
+(function () {
+  "use strict";
+
+  const U = BI.utils;
+  const F = BI.filters;
+  const C = BI.charts;
+  const ids = ["yearFilter", "monthFilter", "dealerFilter", "typeFilter"];
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    await U.loadDashboardData();
+    F.fillFilters(U.getCoreProductData(), { includeType: true, yearLabel: "All years" });
+    F.bindFilters(update, ids);
+    update();
+  });
+
+  function data() {
+    return F.applyFilters(U.getCoreProductData());
+  }
+
+  function update() {
+    const rows = data();
+    const actual = rows.length;
+    const forecast = Math.max(363, Math.round(actual * 1.08));
+    const target = 400;
+    const gap = forecast - target;
+    const value = rows.reduce((sum, item) => sum + U.valueOf(item), 0) * 1.08;
+
+    U.setText("lastRefresh", U.lastRefresh());
+    U.setText("topForecast", forecast);
+    U.setText("kpiForecast", forecast);
+    U.setText("kpiAch", ((forecast / target) * 100).toFixed(1) + "%");
+    U.setText("kpiGap", gap);
+    U.setText("kpiValue", U.formatMoney(value));
+    U.setText("aiMonthForecast", "57 Units");
+    U.setText("aiRevenue", "7.8B MMK");
+    U.setText("aiRiskLevel", gap >= 0 ? "Low" : "Medium");
+
+    renderForecastTrend(rows);
+    renderFunnel();
+    renderProbability();
+    renderList("regionForecastList", U.groupBy(rows, (item) => item.dealer).slice(0, 5), target);
+    renderList("salesmanForecastList", U.groupBy(rows, U.salesmanName).slice(0, 5), target);
+    renderProjection(rows);
+  }
+
+  function renderList(id, rows, target) {
+    const element = document.getElementById(id);
+    if (!element) return;
+    const max = rows[0]?.units || 1;
+    element.innerHTML = rows.map((row, index) => {
+      const forecast = Math.round(row.units * 1.08);
+      const achievement = (forecast / (target / 3)) * 100;
+      return `
+        <div class="clean-item">
+          <div class="clean-rank">${index + 1}</div>
+          <div>
+            <div class="clean-name">${row.name}</div>
+            <div class="clean-meta">Forecast ${forecast} | Achievement ${achievement.toFixed(1)}% | Gap ${forecast - Math.round(target / 3)}</div>
+            <div class="clean-bar"><div class="clean-fill" style="width:${(row.units / max) * 100}%"></div></div>
+          </div>
+          <div class="clean-value">${forecast}</div>
+        </div>`;
+    }).join("") || "<p>No data</p>";
+  }
+
+  function monthly(rows) {
+    const map = {};
+    rows.forEach((item) => {
+      const month = U.number(item.month);
+      if (month) map[month] = (map[month] || 0) + 1;
+    });
+    return Array.from({ length: 12 }, (_, index) => {
+      const month = index + 1;
+      const actual = map[month] || 0;
+      return {
+        month,
+        actual,
+        forecast: Math.round(actual * 1.1) + (index > 5 ? 20 + index * 3 : 0),
+        target: index > 5 ? 75 : 0
+      };
+    });
+  }
+
+  function renderForecastTrend(rows) {
+    const values = monthly(rows);
+    C.renderChart("forecastTrendChart", {
+      type: "line",
+      data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        datasets: [
+          { label: "Actual", data: values.map((item) => item.actual), borderColor: "#222b3f", backgroundColor: "#222b3f" },
+          { label: "Forecast", data: values.map((item) => item.forecast), borderColor: "#ff5a00", backgroundColor: "rgba(255,90,0,.12)", fill: true },
+          { label: "Target", data: values.map((item) => item.target), borderColor: "#9aa3af", borderDash: [6, 6] }
+        ]
+      },
+      options: { plugins: { legend: { position: "top" } } }
+    });
+  }
+
+  function renderFunnel() {
+    const element = document.getElementById("forecastFunnel");
+    if (!element) return;
+    element.innerHTML = ["Lead|4,852", "Quotation|2,986", "Booking|1,986", "Delivery|2,842"].map((row) => {
+      const [label, value] = row.split("|");
+      return `<div class="funnel-step"><span>${label}</span><strong>${value}</strong></div>`;
+    }).join("");
+  }
+
+  function renderProbability() {
+    C.renderChart("probabilityChart", {
+      type: "bubble",
+      data: {
+        datasets: [{
+          label: "Deals",
+          data: [{ x: 5, y: 70, r: 18 }, { x: 9, y: 55, r: 15 }, { x: 14, y: 35, r: 22 }, { x: 18, y: 78, r: 12 }],
+          backgroundColor: ["#c7d2fe", "#bfdbfe", "#ddd6fe", "#fed7aa"]
+        }]
+      },
+      options: {
+        scales: {
+          x: { title: { display: true, text: "Forecast Value (MMK)" } },
+          y: { min: 0, max: 100, title: { display: true, text: "Probability %" } }
+        }
+      }
+    });
+  }
+
+  function renderProjection(rows) {
+    const values = monthly(rows);
+    C.renderChart("projectionChart", {
+      type: "bar",
+      data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        datasets: [
+          { label: "Actual", data: values.map((item) => item.actual), backgroundColor: "#222b3f" },
+          { label: "Forecast", data: values.map((item) => item.forecast), backgroundColor: "#ff5a00" }
+        ]
+      },
+      options: { plugins: { legend: { position: "top" } } }
+    });
+  }
+})();
