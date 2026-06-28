@@ -12,9 +12,9 @@ The platform is designed for GitHub Pages compatibility:
 - No build tools.
 - Data is loaded from `dashboard/data/dashboard_data.json`.
 
-## Current v5.2 Enterprise Intelligence Scope
+## Current v6 Executive Intelligence Scope
 
-The current v5.2 Enterprise Intelligence release keeps six primary dashboard pages:
+The current v6 Executive Intelligence release keeps six primary dashboard pages:
 
 - `dashboard/executive.html` - Executive Overview.
 - `dashboard/salesman.html` - Sales Performance.
@@ -25,24 +25,28 @@ The current v5.2 Enterprise Intelligence release keeps six primary dashboard pag
 
 The root `index.html` redirects to `dashboard/salesman.html`.
 
-v5.2 builds on the v5.1 Enterprise Plus dashboard with a shared intelligence layer across every page while preserving GitHub Pages compatibility. It adds enterprise KPI walls, rule-based insight panels, alert cards, action cards, module-specific snapshots, and V5.3 export placeholders using the Kubota orange, dark navy, green, blue, and white visual system.
+v6 builds on the v5.2 Enterprise Intelligence dashboard with a true Executive Intelligence Cockpit on `dashboard/executive.html` while preserving GitHub Pages compatibility. It adds leadership KPI walls, a rule-based AI Executive Briefing, upgraded Chart.js visuals, alert cards, action cards, module-specific drill-downs, and V6 export placeholders using the Kubota orange, dark navy, green, blue, and white visual system.
 
-V5.2 Enterprise Intelligence includes:
+V6 Executive Intelligence includes:
 
-- Executive BI Command Center with KPI wall, summary panel, alert center, top risks, next actions, dealer snapshot, product snapshot, and monthly gap / forecast placeholder.
+- Executive Cockpit layout with KPI Wall, Sales Trend Chart, Dealer Ranking Chart, Product Mix Chart, GP / Margin Quality Panel, Booking / Pipeline Panel, Forecast Gap Panel, and Risk & Opportunity Panel.
+- AI Executive Briefing generated from `dashboard/data/dashboard_data.json` only, with top performance signal, main risk, recommended action, dealer to watch, product to push, and salesman insight.
+- Drill-down links from dealer cards to `dealer.html`, product cards to `product.html`, salesman insights to `salesman.html`, and sales trend surfaces to `sales.html`.
+- Executive Alert Center with green, yellow, and red cards for GP risk, dealer concentration risk, forecast gap risk, and stock / booking availability signals.
+- Upgraded Chart.js executive charts with gradients, rounded bars, responsive containment, and premium tooltips.
 - Sales Intelligence with KPI wall, funnel placeholder, trend comparison, booking / landing placeholder, source analysis, AI sales insight, and action recommendations.
 - Salesman Intelligence with KPI wall, coaching insight, ranking, performance matrix placeholder, product specialization, lead source insight, and action recommendations.
 - Product Intelligence with KPI wall, model ranking highlight, product mix insight, slow-moving / risk placeholder, and product recommendation cards.
 - Dealer Intelligence with KPI wall, dealer score placeholder, ranking, dealer health insight, and dealer action cards.
 - Forecast Intelligence with KPI wall, forecast vs actual section, gap analysis, risk / opportunity insight, and confidence placeholder.
 - Rule-based AI insights generated from `dashboard/data/dashboard_data.json` for sales performance, dealer performance, product performance, forecast risk, low GP warning, and top performer.
-- Export Center foundation buttons for PDF, PowerPoint, Excel, and PNG with safe V5.3 placeholder messaging.
-- Improved KPI walls, insight cards, alert cards, action cards, spacing, chart containment, and mobile wrapping.
+- Export Center foundation buttons for PDF, PowerPoint, Excel, and PNG with safe V6 placeholder messaging.
+- Improved KPI walls, glass cards, insight cards, alert cards, action cards, spacing, chart containment, and mobile wrapping.
 - No external AI API calls, no backend, no npm workflow, and no build tooling.
 
 ## Near-Term Priorities
 
-1. V5.3 Export Center: replace placeholders with lightweight static exports only when risk is acceptable.
+1. V6 Export Center: replace placeholders with lightweight static exports only when risk is acceptable.
 2. AI Copilot: define a future approved architecture before any external AI API integration.
 3. PWA: explore installable mobile access and offline caching while preserving static hosting.
 4. Multi-company engine: evaluate company-level filters, branding, data partitioning, and tenant-safe configuration.
@@ -68,11 +72,11 @@ Add inventory visibility for current stock, stock aging, slow-moving models, pro
 
 Add an executive summary layer that converts KPI movements into concise business observations. This should remain static and browser-compatible unless an explicit future architecture decision adds a service layer.
 
-V5.2 status: delivered as a rule-based Enterprise Intelligence layer across all six primary dashboard pages. Future work should focus on richer comparisons, target configuration, and optional approved AI Copilot architecture.
+V6 status: delivered as a rule-based Executive Intelligence Cockpit across the executive page with the existing Enterprise Intelligence layer preserved across all six primary dashboard pages. Future work should focus on richer comparisons, target configuration, and optional approved AI Copilot architecture.
 
 ### Export Center
 
-Replace the V5.2 placeholder buttons with static-friendly export features for PDF, PowerPoint, Excel, and PNG. Avoid heavy libraries until bundle size, browser compatibility, and GitHub Pages constraints are reviewed.
+Replace the V6 placeholder buttons with static-friendly export features for PDF, PowerPoint, Excel, and PNG. Avoid heavy libraries until bundle size, browser compatibility, and GitHub Pages constraints are reviewed.
 
 ### Forecast AI
 
