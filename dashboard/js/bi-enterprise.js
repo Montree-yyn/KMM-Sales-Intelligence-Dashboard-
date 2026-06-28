@@ -7,7 +7,7 @@
   const pages = {
     "executive.html": {
       module: "executive",
-      eyebrow: "Executive BI Command Center",
+      eyebrow: "V5.2 Executive BI Command Center",
       title: "Executive Overview",
       subtitle: "Company-wide revenue, unit sales, margin quality, and leadership priorities in one enterprise view.",
       insight: "executive",
@@ -16,7 +16,7 @@
     },
     "salesman.html": {
       module: "salesman",
-      eyebrow: "Performance Coaching",
+      eyebrow: "V5.2 Performance Coaching",
       title: "Sales Performance",
       subtitle: "Salesman productivity, achievement ranking, activity quality, and coaching opportunities.",
       insight: "salesman",
@@ -25,7 +25,7 @@
     },
     "sales.html": {
       module: "sales",
-      eyebrow: "Commercial Analytics",
+      eyebrow: "V5.2 Commercial Analytics",
       title: "Sales Analytics",
       subtitle: "Period performance, channel mix, payment behavior, and product contribution trends.",
       insight: "sales",
@@ -34,7 +34,7 @@
     },
     "product.html": {
       module: "product",
-      eyebrow: "Product Intelligence",
+      eyebrow: "V5.2 Product Intelligence",
       title: "Product Intelligence",
       subtitle: "Model demand, product mix, GP quality, inventory signals, and cross-dealer movement.",
       insight: "product",
@@ -43,7 +43,7 @@
     },
     "dealer.html": {
       module: "dealer",
-      eyebrow: "Dealer Network Health",
+      eyebrow: "V5.2 Dealer Network Health",
       title: "Dealer Intelligence",
       subtitle: "Dealer contribution, health signals, pipeline conversion, stock age, and coverage priorities.",
       insight: "dealer",
@@ -52,7 +52,7 @@
     },
     "forecast.html": {
       module: "forecast",
-      eyebrow: "Forecast AI Foundation",
+      eyebrow: "V5.2 Forecast AI Foundation",
       title: "Sales Forecast AI",
       subtitle: "Rule-based forecast, target gap, pipeline probability, and next-action guidance.",
       insight: "forecast",
@@ -62,7 +62,7 @@
   };
 
   const kpiIcons = ["◒", "◈", "◐", "%", "◇", "↔"];
-  const exportKinds = ["PDF", "PPT", "Excel", "PNG"];
+  const exportKinds = ["PDF", "PowerPoint", "Excel", "PNG"];
 
   function el(tag, className, html) {
     const node = document.createElement(tag);
@@ -256,7 +256,7 @@
         <button type="button" class="enterprise-action primary" data-enterprise-action="ai">AI Summary</button>
         <button type="button" class="enterprise-action" data-enterprise-action="refresh">Refresh View</button>
         <button type="button" class="enterprise-action" data-enterprise-export="PDF">Export PDF</button>
-        <button type="button" class="enterprise-action" data-enterprise-export="PPT">Export PPT</button>
+        <button type="button" class="enterprise-action" data-enterprise-export="PowerPoint">Export PowerPoint</button>
         <button type="button" class="enterprise-action" data-enterprise-export="Excel">Export Excel</button>
         <button type="button" class="enterprise-action" data-enterprise-export="PNG">Export PNG</button>
       </div>`;
@@ -303,7 +303,7 @@
         <div class="enterprise-eyebrow">Export Foundation</div>
         <h2>Prepared Outputs</h2>
         <div class="export-actions" id="enterpriseExportActions"></div>
-        <p id="enterpriseExportStatus" class="export-status">Prepared for V5.2 Export Center.</p>
+        <p id="enterpriseExportStatus" class="export-status">Export Center is prepared for V5.3.</p>
       </div>`;
 
     const anchor = document.querySelector(".ai-strip");
@@ -322,7 +322,7 @@
       <div class="enterprise-ai-heading">
         <div>
           <div class="enterprise-eyebrow">AI Insight Engine</div>
-          <h2>V5.1 Rule-Based Insights</h2>
+          <h2>V5.2 Rule-Based Insights</h2>
         </div>
         <span>Local dashboard_data.json only</span>
       </div>
@@ -356,9 +356,9 @@
   }
 
   function handleExport(kind) {
-    const message = "Prepared for V5.2 Export Center";
+    const message = "Export Center is prepared for V5.3.";
     const status = document.getElementById("enterpriseExportStatus");
-    if (status) status.textContent = `${kind} placeholder: ${message}.`;
+    if (status) status.textContent = `${kind} placeholder: ${message}`;
     toast(message);
   }
 
@@ -381,6 +381,184 @@
         <strong>${value}</strong>
         <small>${meta}</small>
       </div>`;
+  }
+
+  function ensureIntelligenceDeck() {
+    let deck = document.getElementById("enterpriseIntelligenceDeck");
+    if (deck) return deck;
+
+    deck = el("section", "enterprise-intelligence-deck");
+    deck.id = "enterpriseIntelligenceDeck";
+    deck.setAttribute("aria-label", "V5.2 Enterprise Intelligence");
+    const anchor = document.querySelector(".kpi-grid");
+    if (anchor) anchor.insertAdjacentElement("afterend", deck);
+    else document.querySelector(".main-content")?.appendChild(deck);
+    return deck;
+  }
+
+  function safeTop(rows, fallback = "-") {
+    return rows[0] || { name: fallback, units: 0, sales: 0, value: 0, gpPct: 0, share: 0 };
+  }
+
+  function safeBottom(rows, fallback = "-") {
+    return rows.at(-1) || { name: fallback, units: 0, sales: 0, value: 0, gpPct: 0, share: 0 };
+  }
+
+  function valueCard(label, value, meta) {
+    return `<article class="intel-value-card"><span>${label}</span><strong>${value}</strong><small>${meta}</small></article>`;
+  }
+
+  function miniRow(label, value, meta = "") {
+    return `<div class="intel-row"><strong>${label}</strong><span>${value}</span>${meta ? `<small>${meta}</small>` : ""}</div>`;
+  }
+
+  function alertCard(level, title, text) {
+    return `<article class="intel-alert-card"><span>${level}</span><strong>${title}</strong><p>${text}</p></article>`;
+  }
+
+  function actionCard(title, text, tag = "Next Best Action") {
+    return `<article class="intel-action-card"><span>${tag}</span><strong>${title}</strong><p>${text}</p></article>`;
+  }
+
+  function placeholderCard(title, value, text) {
+    return `<article class="intel-placeholder-card"><span>V5.3 foundation</span><strong>${title}</strong><b>${value}</b><p>${text}</p></article>`;
+  }
+
+  function renderCommonKpiWall(summary, groups) {
+    const topDealer = safeTop(groups.dealers);
+    const topModel = safeTop(groups.models);
+    const forecast = Math.round(summary.units * 1.08);
+    return `
+      <div class="enterprise-kpi-wall">
+        ${valueCard("Filtered Units", summary.units.toLocaleString(), "Live from dashboard_data.json")}
+        ${valueCard("Sales Value", utils.formatMoney(summary.sales), "Current filter")}
+        ${valueCard("GP Margin", utils.formatPercent(summary.gpPct), summary.gpPct < 8 ? "Margin pressure" : "Margin stable")}
+        ${valueCard("Top Dealer", topDealer.name, `${utils.formatPercent(topDealer.share)} unit share`)}
+        ${valueCard("Top Model", topModel.name, `${topModel.units.toLocaleString()} units`)}
+        ${valueCard("Rule Forecast", forecast.toLocaleString(), "Static forecast placeholder")}
+      </div>`;
+  }
+
+  function pageGroups(rows) {
+    return {
+      dealers: utils.groupBy(rows, (item) => item.dealer),
+      salesmen: utils.groupBy(rows, utils.salesmanName),
+      models: utils.groupBy(rows, (item) => item.model),
+      types: utils.groupBy(rows, (item) => item.type),
+      sources: utils.groupBy(rows, utils.sourceName),
+      months: utils.groupBy(rows, (item) => utils.monthName(item.month)).reverse()
+    };
+  }
+
+  function renderExecutiveDeck(summary, groups) {
+    const topDealer = safeTop(groups.dealers);
+    const weakDealer = safeBottom(groups.dealers);
+    const topModel = safeTop(groups.models);
+    const lowMargin = groups.models.slice().sort((a, b) => a.gpPct - b.gpPct)[0] || topModel;
+    const forecast = Math.round(summary.units * 1.08);
+    const target = Math.max(400, Math.round(summary.units * 1.12));
+    const gap = forecast - target;
+    return `
+      ${renderCommonKpiWall(summary, groups)}
+      <div class="enterprise-intel-grid">
+        <section class="intel-panel wide"><div class="enterprise-eyebrow">Executive Summary Panel</div><h2>${summary.units.toLocaleString()} units with ${utils.formatPercent(summary.gpPct)} GP margin</h2><p>${topDealer.name} leads dealer contribution while ${topModel.name} anchors product demand. The rule-based forecast shows ${gap >= 0 ? "an upside" : "a shortfall"} of ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units against placeholder target.</p></section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Alert Center</div>${alertCard(summary.gpPct < 8 ? "High" : "Watch", "Margin Quality", `${utils.formatPercent(summary.gpPct)} GP margin in the active filter.`)}${alertCard(topDealer.share > 45 ? "High" : "Review", "Dealer Dependency", `${topDealer.name} contributes ${utils.formatPercent(topDealer.share)} of units.`)}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Top 5 Risks</div>${[lowMargin, weakDealer, topDealer, topModel, safeTop(groups.types)].map((row, index) => miniRow(`${index + 1}. ${row.name}`, index === 0 ? "Margin" : `${row.units.toLocaleString()} units`, `Share ${utils.formatPercent(row.share || 0)}`)).join("")}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Next Best Actions</div>${actionCard("Protect margin", `Review discounting on ${lowMargin.name}.`)}${actionCard("Lift secondary dealers", `Follow up with ${weakDealer.name} on activity and stock blockers.`)}${actionCard("Secure availability", `Keep ${topModel.name} supply visible for close planning.`)}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Dealer Performance Snapshot</div>${groups.dealers.slice(0, 5).map((row) => miniRow(row.name, `${row.units.toLocaleString()} units`, `GP ${utils.formatPercent(row.gpPct)}`)).join("")}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Product Performance Snapshot</div>${groups.types.slice(0, 5).map((row) => miniRow(row.name, `${utils.formatPercent(row.share)} mix`, `${row.units.toLocaleString()} units`)).join("")}</section>
+        <section class="intel-panel">${placeholderCard("Monthly Gap / Forecast", `${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units`, "Placeholder for V5.3 forecast center with target, actual, gap, and confidence controls.")}</section>
+      </div>`;
+  }
+
+  function renderSalesDeck(summary, groups) {
+    const bestMonth = safeTop(groups.months.slice().sort((a, b) => b.units - a.units));
+    const source = safeTop(groups.sources);
+    const model = safeTop(groups.models);
+    return `
+      ${renderCommonKpiWall(summary, groups)}
+      <div class="enterprise-intel-grid">
+        <section class="intel-panel"><div class="enterprise-eyebrow">Sales Funnel Placeholder</div>${placeholderCard("Lead to Delivery", `${Math.round(summary.units * 1.6).toLocaleString()} bookings`, "Booking and landing snapshot is prepared when those fields are available in the source data.")}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Sales Trend Comparison</div>${groups.months.slice(-5).map((row) => miniRow(row.name, `${row.units.toLocaleString()} units`, `Target ${Math.round(row.units * 1.15).toLocaleString()}`)).join("")}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Sales Source Analysis</div>${groups.sources.slice(0, 5).map((row) => miniRow(row.name, `${row.units.toLocaleString()} units`, `${utils.formatPercent(row.share)} share`)).join("")}</section>
+        <section class="intel-panel wide"><div class="enterprise-eyebrow">AI Sales Insight Panel</div><h2>${bestMonth.name} is the strongest sales period</h2><p>${source.name} is the leading source and ${model.name} should anchor the close plan. Current GP margin is ${utils.formatPercent(summary.gpPct)}.</p></section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Action Recommendation Cards</div>${actionCard("Push high-probability leads", `Prioritize ${source.name} leads with ${model.name} offers.`)}${actionCard("Protect payment quality", "Review payment mix before accelerating volume.")}${actionCard("Use monthly rhythm", `Replicate ${bestMonth.name} activity cadence.`)}</section>
+      </div>`;
+  }
+
+  function renderSalesmanDeck(summary, groups) {
+    const leader = safeTop(groups.salesmen);
+    const coach = groups.salesmen.slice().sort((a, b) => a.gpPct - b.gpPct)[0] || leader;
+    const source = safeTop(groups.sources);
+    return `
+      ${renderCommonKpiWall(summary, groups)}
+      <div class="enterprise-intel-grid">
+        <section class="intel-panel wide"><div class="enterprise-eyebrow">Coaching Insight Panel</div><h2>${leader.name} leads the team</h2><p>${coach.name} is the coaching focus for margin or conversion. Route best ${source.name} leads through proven playbooks and track follow-up quality weekly.</p></section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Salesman Ranking</div>${groups.salesmen.slice(0, 5).map((row, index) => miniRow(`${index + 1}. ${row.name}`, `${row.units.toLocaleString()} units`, `GP ${utils.formatPercent(row.gpPct)}`)).join("")}</section>
+        <section class="intel-panel">${placeholderCard("Performance Matrix", "Volume x GP", "Matrix is prepared for quadrant scoring, coaching paths, and achievement targets.")}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Product Specialization Summary</div>${groups.types.slice(0, 4).map((row) => miniRow(row.name, `${row.units.toLocaleString()} units`, `${utils.formatPercent(row.share)} mix`)).join("")}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Lead Source Insight</div>${groups.sources.slice(0, 4).map((row) => miniRow(row.name, `${row.units.toLocaleString()} leads`, `Share ${utils.formatPercent(row.share)}`)).join("")}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Action Recommendation Cards</div>${actionCard("Coach margin control", `Review ${coach.name} discount pattern.`)}${actionCard("Scale leader behavior", `Turn ${leader.name} routines into a team checklist.`)}${actionCard("Specialize by product", `Assign specialists around ${safeTop(groups.types).name}.`)}</section>
+      </div>`;
+  }
+
+  function renderProductDeck(summary, groups) {
+    const topModel = safeTop(groups.models);
+    const slow = safeBottom(groups.models);
+    const highGp = groups.models.slice().sort((a, b) => b.gpPct - a.gpPct)[0] || topModel;
+    return `
+      ${renderCommonKpiWall(summary, groups)}
+      <div class="enterprise-intel-grid">
+        <section class="intel-panel wide"><div class="enterprise-eyebrow">Model Ranking Highlight</div><h2>${topModel.name} is the lead demand signal</h2><p>${topModel.units.toLocaleString()} units sold with ${utils.formatPercent(topModel.share)} share. ${highGp.name} has the strongest GP quality at ${utils.formatPercent(highGp.gpPct)}.</p></section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Product Mix Insight</div>${groups.types.slice(0, 5).map((row) => miniRow(row.name, `${utils.formatPercent(row.share)} mix`, `${row.units.toLocaleString()} units`)).join("")}</section>
+        <section class="intel-panel">${placeholderCard("Slow-Moving / Risk", slow.name, "Prepared for inventory age, slow movement, and dealer stock risk scoring.")}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Product Recommendation Cards</div>${actionCard("Anchor campaigns", `Use ${topModel.name} demand in dealer campaigns.`)}${actionCard("Protect GP", `Preserve pricing on ${highGp.name}.`)}${actionCard("Watch slow movement", `Review stock and offers for ${slow.name}.`)}</section>
+      </div>`;
+  }
+
+  function renderDealerDeck(summary, groups) {
+    const dealer = safeTop(groups.dealers);
+    const weak = safeBottom(groups.dealers);
+    return `
+      ${renderCommonKpiWall(summary, groups)}
+      <div class="enterprise-intel-grid">
+        <section class="intel-panel"><div class="enterprise-eyebrow">Dealer Ranking</div>${groups.dealers.slice(0, 5).map((row, index) => miniRow(`${index + 1}. ${row.name}`, `${row.units.toLocaleString()} units`, `${utils.formatPercent(row.share)} share`)).join("")}</section>
+        <section class="intel-panel">${placeholderCard("Dealer Score", `${Math.min(99, Math.round((dealer.share || 0) + 62))}/100`, "Composite score placeholder for sales, stock, collection, service, and coverage.")}</section>
+        <section class="intel-panel wide"><div class="enterprise-eyebrow">Dealer Health Insight</div><h2>${dealer.name} leads network performance</h2><p>${weak.name} needs activity review. Dealer concentration is ${utils.formatPercent(dealer.share)}, so secondary dealer lift remains important for resilience.</p></section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Dealer Action Cards</div>${actionCard("Reduce dependency", `Lift activity for ${weak.name}.`)}${actionCard("Protect leader", `Keep stock availability visible for ${dealer.name}.`)}${actionCard("Weekly scorecard", "Track sales, collection, and stock age together.")}</section>
+      </div>`;
+  }
+
+  function renderForecastDeck(summary, groups) {
+    const forecast = Math.max(363, Math.round(summary.units * 1.08));
+    const target = 400;
+    const gap = forecast - target;
+    const confidence = Math.max(62, Math.min(92, Math.round(86 + summary.gpPct / 3 - Math.abs(gap) / 80)));
+    return `
+      ${renderCommonKpiWall(summary, groups)}
+      <div class="enterprise-intel-grid">
+        <section class="intel-panel"><div class="enterprise-eyebrow">Forecast vs Actual</div>${miniRow("Actual", `${summary.units.toLocaleString()} units`, "Filtered records")}${miniRow("Forecast", `${forecast.toLocaleString()} units`, "Rule-based placeholder")}${miniRow("Target", `${target.toLocaleString()} units`, "Static planning baseline")}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">Gap Analysis Panel</div>${miniRow("Gap", `${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units`, gap < 0 ? "Needs recovery" : "Above target")}${miniRow("Value Forecast", utils.formatMoney(summary.sales * 1.08), "Estimated")}</section>
+        <section class="intel-panel wide"><div class="enterprise-eyebrow">Risk / Opportunity Insight</div><h2>${gap < 0 ? "Target gap requires action" : "Forecast is on track"}</h2><p>${safeTop(groups.dealers).name} and ${safeTop(groups.salesmen).name} are the strongest levers in the current filter. Use high-probability deals first, then protect GP margin.</p></section>
+        <section class="intel-panel">${placeholderCard("Forecast Confidence", `${confidence}%`, "Prepared for future scenario weighting, pipeline probability, and confidence model controls.")}</section>
+      </div>`;
+  }
+
+  function renderIntelligenceDeck(rows) {
+    const deck = document.getElementById("enterpriseIntelligenceDeck");
+    if (!deck) return;
+    const config = pageConfig();
+    const summary = utils.kpi(rows);
+    const groups = pageGroups(rows);
+    const renderers = {
+      executive: renderExecutiveDeck,
+      sales: renderSalesDeck,
+      salesman: renderSalesmanDeck,
+      product: renderProductDeck,
+      dealer: renderDealerDeck,
+      forecast: renderForecastDeck
+    };
+    deck.innerHTML = (renderers[config.module] || renderExecutiveDeck)(summary, groups);
   }
 
   function themeClass(name, enabled = true) {
@@ -485,11 +663,13 @@
     const insight = insightFor(config.insight, data);
     ensureHeader();
     ensureInsightPanel();
+    ensureIntelligenceDeck();
     ensureFoundationPanel();
     ensureInsightEnginePanel();
     enhanceKpis();
     enhancePanels();
     updateEmptyStates(data);
+    renderIntelligenceDeck(data);
     renderInsightEngine(data);
     utils.setText("enterpriseLastRefresh", utils.lastRefresh());
     utils.setText("enterpriseInsightHeadline", insight.headline);
