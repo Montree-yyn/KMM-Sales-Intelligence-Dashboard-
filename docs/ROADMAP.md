@@ -12,9 +12,9 @@ The platform is designed for GitHub Pages compatibility:
 - No build tools.
 - Data is loaded from `dashboard/data/dashboard_data.json`.
 
-## Current v5 Enterprise Foundation Scope
+## Current v5.1 Enterprise Plus Scope
 
-The current v5 Enterprise Foundation keeps six primary dashboard pages:
+The current v5.1 Enterprise Plus release keeps six primary dashboard pages:
 
 - `dashboard/executive.html` - Executive Overview.
 - `dashboard/salesman.html` - Sales Performance.
@@ -25,16 +25,24 @@ The current v5 Enterprise Foundation keeps six primary dashboard pages:
 
 The root `index.html` redirects to `dashboard/salesman.html`.
 
-v5 adds shared component foundations, module readiness markers, rule-based AI insights, and export-ready placeholders while preserving GitHub Pages compatibility.
+v5.1 builds on the v5 Enterprise Dashboard with visible business-usefulness improvements while preserving GitHub Pages compatibility. It adds an Executive Command Center, rule-based AI Insight Engine, safer export placeholders, stronger mobile behavior, and dashboard polish using the Kubota orange, dark navy, and white visual system.
+
+V5.1 Enterprise Plus includes:
+
+- Executive Summary, Top Risks, Next Actions, Dealer Performance Snapshot, Product Mix Snapshot, and Forecast / Gap placeholder on `dashboard/executive.html`.
+- Rule-based AI insights generated from `dashboard/data/dashboard_data.json` for sales performance, dealer performance, product performance, forecast risk, low GP warning, and top performer.
+- Export Center foundation buttons for PDF, PowerPoint, Excel, and PNG with safe V5.2 placeholder messaging.
+- Improved KPI cards, insight cards, alert cards, spacing, chart containment, and mobile wrapping.
+- No external AI API calls, no backend, no npm workflow, and no build tooling.
 
 ## Near-Term Priorities
 
-1. Stabilize the shared design system across all current dashboard pages.
-2. Keep dashboard pages aligned with the shared CSS and JS modules.
-3. Maintain clean Excel-to-JSON updates through `tools/update_dashboard.py`.
-4. Improve mobile usability for executive and field users.
-5. Expand reusable dashboard components before adding new page-specific patterns.
-6. Replace export placeholders with lightweight static export implementations only when risk is acceptable.
+1. V5.2 Export Center: replace placeholders with lightweight static exports only when risk is acceptable.
+2. AI Copilot: define a future approved architecture before any external AI API integration.
+3. PWA: explore installable mobile access and offline caching while preserving static hosting.
+4. Multi-company: evaluate company-level filters, branding, and data partitioning.
+5. Keep dashboard pages aligned with the shared CSS and JS modules.
+6. Maintain clean Excel-to-JSON updates through `tools/update_dashboard.py`.
 7. Keep AI insight generation rule-based until a backend or approved API integration exists.
 
 ## Future Roadmap
@@ -55,6 +63,12 @@ Add inventory visibility for current stock, stock aging, slow-moving models, pro
 
 Add an executive summary layer that converts KPI movements into concise business observations. This should remain static and browser-compatible unless an explicit future architecture decision adds a service layer.
 
+V5.1 status: delivered as a rule-based Executive Command Center and shared AI Insight Engine. Future work should focus on richer comparisons, target configuration, and optional approved AI Copilot architecture.
+
+### Export Center
+
+Replace the V5.1 placeholder buttons with static-friendly export features for PDF, PowerPoint, Excel, and PNG. Avoid heavy libraries until bundle size, browser compatibility, and GitHub Pages constraints are reviewed.
+
 ### Forecast AI
 
 Continue improving the existing Forecast AI page with stronger scenario modeling, better target-gap analysis, regional forecast views, and clearer confidence indicators.
@@ -62,6 +76,10 @@ Continue improving the existing Forecast AI page with stronger scenario modeling
 ### PWA Mobile App
 
 Explore a progressive web app layer for mobile access, offline caching, and installable dashboard shortcuts. Any PWA work must preserve the static GitHub Pages architecture.
+
+### Multi-Company
+
+Add company-level segmentation only after the dashboard data contract supports safe company identifiers, permissions expectations, and branding rules.
 
 ## Release Principles
 

@@ -90,6 +90,92 @@
     return grouped[0] || { name: "-", units: 0, gpPct: 0, share: 0, sales: 0, value: 0 };
   }
 
+  function groupedBottom(rows, getter) {
+    const grouped = utils.groupBy(rows, getter);
+    return grouped.at(-1) || { name: "-", units: 0, gpPct: 0, share: 0, sales: 0, value: 0 };
+  }
+
+  function emptyInsight(title) {
+    return {
+      title,
+      severity: "Waiting",
+      headline: "No data for current filters",
+      detail: "Adjust filters to generate this rule-based insight from dashboard_data.json.",
+      action: "Safe placeholder. No external AI API is used."
+    };
+  }
+
+  function insightSet(rows) {
+    if (!rows.length) {
+      return [
+        emptyInsight("Sales Performance"),
+        emptyInsight("Dealer Performance"),
+        emptyInsight("Product Performance"),
+        emptyInsight("Forecast Risk"),
+        emptyInsight("Low GP Warning"),
+        emptyInsight("Top Performer")
+      ];
+    }
+
+    const kpi = utils.kpi(rows);
+    const dealer = groupedTop(rows, (item) => item.dealer);
+    const weakDealer = groupedBottom(rows, (item) => item.dealer);
+    const product = groupedTop(rows, (item) => item.model);
+    const productType = groupedTop(rows, (item) => item.type);
+    const lowMarginProduct = utils.groupBy(rows, (item) => item.model).sort((a, b) => a.gpPct - b.gpPct)[0] || product;
+    const salesman = groupedTop(rows, utils.salesmanName);
+    const monthly = utils.groupBy(rows, (item) => utils.monthName(item.month)).sort((a, b) => b.units - a.units);
+    const forecast = Math.round(kpi.units * 1.08);
+    const target = Math.max(400, Math.round(kpi.units * 1.12));
+    const gap = forecast - target;
+    const lowGp = kpi.gpPct < 8;
+
+    return [
+      {
+        title: "Sales Performance",
+        severity: kpi.units >= 400 ? "Strong" : "Review",
+        headline: `${kpi.units.toLocaleString()} units sold`,
+        detail: `${monthly[0]?.name || "-"} is the strongest month with ${utils.formatMoney(kpi.sales)} total sales value.`,
+        action: kpi.units >= 400 ? "Maintain close rhythm and protect margin quality." : "Use dealer and salesman follow-up to close the volume gap."
+      },
+      {
+        title: "Dealer Performance",
+        severity: dealer.share > 45 ? "Dependency" : "Balanced",
+        headline: `${dealer.name} leads dealer contribution`,
+        detail: `${dealer.units.toLocaleString()} units and ${utils.formatPercent(dealer.share)} share. Lowest filtered contribution: ${weakDealer.name}.`,
+        action: dealer.share > 45 ? "Lift secondary dealer activity to reduce dependency risk." : "Keep weekly dealer scorecards active."
+      },
+      {
+        title: "Product Performance",
+        severity: productType.share > 60 ? "Concentrated" : "Healthy",
+        headline: `${product.name} is the top model`,
+        detail: `${productType.name} contributes ${utils.formatPercent(productType.share)} of filtered units.`,
+        action: productType.share > 60 ? "Prepare substitute model offers and watch concentration risk." : "Use top-model demand to open adjacent product conversations."
+      },
+      {
+        title: "Forecast Risk",
+        severity: gap < 0 ? "Gap" : "On Track",
+        headline: `${forecast.toLocaleString()} unit rule-based forecast`,
+        detail: `Static target placeholder is ${target.toLocaleString()} units, leaving ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units gap.`,
+        action: gap < 0 ? "Prioritize high-probability deals and top dealer follow-up." : "Forecast is above baseline; protect GP while closing."
+      },
+      {
+        title: "Low GP Warning",
+        severity: lowGp ? "High" : "Stable",
+        headline: `${utils.formatPercent(kpi.gpPct)} GP margin`,
+        detail: `${lowMarginProduct.name} is the lowest-margin model at ${utils.formatPercent(lowMarginProduct.gpPct)}.`,
+        action: lowGp ? "Review discounts, campaigns, and cost leakage before adding volume pressure." : "Margin is stable. Keep price discipline visible."
+      },
+      {
+        title: "Top Performer",
+        severity: "Leader",
+        headline: `${salesman.name} leads filtered performance`,
+        detail: `${salesman.units.toLocaleString()} units, ${utils.formatPercent(salesman.share)} share, and ${utils.formatPercent(salesman.gpPct)} GP margin.`,
+        action: "Turn top performer behavior into a coaching reference for the team."
+      }
+    ];
+  }
+
   function insightFor(type, rows) {
     if (!rows.length) {
       return {
@@ -217,11 +303,33 @@
         <div class="enterprise-eyebrow">Export Foundation</div>
         <h2>Prepared Outputs</h2>
         <div class="export-actions" id="enterpriseExportActions"></div>
-        <p id="enterpriseExportStatus" class="export-status">Export feature is prepared for V5.1.</p>
+        <p id="enterpriseExportStatus" class="export-status">Prepared for V5.2 Export Center.</p>
       </div>`;
 
     const anchor = document.querySelector(".ai-strip");
     if (anchor) anchor.insertAdjacentElement("afterend", panel);
+    else document.querySelector(".main-content")?.appendChild(panel);
+    return panel;
+  }
+
+  function ensureInsightEnginePanel() {
+    let panel = document.getElementById("enterpriseInsightEngine");
+    if (panel) return panel;
+
+    panel = el("section", "enterprise-ai-engine");
+    panel.id = "enterpriseInsightEngine";
+    panel.innerHTML = `
+      <div class="enterprise-ai-heading">
+        <div>
+          <div class="enterprise-eyebrow">AI Insight Engine</div>
+          <h2>V5.1 Rule-Based Insights</h2>
+        </div>
+        <span>Local dashboard_data.json only</span>
+      </div>
+      <div id="enterpriseInsightGrid" class="enterprise-insight-grid"></div>`;
+
+    const anchor = document.getElementById("enterpriseFoundation");
+    if (anchor) anchor.insertAdjacentElement("beforebegin", panel);
     else document.querySelector(".main-content")?.appendChild(panel);
     return panel;
   }
@@ -248,9 +356,9 @@
   }
 
   function handleExport(kind) {
-    const message = "Export feature is prepared for V5.1.";
+    const message = "Prepared for V5.2 Export Center";
     const status = document.getElementById("enterpriseExportStatus");
-    if (status) status.textContent = `${kind} export: ${message}`;
+    if (status) status.textContent = `${kind} placeholder: ${message}.`;
     toast(message);
   }
 
@@ -283,12 +391,24 @@
     const target = document.getElementById("enterpriseExportActions");
     if (!target || target.dataset.ready === "true") return;
     exportKinds.forEach((kind) => {
-      const button = el("button", "export-button", kind);
+      const button = el("button", "export-button", `${kind} placeholder`);
       button.type = "button";
       button.dataset.enterpriseExport = kind;
       target.appendChild(button);
     });
     target.dataset.ready = "true";
+  }
+
+  function renderInsightEngine(rows) {
+    const target = document.getElementById("enterpriseInsightGrid");
+    if (!target) return;
+    target.innerHTML = insightSet(rows).map((insight) => `
+      <article class="enterprise-ai-card">
+        <span>${insight.title}</span>
+        <strong>${insight.headline}</strong>
+        <p>${insight.detail}</p>
+        <small><b>${insight.severity}</b> ${insight.action}</small>
+      </article>`).join("");
   }
 
   function bindActions() {
@@ -366,9 +486,11 @@
     ensureHeader();
     ensureInsightPanel();
     ensureFoundationPanel();
+    ensureInsightEnginePanel();
     enhanceKpis();
     enhancePanels();
     updateEmptyStates(data);
+    renderInsightEngine(data);
     utils.setText("enterpriseLastRefresh", utils.lastRefresh());
     utils.setText("enterpriseInsightHeadline", insight.headline);
     utils.setText("enterpriseInsightDetail", insight.detail);
@@ -389,6 +511,7 @@
     ensureHeader();
     ensureInsightPanel();
     ensureFoundationPanel();
+    ensureInsightEnginePanel();
     renderModules();
     renderExports();
     bindActions();

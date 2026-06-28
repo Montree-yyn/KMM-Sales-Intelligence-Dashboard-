@@ -165,15 +165,45 @@ Visual marker for the strip.
 
 Reusable summary cells containing a strong value and supporting label.
 
-## v5 Enterprise Components
+## V5.1 Enterprise Plus Components
 
 ### `BI.enterprise.components.el(tag, className, html)`
 
 Small shared DOM factory used by the v5 foundation. It is intentionally simple so it works in static pages without a framework or build step.
 
+### `.executive-command-center`
+
+Executive-only command center used by `dashboard/executive.html`. It contains:
+
+- `.command-brief` for the Executive Summary.
+- `#execTopRisks` for Top Risks generated from local rules.
+- `#execNextActions` for Next Actions generated from local rules.
+- `.command-chip-row` and `.command-chip` for compact forecast, gap, and dependency signals.
+
+### `.executive-snapshot-grid`
+
+Executive snapshot row for Dealer Performance, Product Mix, and Forecast / Gap placeholder panels. These panels are rendered from filtered `dashboard_data.json` through `dashboard/js/executive.js`.
+
+### `.enterprise-ai-engine`
+
+Shared V5.1 AI Insight Engine injected by `dashboard/js/bi-enterprise.js`. It displays six rule-based insight cards:
+
+- Sales Performance.
+- Dealer Performance.
+- Product Performance.
+- Forecast Risk.
+- Low GP Warning.
+- Top Performer.
+
+The insight engine uses local filtered dashboard rows only. It does not call external APIs.
+
+### `.enterprise-insight-grid` and `.enterprise-ai-card`
+
+Responsive card grid and card pattern for V5.1 rule-based AI insights. Cards stack on mobile and include severity, headline, detail, and action guidance.
+
 ### `.enterprise-foundation`
 
-Responsive three-column foundation area injected after each page's existing `.ai-strip`. It contains the v5 AI insight card, dashboard module readiness, and export placeholder controls.
+Responsive foundation area injected after each page's existing `.ai-strip` and V5.1 insight engine. It contains dashboard module readiness and export placeholder controls.
 
 ### `.insight-card`
 
@@ -203,7 +233,16 @@ These are framework markers, not new routes yet. Existing six dashboard paths re
 
 ### `.export-actions` and `.export-button`
 
-Visible export-ready controls for PDF, PowerPoint, Excel, and PNG. Current handlers are placeholders that update status text and never attempt file generation or external library calls.
+Visible export-ready controls for PDF, PowerPoint, Excel, and PNG. Current handlers are placeholders that show `Prepared for V5.2 Export Center`, update status text, and never attempt file generation or external library calls.
+
+## V5.1 Extension Rules
+
+- Keep AI insights deterministic and rule-based unless an approved future architecture adds a service layer.
+- Keep Export Center controls as placeholders until V5.2 introduces reviewed static export behavior.
+- Do not modify `dashboard/data/dashboard_data.json` to support UI-only enhancements.
+- Do not modify `tools/update_dashboard.py` unless a data contract change is explicitly requested.
+- Preserve no-npm, no-build, static GitHub Pages compatibility.
+- Test desktop and mobile widths for no horizontal overflow, wrapped buttons, and contained chart panels.
 
 ## Specialized Modules
 
