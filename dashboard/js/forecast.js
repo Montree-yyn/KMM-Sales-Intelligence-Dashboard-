@@ -34,6 +34,7 @@
     U.setText("aiMonthForecast", "57 Units");
     U.setText("aiRevenue", "7.8B MMK");
     U.setText("aiRiskLevel", gap >= 0 ? "Low" : "Medium");
+    BI.enterprise?.refresh(rows);
 
     renderForecastTrend(rows);
     renderFunnel();

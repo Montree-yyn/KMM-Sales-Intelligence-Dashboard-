@@ -6,9 +6,9 @@ KMM Sales Intelligence Platform is a static sales intelligence application for r
 
 The application is intentionally simple to deploy: GitHub Pages can serve the repository directly because the dashboard uses only static HTML, CSS, JavaScript, local Chart.js, and a generated JSON data file.
 
-## Current v4 Architecture
+## Current v5 Enterprise Foundation Architecture
 
-The v4 architecture is organized around static dashboard pages, shared CSS bundles, shared browser modules, and a generated data source.
+The v5 Enterprise Foundation keeps the v4 static dashboard contract and adds a shared front-end foundation for reusable components, dashboard module structure, rule-based AI insights, and export placeholders. The architecture remains static HTML, CSS, JavaScript, local Chart.js, and generated JSON data.
 
 ```text
 index.html
@@ -31,6 +31,7 @@ dashboard/
     bi-filters.js
     bi-charts.js
     bi-core.js
+    bi-enterprise.js
     executive.js
     salesman.js
     sales.js
@@ -112,12 +113,13 @@ Page script: `dashboard/js/forecast.js`
 
 ## Shared CSS Files
 
-The v4 dashboard pages load `dashboard/css/bi-core.css`, which imports:
+The dashboard pages load `dashboard/css/bi-core.css`, which imports:
 
 - `design-system.css` - color tokens, typography, root variables, body defaults, and accent styling.
 - `bi-layout.css` - app shell, sidebar, navigation, topbar, page header, grid layout, and responsive layout behavior.
 - `bi-components.css` - filter bars, KPI cards, panels, chart containers, tables, buttons, and form controls.
 - `bi-modules.css` - reusable dashboard modules such as lists, AI strips, score grids, funnels, heatmaps, and specialized visual blocks.
+- `bi-enterprise.css` - v5 AI insight cards, module readiness pills, export placeholder buttons, and enterprise footer.
 
 Additional legacy or page-specific CSS files exist in `dashboard/css/`. New work should prefer the v4 shared files unless a page-specific requirement is explicit.
 
@@ -127,6 +129,40 @@ Additional legacy or page-specific CSS files exist in `dashboard/css/`. New work
 - `bi-filters.js` owns filter population, filter state, filter application, reset behavior, and filter event binding.
 - `bi-charts.js` wraps Chart.js with shared palette, defaults, tooltip behavior, dataset enhancement, chart destruction, and render helpers.
 - `bi-core.js` exposes shared rendering helpers and backward-compatible global aliases used by page scripts.
+- `bi-enterprise.js` exposes the v5 foundation:
+  - shared component helper `BI.enterprise.components.el()`.
+  - dashboard module registry for Landing Dashboard, Booking Dashboard, Inventory Dashboard, Finance Dashboard, Dealer KPI, and Salesman KPI.
+  - rule-based AI insight rendering from `dashboard_data.json`.
+  - safe export placeholder handlers for PDF, PowerPoint, Excel, and PNG.
+  - page footer and enterprise foundation panel injection.
+
+## v5 Module Framework
+
+The current six pages remain the production entry points. The module framework documents where future dashboards fit without changing existing paths:
+
+- Landing Dashboard: executive summary foundation, currently represented by `executive.html`.
+- Booking Dashboard: booking and pipeline foundation, currently represented through booking/funnel placeholder sections.
+- Inventory Dashboard: product and stock foundation, currently represented by `product.html` and dealer stock sections.
+- Finance Dashboard: sales value, gross profit, GP margin, commission, and collection metrics across current pages.
+- Dealer KPI: dealer ranking, dealer health, market coverage, and dealer scorecard in `dealer.html`.
+- Salesman KPI: salesman ranking, performance matrix, activity, and coaching insight in `salesman.html`.
+
+## AI Intelligence Foundation
+
+The v5 AI layer is intentionally rule-based and browser-only. It does not call external APIs. Each page passes filtered rows to `BI.enterprise.refresh(rows)`, which generates a clean insight from loaded dashboard data. If no rows match the filters, the insight card shows a no-data placeholder.
+
+Current insight types:
+
+- Executive Summary.
+- Sales Coaching Insight.
+- Product Recommendation.
+- Dealer Health Insight.
+- Forecast Recommendation.
+- KPI Alert Center.
+
+## Export Foundation
+
+The v5 export layer adds visible buttons for PDF, PowerPoint, Excel, and PNG. The handlers are safe placeholders and never throw or call external libraries. Full file generation is deferred so the current GitHub Pages deployment remains lightweight.
 
 ## Data Source
 
@@ -154,4 +190,3 @@ The platform must remain compatible with GitHub Pages:
 - No server-side rendering.
 - No runtime dependency on private APIs.
 - Use relative paths that work from static files under `dashboard/`.
-

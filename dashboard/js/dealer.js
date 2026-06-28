@@ -26,6 +26,7 @@
     U.setText("kpiDealers", dealers.length);
     U.setText("kpiSales", rows.length.toLocaleString());
     U.setText("kpiGP", U.formatMoney(rows.reduce((sum, item) => sum + U.gpOf(item), 0)));
+    BI.enterprise?.refresh(rows);
 
     renderList("dealerRankingList", dealers);
     renderRadar(dealers);

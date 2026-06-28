@@ -24,6 +24,10 @@ Fixed desktop navigation region. It contains:
 
 Primary page content area. It offsets itself from the fixed sidebar on desktop and becomes full-width on smaller screens.
 
+### Enterprise footer
+
+`bi-enterprise.js` injects `#enterpriseFooter` into each dashboard page. It documents the runtime boundary directly in the UI: static GitHub Pages dashboard, local data only, and placeholder AI/export integrations.
+
 ## Navigation
 
 ### `.nav-menu`
@@ -161,6 +165,46 @@ Visual marker for the strip.
 
 Reusable summary cells containing a strong value and supporting label.
 
+## v5 Enterprise Components
+
+### `BI.enterprise.components.el(tag, className, html)`
+
+Small shared DOM factory used by the v5 foundation. It is intentionally simple so it works in static pages without a framework or build step.
+
+### `.enterprise-foundation`
+
+Responsive three-column foundation area injected after each page's existing `.ai-strip`. It contains the v5 AI insight card, dashboard module readiness, and export placeholder controls.
+
+### `.insight-card`
+
+Rule-based AI intelligence card. Current supported insight labels:
+
+- Executive Summary.
+- Sales Coaching Insight.
+- Product Recommendation.
+- Dealer Health Insight.
+- Forecast Recommendation.
+- KPI Alert Center.
+
+The card uses filtered rows from `dashboard/data/dashboard_data.json`. It does not call external APIs.
+
+### `.module-pills` and `.module-pill`
+
+Dashboard framework status indicators for:
+
+- Landing Dashboard.
+- Booking Dashboard.
+- Inventory Dashboard.
+- Finance Dashboard.
+- Dealer KPI.
+- Salesman KPI.
+
+These are framework markers, not new routes yet. Existing six dashboard paths remain unchanged.
+
+### `.export-actions` and `.export-button`
+
+Visible export-ready controls for PDF, PowerPoint, Excel, and PNG. Current handlers are placeholders that update status text and never attempt file generation or external library calls.
+
 ## Specialized Modules
 
 The current dashboards include specialized module targets:
@@ -184,4 +228,4 @@ These should remain page-specific until the same visual pattern is needed across
 - Keep component naming descriptive and dashboard-oriented.
 - Keep dimensions stable so charts, labels, and dynamic values do not shift the page layout unexpectedly.
 - Test components on desktop, tablet, and mobile widths.
-
+- Keep AI and export work front-end only unless a future architecture decision explicitly adds a backend or external service.

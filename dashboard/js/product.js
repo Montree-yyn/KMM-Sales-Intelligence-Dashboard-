@@ -27,6 +27,7 @@
     U.setText("lastRefresh", U.lastRefresh());
     U.setText("topModelTop", models[0]?.name || "-");
     renderKpis(summary);
+    BI.enterprise?.refresh(rows);
     renderList("topModelList", models.slice(0, 5));
     renderTrend(rows);
     renderTypeMix(types);
