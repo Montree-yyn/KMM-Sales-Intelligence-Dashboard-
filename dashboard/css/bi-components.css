@@ -1,0 +1,236 @@
+/* Shared controls, cards, panels, tables, and chart containers */
+.filter-bar {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) 160px;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 22px;
+  border: 1px solid rgba(227, 232, 239, 0.92);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: var(--bi-shadow-soft);
+  padding: 20px 22px;
+  backdrop-filter: blur(18px);
+}
+
+.filter-group,
+.filter-item {
+  min-width: 0;
+}
+
+.filter-group label,
+.filter-item label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--bi-text);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.filter-group select,
+.filter-item select {
+  width: 100%;
+  height: 46px;
+  min-width: 0;
+  border: 1px solid var(--bi-line-strong);
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--bi-text);
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 850;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.filter-group select:focus,
+.filter-item select:focus {
+  border-color: var(--bi-orange);
+  box-shadow: 0 0 0 4px rgba(255, 90, 0, 0.12);
+}
+
+.reset-btn,
+.filter-reset {
+  height: 46px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--bi-orange), var(--bi-orange-2));
+  color: #ffffff;
+  box-shadow: 0 14px 26px rgba(255, 90, 0, 0.24);
+  font-size: 14px;
+  font-weight: 900;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.reset-btn:hover,
+.filter-reset:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 30px rgba(255, 90, 0, 0.28);
+}
+
+.kpi-card {
+  position: relative;
+  min-height: 118px;
+  overflow: hidden;
+  border: 1px solid var(--bi-line);
+  border-radius: var(--bi-radius-lg);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(251, 252, 254, 0.9));
+  box-shadow: var(--bi-shadow-soft);
+  padding: 19px 18px 18px 74px;
+}
+
+.kpi-card::before {
+  content: "";
+  position: absolute;
+  top: 22px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--bi-orange), var(--bi-orange-2));
+  box-shadow: 0 12px 22px rgba(255, 90, 0, 0.26);
+}
+
+.kpi-card.teal::before {
+  background: linear-gradient(135deg, var(--bi-teal), #0f766e);
+}
+
+.kpi-card span {
+  display: block;
+  color: var(--bi-muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.kpi-card strong {
+  display: block;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+  color: var(--bi-text);
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+
+.kpi-card small {
+  display: block;
+  margin-top: 7px;
+  color: var(--bi-green);
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.panel {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--bi-line);
+  border-radius: var(--bi-radius-lg);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(251, 252, 254, 0.92));
+  box-shadow: var(--bi-shadow-soft);
+  padding: 20px;
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 54px;
+  border-radius: 0 0 8px 0;
+  background: linear-gradient(180deg, var(--bi-orange), transparent);
+}
+
+.panel h2 {
+  margin: 0;
+  color: var(--bi-text);
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.18;
+}
+
+.panel p {
+  margin: 7px 0 0;
+  color: var(--bi-muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.chart-box {
+  position: relative;
+  height: 300px;
+  margin-top: 16px;
+}
+
+.chart-box.small,
+.chart-box.sm {
+  height: 235px;
+}
+
+.chart-box.lg {
+  height: 345px;
+}
+
+.table-wrap {
+  max-height: 310px;
+  overflow: auto;
+  margin-top: 14px;
+}
+
+table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--bi-line);
+  padding: 11px;
+  text-align: left;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f6f8fb;
+  color: var(--bi-muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+td {
+  color: var(--bi-text);
+  font-weight: 780;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+@media (max-width: 1440px) {
+  .filter-bar {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .filter-bar {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .kpi-card strong {
+    font-size: 25px;
+  }
+
+  .chart-box,
+  .chart-box.lg {
+    height: 270px;
+  }
+}
