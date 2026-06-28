@@ -254,6 +254,31 @@
     toast(message);
   }
 
+  function renderAiInsight(targetId, insight) {
+    const target = document.getElementById(targetId);
+    if (!target || !insight) return;
+    target.innerHTML = `
+      <div class="ai-insight-card">
+        <span>${insight.risk || "Local insight"}</span>
+        <strong>${insight.headline || "Insight ready"}</strong>
+        <p>${insight.detail || "Rule-based V5 insight is prepared from local dashboard data."}</p>
+        <small>${insight.action || "No external AI API is connected."}</small>
+      </div>`;
+  }
+
+  function premiumCard(label, value, meta = "") {
+    return `
+      <div class="premium-stat-card">
+        <span>${label}</span>
+        <strong>${value}</strong>
+        <small>${meta}</small>
+      </div>`;
+  }
+
+  function themeClass(name, enabled = true) {
+    document.documentElement.classList.toggle(`enterprise-${name}`, enabled);
+  }
+
   function renderExports() {
     const target = document.getElementById("enterpriseExportActions");
     if (!target || target.dataset.ready === "true") return;
@@ -379,6 +404,9 @@
     refresh,
     insightFor,
     handleExport,
+    renderAiInsight,
+    premiumCard,
+    themeClass,
     toast
   };
 

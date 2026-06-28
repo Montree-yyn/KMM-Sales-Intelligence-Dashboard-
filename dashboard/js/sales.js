@@ -1,1 +1,115 @@
-window.addEventListener("DOMContentLoaded",async()=>{await loadData();fillFilters(coreData());bindFilters(update);update()});function update(){const data=filteredData(),k=kpi(data);renderKpis(k);BI.enterprise?.refresh(data);const byMonth=group(data,x=>monthName(x.month)).reverse();chart("salesTrendChart",{type:"line",data:{labels:byMonth.map(x=>x.name),datasets:[{label:"This Year",data:byMonth.map(x=>x.units),borderColor:"#ff5a00",tension:.35},{label:"Last Year",data:byMonth.map(x=>Math.round(x.units*.82)),borderColor:"#9aa3af",tension:.35},{label:"Target",data:byMonth.map(x=>Math.round(x.units*1.15)),borderColor:"#121a2d",borderDash:[5,5],tension:.35}]},options:commonOptions()});const channel=group(data,sourceName).slice(0,5);chart("channelChart",{type:"doughnut",data:{labels:channel.map(x=>x.name),datasets:[{data:channel.map(x=>x.units),backgroundColor:["#ff5a00","#7a5af8","#12b89d","#ffb000","#9aa3af"],borderColor:"#fff",borderWidth:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:"62%",plugins:{legend:{position:"right"}}}});const pay=group(data,x=>x.payment||x.purchaseType||"Unknown").slice(0,5);chart("paymentChart",{type:"doughnut",data:{labels:pay.map(x=>x.name),datasets:[{data:pay.map(x=>x.units),backgroundColor:["#ff5a00","#121a2d","#12b89d","#ffb000","#d6dbe3"],borderColor:"#fff",borderWidth:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:"62%",plugins:{legend:{position:"right"}}}});set("monthTable",byMonth.map(x=>`<tr><td>${x.name}</td><td class="text-right">${x.units}</td><td class="text-right">${money(x.sales)}</td><td class="text-right">${pct(x.gpPct)}</td></tr>`).join(""));const byType=group(data,x=>x.type).slice(0,4);chart("typeTrendChart",{type:"bar",data:{labels:["Jan","Feb","Mar","Apr","May","Jun"],datasets:byType.map((t,i)=>({label:t.name,data:[400-i*40,520-i*35,450-i*30,640-i*25,560-i*20,720-i*15],backgroundColor:["#ff5a00","#121a2d","#12b89d","#ffb000"][i]}))},options:{...commonOptions(),scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}}}});renderRankList("modelContribution",group(data,x=>x.model).slice(0,6));set("bestMonthAi",byMonth.sort((a,b)=>b.units-a.units)[0]?.name||"-") }
+(function () {
+  "use strict";
+
+  const U = BI.utils;
+  const F = BI.filters;
+  const C = BI.charts;
+  const filterIds = ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "salesmanFilter"];
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    await U.loadDashboardData();
+    F.fillFilters(U.getCoreProductData(), { yearLabel: "All years" });
+    F.bindFilters(update, filterIds);
+    update();
+  });
+
+  function update() {
+    const data = F.applyFilters(U.getCoreProductData());
+    const summary = U.kpi(data);
+    const monthly = U.groupBy(data, (item) => U.monthName(item.month)).reverse();
+    const sources = U.groupBy(data, U.sourceName);
+    const payments = U.groupBy(data, (item) => item.payment || item.purchaseType || "Unknown");
+    const models = U.groupBy(data, (item) => item.model);
+    const types = U.groupBy(data, (item) => item.type);
+
+    renderKpis(summary);
+    BI.enterprise?.refresh(data);
+    renderSalesTrend(monthly);
+    renderDonut("channelChart", sources.slice(0, 5));
+    renderDonut("paymentChart", payments.slice(0, 5));
+    renderMonthTable(monthly);
+    renderTypeTrend(types);
+    renderRankList("modelContribution", models.slice(0, 6));
+    renderSalesMix(sources, payments, models);
+    renderSalesInsight(summary, monthly, sources, payments, models);
+  }
+
+  function renderSalesTrend(monthly) {
+    C.renderChart("salesTrendChart", {
+      type: "line",
+      data: {
+        labels: monthly.map((item) => item.name),
+        datasets: [
+          { label: "This Year", data: monthly.map((item) => item.units), borderColor: "#f36b21", backgroundColor: "rgba(243,107,33,.14)", fill: true },
+          { label: "Last Year", data: monthly.map((item) => Math.round(item.units * 0.82)), borderColor: "#8a94a6" },
+          { label: "Target", data: monthly.map((item) => Math.round(item.units * 1.15)), borderColor: "#172033", borderDash: [6, 6] }
+        ]
+      },
+      options: { plugins: { legend: { position: "top" } } }
+    });
+  }
+
+  function renderDonut(id, rows) {
+    C.renderChart(id, {
+      type: "doughnut",
+      data: {
+        labels: rows.map((item) => item.name),
+        datasets: [{ data: rows.map((item) => item.units), backgroundColor: C.palette }]
+      },
+      options: { plugins: { legend: { position: "right" } } }
+    });
+  }
+
+  function renderMonthTable(monthly) {
+    U.setHtml("monthTable", monthly.map((item) => `
+      <tr>
+        <td>${item.name}</td>
+        <td class="text-right">${item.units.toLocaleString()}</td>
+        <td class="text-right">${U.formatMoney(item.sales)}</td>
+        <td class="text-right">${U.formatPercent(item.gpPct)}</td>
+      </tr>`).join(""));
+  }
+
+  function renderTypeTrend(types) {
+    C.renderChart("typeTrendChart", {
+      type: "bar",
+      data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        datasets: types.slice(0, 4).map((type, index) => ({
+          label: type.name,
+          data: [400, 520, 450, 640, 560, 720].map((value, month) => Math.max(12, value - index * 40 + month * index * 5)),
+          backgroundColor: C.palette[index]
+        }))
+      },
+      options: { scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }, plugins: { legend: { position: "top" } } }
+    });
+  }
+
+  function renderSalesMix(sources, payments, models) {
+    renderSignalRows("sourceAnalysis", sources.slice(0, 4), "lead source");
+    renderSignalRows("paymentAnalysis", payments.slice(0, 4), "payment mix");
+    renderSignalRows("modelAnalysis", models.slice(0, 4), "model contribution");
+  }
+
+  function renderSignalRows(id, rows, label) {
+    const target = document.getElementById(id);
+    if (!target) return;
+    target.innerHTML = rows.map((row, index) => `
+      <div class="score-row">
+        <strong>${index + 1}. ${row.name}</strong>
+        <span>${row.units.toLocaleString()} units</span>
+        <small>${U.formatPercent(row.share)} ${label} share</small>
+      </div>`).join("") || "<p>No data</p>";
+  }
+
+  function renderSalesInsight(summary, monthly, sources, payments, models) {
+    const bestMonth = monthly.slice().sort((a, b) => b.units - a.units)[0];
+    const topSource = sources[0];
+    const topPayment = payments[0];
+    const topModel = models[0];
+    U.setText("bestMonthAi", bestMonth?.name || "-");
+    U.setText("salesInsightPrimary", `${topSource?.name || "-"} / ${topPayment?.name || "-"}`);
+    U.setText("salesInsightAction", `${topModel?.name || "Top model"} should anchor this month's close plan`);
+    U.setText("salesInsightMargin", U.formatPercent(summary.gpPct));
+  }
+})();

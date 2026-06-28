@@ -475,13 +475,22 @@ body {
 }
 
 .chart-box {
+  height: 320px;
   min-width: 0;
   border-radius: 14px;
   background: linear-gradient(180deg, rgba(248, 250, 252, 0.85), rgba(255, 255, 255, 0.96));
   padding: 10px;
 }
 
+.chart-box.small,
+.chart-box.sm {
+  height: 250px;
+}
+
 .chart-box canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
   max-width: 100%;
 }
 
@@ -500,6 +509,203 @@ body {
 .score-row,
 .funnel-step {
   border-color: rgba(31, 42, 68, 0.1);
+}
+
+.enterprise-priority-grid {
+  align-items: stretch;
+}
+
+.signal-list,
+.risk-list,
+.capability-matrix,
+.activity-heatmap {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.signal-row {
+  display: grid;
+  gap: 5px;
+  border: 1px solid rgba(31, 42, 68, 0.1);
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.signal-row strong,
+.score-row strong {
+  min-width: 0;
+  color: var(--v5-ink);
+  font-size: 13px;
+  font-weight: 950;
+  overflow-wrap: anywhere;
+}
+
+.signal-row small,
+.score-row small {
+  color: var(--v5-muted);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.signal-badge {
+  width: max-content;
+  border-radius: 999px;
+  background: rgba(243, 107, 33, 0.12);
+  color: var(--v5-orange);
+  font-size: 10px;
+  font-weight: 950;
+  padding: 5px 8px;
+  text-transform: uppercase;
+}
+
+.risk-meter {
+  display: grid;
+  gap: 6px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--v5-ink), #263851);
+  color: #ffffff;
+  padding: 16px;
+}
+
+.risk-meter strong {
+  color: #ffffff;
+  font-size: 34px;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.risk-meter span {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 12px;
+  font-weight: 820;
+}
+
+.score-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 10px;
+  align-items: center;
+  border-bottom: 1px solid rgba(31, 42, 68, 0.09);
+  padding: 10px 0;
+}
+
+.score-row span {
+  color: var(--v5-orange);
+  font-size: 12px;
+  font-weight: 950;
+  text-align: right;
+}
+
+.score-row small {
+  grid-column: 1 / -1;
+}
+
+.score-grid.compact {
+  margin-top: 10px;
+  border-top: 1px solid rgba(31, 42, 68, 0.09);
+  padding-top: 8px;
+}
+
+.activity-row {
+  display: grid;
+  grid-template-columns: minmax(92px, 1fr) repeat(7, minmax(12px, 1fr));
+  gap: 5px;
+  align-items: center;
+}
+
+.activity-row span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--v5-muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-row b {
+  display: block;
+  height: 18px;
+  border-radius: 5px;
+  background: rgba(243, 107, 33, var(--activity, 0.3));
+}
+
+.capability-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  border: 1px solid rgba(31, 42, 68, 0.1);
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.capability-row strong {
+  min-width: 0;
+  color: var(--v5-ink);
+  font-size: 13px;
+  font-weight: 950;
+  overflow-wrap: anywhere;
+}
+
+.capability-row span {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eef2f7;
+  color: var(--v5-ink);
+  font-size: 10px;
+  font-weight: 950;
+  padding: 7px 9px;
+  text-transform: uppercase;
+}
+
+.capability-row span::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--score, 0%);
+  background: linear-gradient(90deg, rgba(243, 107, 33, 0.34), rgba(22, 143, 114, 0.22));
+  content: "";
+}
+
+.ai-insight-card,
+.premium-stat-card {
+  display: grid;
+  gap: 7px;
+  border: 1px solid rgba(31, 42, 68, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--v5-shadow-soft);
+  padding: 16px;
+}
+
+.ai-insight-card span,
+.premium-stat-card span {
+  color: var(--v5-orange);
+  font-size: 10px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.ai-insight-card strong,
+.premium-stat-card strong {
+  color: var(--v5-ink);
+  font-size: 18px;
+  font-weight: 950;
+  line-height: 1.15;
+}
+
+.ai-insight-card p,
+.ai-insight-card small,
+.premium-stat-card small {
+  margin: 0;
+  color: var(--v5-muted);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.45;
 }
 
 .enterprise-empty-state {
@@ -678,6 +884,10 @@ body {
   .filter-bar {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .chart-box {
+    height: 280px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -714,5 +924,14 @@ body {
   .enterprise-toast {
     right: 16px;
     bottom: 16px;
+  }
+
+  .score-row,
+  .activity-row {
+    grid-template-columns: 1fr;
+  }
+
+  .score-row span {
+    text-align: left;
   }
 }
