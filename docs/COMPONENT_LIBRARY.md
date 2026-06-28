@@ -165,32 +165,69 @@ Visual marker for the strip.
 
 Reusable summary cells containing a strong value and supporting label.
 
-## V5.2 Enterprise Intelligence Components
+## V6 Executive Intelligence Components
 
 ### `BI.enterprise.components.el(tag, className, html)`
 
 Small shared DOM factory used by the v5 foundation. It is intentionally simple so it works in static pages without a framework or build step.
 
+### `.v6-briefing`
+
+Executive-only AI Executive Briefing used by `dashboard/executive.html`. It contains:
+
+- `.briefing-main` for the top performance signal and recommended action.
+- `.briefing-grid` for main risk, dealer to watch, product to push, and salesman signal cards.
+- `.command-chip-row` and `.command-chip` for compact forecast, gap, and dependency signals.
+
+All briefing content is generated from filtered `dashboard/data/dashboard_data.json` in `dashboard/js/executive.js`. It does not call external APIs.
+
+### `.v6-cockpit-grid` and `.v6-panel`
+
+Executive cockpit layout for the V6 page. Current cockpit panels include:
+
+- KPI Wall.
+- Sales Trend Chart.
+- Dealer Ranking Chart.
+- Product Mix Chart.
+- GP / Margin Quality Panel.
+- Booking / Pipeline Panel.
+- Forecast Gap Panel.
+- Risk & Opportunity Panel.
+- Executive Alert Center.
+
+Use `.v6-panel.span-2` for major desktop panels such as the sales trend chart. Panels collapse to one column on mobile.
+
+### `.drill-card`
+
+Clickable executive summary cards used for dealer and product drill-downs. Dealer cards link to `dealer.html`; product cards link to `product.html`.
+
+### `.alert-center-grid` and `.alert-card`
+
+Executive Alert Center grid. Alert cards use `.green`, `.yellow`, and `.red` severity classes for GP risk, dealer concentration risk, forecast gap risk, and stock / booking signal.
+
+### `.quality-grid` and `.quality-card`
+
+Margin quality card grid used for GP margin, lowest-margin model, best-GP model, and product mix watch signals.
+
+### `.export-center-v6`
+
+Executive export placeholder band for PDF, PowerPoint, Excel, and PNG. Buttons use the shared `data-enterprise-export` handler and show `V6 Export Center prepared.`
+
 ### `.executive-command-center`
 
-Executive-only command center used by `dashboard/executive.html`. It contains:
-
-- `.command-brief` for the Executive Summary.
-- `#execTopRisks` for Top Risks generated from local rules.
-- `#execNextActions` for Next Actions generated from local rules.
-- `.command-chip-row` and `.command-chip` for compact forecast, gap, and dependency signals.
+Legacy V5.2 command center class retained for backwards compatibility with shared enterprise styles. Prefer `.v6-briefing` and `.v6-cockpit-grid` for new executive cockpit work.
 
 ### `.executive-snapshot-grid`
 
-Executive snapshot row for Dealer Performance, Product Mix, and Forecast / Gap placeholder panels. These panels are rendered from filtered `dashboard_data.json` through `dashboard/js/executive.js`.
+Legacy executive snapshot row retained for compatibility. New executive snapshots should be implemented inside `.v6-cockpit-grid`.
 
 ### `.enterprise-intelligence-deck`
 
-Shared V5.2 intelligence area injected after each page's existing KPI grid by `dashboard/js/bi-enterprise.js`. It renders page-specific enterprise panels from filtered `dashboard_data.json`.
+Shared Enterprise Intelligence area injected after each page's existing KPI grid by `dashboard/js/bi-enterprise.js`. It renders page-specific enterprise panels from filtered `dashboard_data.json`.
 
 Current page coverage:
 
-- Executive KPI Wall, Executive Summary Panel, Alert Center, Top 5 Risks, Next Best Actions, Dealer Performance Snapshot, Product Performance Snapshot, and Monthly Gap / Forecast placeholder.
+- Executive KPI Wall, Executive Summary Panel, Alert Center, Top Risks, Next Actions, Dealer Performance Snapshot, Product Performance Snapshot, and Monthly Gap / Forecast placeholder.
 - Sales KPI Wall, Sales Funnel placeholder, Sales Trend comparison, Booking / Landing placeholder, Sales Source analysis, AI Sales Insight panel, and action recommendation cards.
 - Salesman KPI Wall, Coaching Insight panel, Salesman Ranking, Performance Matrix placeholder, Product Specialization summary, Lead Source insight, and action recommendation cards.
 - Product KPI Wall, Model Ranking highlight, Product Mix insight, Slow-moving / risk placeholder, and product recommendation cards.
@@ -199,19 +236,19 @@ Current page coverage:
 
 ### `.enterprise-kpi-wall` and `.intel-value-card`
 
-Dense KPI wall used inside the V5.2 intelligence deck. Cards summarize filtered units, sales value, GP margin, top dealer, top model, and rule-based forecast.
+Dense KPI wall used inside the Enterprise Intelligence deck. Cards summarize filtered units, sales value, GP margin, top dealer, top model, and rule-based forecast.
 
 ### `.enterprise-intel-grid` and `.intel-panel`
 
-Responsive module grid and panel pattern for V5.2 BI content. Use `.intel-panel.wide` for an important insight panel that should span two desktop columns.
+Responsive module grid and panel pattern for Enterprise BI content. Use `.intel-panel.wide` for an important insight panel that should span two desktop columns.
 
 ### `.intel-alert-card`, `.intel-action-card`, `.intel-placeholder-card`
 
-Shared V5.2 card types for warning signals, next-best-action recommendations, and future-feature placeholders. Placeholders must remain safe and static until the future feature is implemented.
+Shared Enterprise card types for warning signals, next-best-action recommendations, and future-feature placeholders. Placeholders must remain safe and static until the future feature is implemented.
 
 ### `.enterprise-ai-engine`
 
-Shared V5.2 AI Insight Engine injected by `dashboard/js/bi-enterprise.js`. It displays six rule-based insight cards:
+Shared AI Insight Engine injected by `dashboard/js/bi-enterprise.js`. It displays six rule-based insight cards:
 
 - Sales Performance.
 - Dealer Performance.
@@ -224,11 +261,11 @@ The insight engine uses local filtered dashboard rows only. It does not call ext
 
 ### `.enterprise-insight-grid` and `.enterprise-ai-card`
 
-Responsive card grid and card pattern for V5.2 rule-based AI insights. Cards stack on mobile and include severity, headline, detail, and action guidance.
+Responsive card grid and card pattern for rule-based AI insights. Cards stack on mobile and include severity, headline, detail, and action guidance.
 
 ### `.enterprise-foundation`
 
-Responsive foundation area injected after each page's existing `.ai-strip` and V5.1 insight engine. It contains dashboard module readiness and export placeholder controls.
+Responsive foundation area injected after each page's existing `.ai-strip` and insight engine. It contains dashboard module readiness and export placeholder controls.
 
 ### `.insight-card`
 
@@ -258,12 +295,12 @@ These are framework markers, not new routes yet. Existing six dashboard paths re
 
 ### `.export-actions` and `.export-button`
 
-Visible export-ready controls for PDF, PowerPoint, Excel, and PNG. Current handlers are placeholders that show `Export Center is prepared for V5.3.`, update status text, and never attempt file generation or external library calls.
+Visible export-ready controls for PDF, PowerPoint, Excel, and PNG. Current handlers are placeholders that show `V6 Export Center prepared.`, update status text, and never attempt file generation or external library calls.
 
-## V5.2 Extension Rules
+## V6 Extension Rules
 
 - Keep AI insights deterministic and rule-based unless an approved future architecture adds a service layer.
-- Keep Export Center controls as placeholders until V5.3 introduces reviewed static export behavior.
+- Keep Export Center controls as placeholders until a reviewed static export implementation replaces the V6 placeholder behavior.
 - Do not modify `dashboard/data/dashboard_data.json` to support UI-only enhancements.
 - Do not modify `tools/update_dashboard.py` unless a data contract change is explicitly requested.
 - Preserve no-npm, no-build, static GitHub Pages compatibility.

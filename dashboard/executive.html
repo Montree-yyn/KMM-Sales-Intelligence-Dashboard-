@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KMM Executive Overview</title>
+  <title>KMM V6 Executive Intelligence Cockpit</title>
   <link rel="stylesheet" href="css/bi-core.css">
   <script src="js/chart.umd.min.js"></script>
 </head>
@@ -22,10 +22,10 @@
       <div class="sidebar-footer"><strong>KUBOTA</strong><span>For Earth, For Life</span></div>
     </aside>
 
-    <main class="main-content">
+    <main class="main-content executive-v6">
       <header class="page-head">
-        <div class="page-title"><h1>Executive <span class="accent">Overview</span></h1><p>ภาพรวมผลการดำเนินงานของบริษัท</p></div>
-        <div class="head-actions"><div class="date-pill">28/06/2026</div><select class="period-select"><option>This Year</option></select></div>
+        <div class="page-title"><h1>Executive <span class="accent">Intelligence Cockpit</span></h1><p>V6 leadership view for sales momentum, margin quality, dealer risk, product focus, and forecast action.</p></div>
+        <div class="head-actions"><div class="date-pill">29/06/2026</div><select class="period-select"><option>This Year</option></select></div>
       </header>
 
       <section class="filter-bar">
@@ -37,62 +37,62 @@
         <button id="resetFilter" class="reset-btn">Reset</button>
       </section>
 
-      <section class="kpi-grid">
+      <section class="kpi-grid" aria-label="KPI Wall">
         <div class="kpi-card"><span>Total Sales (Units)</span><strong id="kpiUnits">-</strong><small>Current filter</small></div>
         <div class="kpi-card"><span>Sales Value (MMK)</span><strong id="kpiSales">-</strong><small>Revenue quality</small></div>
         <div class="kpi-card"><span>Gross Profit (MMK)</span><strong id="kpiGp">-</strong><small>GP1</small></div>
         <div class="kpi-card"><span>GP Margin</span><strong id="kpiGpPct">-</strong><small>Margin signal</small></div>
-        <div class="kpi-card"><span>Total Commission</span><strong id="kpiCom">-</strong><small>Sales incentive</small></div>
-        <div class="kpi-card"><span>Avg. Deal Size</span><strong id="kpiAvg">-</strong><small>MMK / unit</small></div>
+        <div class="kpi-card"><span>Rule Forecast</span><strong id="kpiForecast">-</strong><small>Next-period proxy</small></div>
+        <div class="kpi-card"><span>Forecast Gap</span><strong id="kpiGap">-</strong><small>Against static baseline</small></div>
       </section>
 
-      <section class="executive-command-center" aria-label="Executive Command Center">
-        <div class="command-brief">
-          <div class="enterprise-eyebrow">Executive Summary</div>
-          <h2 id="execSummaryHeadline">Loading executive summary...</h2>
-          <p id="execSummaryDetail">Rule-based leadership summary will appear after dashboard data loads.</p>
-          <div id="execInsightChips" class="command-chip-row"></div>
+      <section class="v6-briefing" aria-label="AI Executive Briefing">
+        <div class="briefing-main">
+          <div class="enterprise-eyebrow">AI Executive Briefing</div>
+          <h2 id="briefTopSignal">Loading executive signal...</h2>
+          <p id="briefRecommendedAction">Rule-based leadership guidance will appear after dashboard data loads.</p>
+          <div id="briefSignalChips" class="command-chip-row"></div>
         </div>
-        <div class="command-panel risk-panel">
-          <div class="panel-title-row"><h2>Top Risks</h2><span class="panel-status">Watch</span></div>
-          <div id="execTopRisks" class="signal-list"></div>
-        </div>
-        <div class="command-panel action-panel">
-          <div class="panel-title-row"><h2>Next Actions</h2><span class="panel-status">Now</span></div>
-          <div id="execNextActions" class="signal-list"></div>
+        <div class="briefing-grid">
+          <a href="dealer.html" class="briefing-card"><span>Main Risk</span><strong id="briefMainRisk">-</strong><small>Dealer and margin exposure</small></a>
+          <a href="dealer.html" class="briefing-card"><span>Dealer to Watch</span><strong id="briefDealerWatch">-</strong><small>Network balance signal</small></a>
+          <a href="product.html" class="briefing-card"><span>Product to Push</span><strong id="briefProductPush">-</strong><small>Demand and GP signal</small></a>
+          <a href="salesman.html" class="briefing-card"><span>Salesman Signal</span><strong id="briefSalesmanSignal">-</strong><small>Leadership follow-up</small></a>
         </div>
       </section>
 
-      <section class="grid-3 executive-snapshot-grid">
-        <div class="panel"><h2>Dealer Performance Snapshot</h2><p>Top dealer contribution and dependency signals</p><div id="execDealerSnapshot" class="score-grid"></div></div>
-        <div class="panel"><h2>Product Mix Snapshot</h2><p>Core product type contribution and margin</p><div id="execProductSnapshot" class="score-grid"></div></div>
-        <div class="panel"><h2>Forecast / Gap Placeholder</h2><p>V5.1 rule-based projection foundation</p><div id="execForecastGap" class="risk-list"></div></div>
+      <section class="v6-cockpit-grid">
+        <div class="panel v6-panel span-2"><h2>Sales Trend Chart</h2><p><a href="sales.html">Open Sales Analytics</a></p><div class="chart-box lg"><canvas id="trendChart"></canvas></div></div>
+        <div class="panel v6-panel"><h2>Forecast Gap Panel</h2><p>Rule-based target gap from local data</p><div id="forecastGapPanel" class="risk-list"></div></div>
+        <div class="panel v6-panel"><h2>Dealer Ranking Chart</h2><p><a href="dealer.html">Open Dealer Intelligence</a></p><div class="chart-box"><canvas id="dealerChart"></canvas></div><div id="dealerCards" class="v6-card-list"></div></div>
+        <div class="panel v6-panel"><h2>Product Mix Chart</h2><p><a href="product.html">Open Product Intelligence</a></p><div class="chart-box"><canvas id="typeChart"></canvas></div><div id="productCards" class="v6-card-list compact"></div></div>
+        <div class="panel v6-panel"><h2>GP / Margin Quality Panel</h2><p>Profit quality and low-margin pressure</p><div id="marginQualityPanel" class="quality-grid"></div></div>
+        <div class="panel v6-panel"><h2>Booking / Pipeline Panel</h2><p>Booking proxy and delivery momentum</p><div class="chart-box small"><canvas id="bookingChart"></canvas></div><div id="bookingPipelinePanel" class="risk-list"></div></div>
+        <div class="panel v6-panel"><h2>Risk & Opportunity Panel</h2><p>Executive actions ranked by urgency</p><div id="riskOpportunityPanel" class="signal-list"></div></div>
+        <div class="panel v6-panel"><h2>Executive Alert Center</h2><p>Green, yellow, and red rule-based alerts</p><div id="alertCenter" class="alert-center-grid"></div></div>
+        <div class="panel v6-panel"><h2>Top 5 Models</h2><p><a href="product.html">Inspect model performance</a></p><div class="table-wrap"><table><thead><tr><th>Model</th><th class="text-right">Units</th><th class="text-right">Share</th><th class="text-right">GP%</th></tr></thead><tbody id="modelTable"></tbody></table></div></div>
       </section>
 
-      <section class="grid-3">
-        <div class="panel"><h2>Sales Performance Trend</h2><p>ยอดขายและมูลค่าขายรายเดือน</p><div class="chart-box"><canvas id="trendChart"></canvas></div></div>
-        <div class="panel"><h2>Sales by Product Type</h2><p>สัดส่วนสินค้า</p><div class="chart-box"><canvas id="typeChart"></canvas></div></div>
-        <div class="panel"><h2>Sales by Region</h2><p>พื้นที่ขายหลัก</p><div id="regionList" class="list"></div></div>
-      </section>
-
-      <section class="grid-3">
-        <div class="panel"><h2>Top 5 Models</h2><p>รุ่นขายดี</p><div class="table-wrap"><table><thead><tr><th>Model</th><th class="text-right">Units</th><th class="text-right">Share</th><th class="text-right">GP%</th></tr></thead><tbody id="modelTable"></tbody></table></div></div>
-        <div class="panel"><h2>Booking vs Delivery</h2><p>V5.1 booking foundation placeholder</p><div class="chart-box small"><canvas id="bookingChart"></canvas></div></div>
-        <div class="panel"><h2>Business Health Score</h2><p>คะแนนภาพรวม</p><div class="health-gauge"><div><div class="gauge-score" id="healthScore">90</div><div class="gauge-label">Excellent</div>⭐⭐⭐⭐⭐</div></div></div>
-      </section>
-
-      <section class="grid-3 enterprise-priority-grid">
-        <div class="panel"><h2>Alert Center</h2><p>Executive alerts from local dashboard rules</p><div id="alertCenter" class="signal-list"></div></div>
-        <div class="panel"><h2>Dealer Ranking</h2><p>Contribution, margin, and share by dealer</p><div id="dealerRanking" class="list"></div></div>
-        <div class="panel"><h2>Forecast / Risk</h2><p>V5.1-ready forecast and risk placeholder</p><div id="forecastRisk" class="risk-list"></div></div>
+      <section class="export-center-v6" aria-label="Export Center">
+        <div>
+          <div class="enterprise-eyebrow">Export Center</div>
+          <h2>V6 board-pack placeholders</h2>
+          <p>Prepared for PDF, PowerPoint, Excel, and PNG outputs while remaining static and GitHub Pages compatible.</p>
+        </div>
+        <div class="export-actions">
+          <button type="button" class="export-button" data-enterprise-export="PDF">Export PDF</button>
+          <button type="button" class="export-button" data-enterprise-export="PowerPoint">Export PowerPoint</button>
+          <button type="button" class="export-button" data-enterprise-export="Excel">Export Excel</button>
+          <button type="button" class="export-button" data-enterprise-export="PNG">Export PNG</button>
+        </div>
       </section>
 
       <section class="ai-strip">
-        <div class="ai-bot">🤖</div>
-        <div class="ai-item"><strong id="aiSales">-</strong><span>ยอดขายเติบโต</span></div>
+        <div class="ai-bot">AI</div>
+        <a class="ai-item" href="sales.html"><strong id="aiSales">-</strong><span>Sales trend</span></a>
         <div class="ai-item"><strong id="aiGp">-</strong><span>GP Margin</span></div>
-        <div class="ai-item"><strong id="aiExecutiveFocus">-</strong><span>Dealer priority</span></div>
-        <div class="ai-item"><strong id="aiModelFocus">-</strong><span>Model focus</span></div>
+        <a class="ai-item" href="dealer.html"><strong id="aiExecutiveFocus">-</strong><span>Dealer priority</span></a>
+        <a class="ai-item" href="product.html"><strong id="aiModelFocus">-</strong><span>Product focus</span></a>
       </section>
     </main>
   </div>

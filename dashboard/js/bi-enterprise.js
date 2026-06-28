@@ -7,9 +7,9 @@
   const pages = {
     "executive.html": {
       module: "executive",
-      eyebrow: "V5.2 Executive BI Command Center",
-      title: "Executive Overview",
-      subtitle: "Company-wide revenue, unit sales, margin quality, and leadership priorities in one enterprise view.",
+      eyebrow: "V6 Executive Intelligence Cockpit",
+      title: "Executive Intelligence Cockpit",
+      subtitle: "Company-wide revenue, unit sales, margin quality, dealer concentration, product focus, and forecast action in one leadership view.",
       insight: "executive",
       icon: "⌂",
       modules: ["Executive", "Sales", "Product", "Dealer"]
@@ -303,7 +303,7 @@
         <div class="enterprise-eyebrow">Export Foundation</div>
         <h2>Prepared Outputs</h2>
         <div class="export-actions" id="enterpriseExportActions"></div>
-        <p id="enterpriseExportStatus" class="export-status">Export Center is prepared for V5.3.</p>
+        <p id="enterpriseExportStatus" class="export-status">V6 Export Center prepared.</p>
       </div>`;
 
     const anchor = document.querySelector(".ai-strip");
@@ -322,7 +322,7 @@
       <div class="enterprise-ai-heading">
         <div>
           <div class="enterprise-eyebrow">AI Insight Engine</div>
-          <h2>V5.2 Rule-Based Insights</h2>
+          <h2>V6 Rule-Based Insights</h2>
         </div>
         <span>Local dashboard_data.json only</span>
       </div>
@@ -356,7 +356,7 @@
   }
 
   function handleExport(kind) {
-    const message = "Export Center is prepared for V5.3.";
+    const message = "V6 Export Center prepared.";
     const status = document.getElementById("enterpriseExportStatus");
     if (status) status.textContent = `${kind} placeholder: ${message}`;
     toast(message);
@@ -389,7 +389,7 @@
 
     deck = el("section", "enterprise-intelligence-deck");
     deck.id = "enterpriseIntelligenceDeck";
-    deck.setAttribute("aria-label", "V5.2 Enterprise Intelligence");
+    deck.setAttribute("aria-label", "V6 Enterprise Intelligence");
     const anchor = document.querySelector(".kpi-grid");
     if (anchor) anchor.insertAdjacentElement("afterend", deck);
     else document.querySelector(".main-content")?.appendChild(deck);
@@ -421,7 +421,7 @@
   }
 
   function placeholderCard(title, value, text) {
-    return `<article class="intel-placeholder-card"><span>V5.3 foundation</span><strong>${title}</strong><b>${value}</b><p>${text}</p></article>`;
+    return `<article class="intel-placeholder-card"><span>V6 foundation</span><strong>${title}</strong><b>${value}</b><p>${text}</p></article>`;
   }
 
   function renderCommonKpiWall(summary, groups) {
@@ -467,7 +467,7 @@
         <section class="intel-panel"><div class="enterprise-eyebrow">Next Best Actions</div>${actionCard("Protect margin", `Review discounting on ${lowMargin.name}.`)}${actionCard("Lift secondary dealers", `Follow up with ${weakDealer.name} on activity and stock blockers.`)}${actionCard("Secure availability", `Keep ${topModel.name} supply visible for close planning.`)}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">Dealer Performance Snapshot</div>${groups.dealers.slice(0, 5).map((row) => miniRow(row.name, `${row.units.toLocaleString()} units`, `GP ${utils.formatPercent(row.gpPct)}`)).join("")}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">Product Performance Snapshot</div>${groups.types.slice(0, 5).map((row) => miniRow(row.name, `${utils.formatPercent(row.share)} mix`, `${row.units.toLocaleString()} units`)).join("")}</section>
-        <section class="intel-panel">${placeholderCard("Monthly Gap / Forecast", `${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units`, "Placeholder for V5.3 forecast center with target, actual, gap, and confidence controls.")}</section>
+        <section class="intel-panel">${placeholderCard("Monthly Gap / Forecast", `${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units`, "Placeholder for V6 forecast center with target, actual, gap, and confidence controls.")}</section>
       </div>`;
   }
 
@@ -682,7 +682,7 @@
     if (document.getElementById("enterpriseFooter")) return;
     const footer = el("footer", "enterprise-footer");
     footer.id = "enterpriseFooter";
-    footer.innerHTML = "<strong>KMM Sales Intelligence V5 Enterprise BI</strong><span>Static GitHub Pages dashboard | Local data only | AI and export actions are safe placeholders</span>";
+    footer.innerHTML = "<strong>KMM Sales Intelligence V6 Enterprise BI</strong><span>Static GitHub Pages dashboard | Local data only | AI and export actions are safe placeholders</span>";
     document.querySelector(".main-content")?.appendChild(footer);
   }
 
