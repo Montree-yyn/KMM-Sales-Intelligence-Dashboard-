@@ -46,6 +46,29 @@
         <div class="kpi-card"><span>Avg. Deal Size</span><strong id="kpiAvg">-</strong><small>MMK / unit</small></div>
       </section>
 
+      <section class="executive-command-center" aria-label="Executive Command Center">
+        <div class="command-brief">
+          <div class="enterprise-eyebrow">Executive Summary</div>
+          <h2 id="execSummaryHeadline">Loading executive summary...</h2>
+          <p id="execSummaryDetail">Rule-based leadership summary will appear after dashboard data loads.</p>
+          <div id="execInsightChips" class="command-chip-row"></div>
+        </div>
+        <div class="command-panel risk-panel">
+          <div class="panel-title-row"><h2>Top Risks</h2><span class="panel-status">Watch</span></div>
+          <div id="execTopRisks" class="signal-list"></div>
+        </div>
+        <div class="command-panel action-panel">
+          <div class="panel-title-row"><h2>Next Actions</h2><span class="panel-status">Now</span></div>
+          <div id="execNextActions" class="signal-list"></div>
+        </div>
+      </section>
+
+      <section class="grid-3 executive-snapshot-grid">
+        <div class="panel"><h2>Dealer Performance Snapshot</h2><p>Top dealer contribution and dependency signals</p><div id="execDealerSnapshot" class="score-grid"></div></div>
+        <div class="panel"><h2>Product Mix Snapshot</h2><p>Core product type contribution and margin</p><div id="execProductSnapshot" class="score-grid"></div></div>
+        <div class="panel"><h2>Forecast / Gap Placeholder</h2><p>V5.1 rule-based projection foundation</p><div id="execForecastGap" class="risk-list"></div></div>
+      </section>
+
       <section class="grid-3">
         <div class="panel"><h2>Sales Performance Trend</h2><p>ยอดขายและมูลค่าขายรายเดือน</p><div class="chart-box"><canvas id="trendChart"></canvas></div></div>
         <div class="panel"><h2>Sales by Product Type</h2><p>สัดส่วนสินค้า</p><div class="chart-box"><canvas id="typeChart"></canvas></div></div>
