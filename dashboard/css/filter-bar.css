@@ -1,0 +1,84 @@
+/* ===========================
+   Universal Filter Bar
+=========================== */
+
+.filter-bar {
+    display: grid;
+    grid-template-columns:
+        repeat(5, minmax(180px, 1fr)) 180px;
+
+    gap: 20px;
+
+    align-items: end;
+
+    width: 100%;
+
+    padding: 28px;
+
+    margin-top: 20px;
+
+    background: #fff;
+
+    border-radius: 28px;
+
+    border: 1px solid #e4e8ef;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, .05);
+}
+
+.filter-item {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+.filter-item label {
+
+    margin-bottom: 10px;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    color: #1a2238;
+
+}
+
+.filter-item select {
+
+    height: 56px;
+
+    padding: 0 18px;
+
+    border-radius: 14px;
+
+    border: 1px solid #dbe3ec;
+
+    background: white;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+}
+
+.filter-reset {
+
+    height: 56px;
+
+    border-radius: 16px;
+
+    background: #ff6200;
+
+    color: white;
+
+    border: none;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+}

@@ -2,180 +2,217 @@
 <html lang="th">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KMM Salesman Performance Dashboard</title>
 
-    <title>KMM Salesman & Commission Dashboard</title>
+  <link rel="stylesheet" href="css/enterprise.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/cards.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <link rel="stylesheet" href="css/salesman.css" />
 
-    <link rel="stylesheet" href="css/enterprise.css" />
-    <link rel="stylesheet" href="css/layout.css" />
-    <link rel="stylesheet" href="css/sidebar.css" />
-    <link rel="stylesheet" href="css/cards.css" />
-    <link rel="stylesheet" href="css/responsive.css" />
-    <link rel="stylesheet" href="css/salesman.css" />
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
-    <div class="app-shell">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">KMM</div>
+        <div class="brand-name">Sales Intelligence</div>
+      </div>
+      <nav class="nav-menu">
+        <a href="executive.html" class="active">🏠 Executive</a>
 
-        <aside class="sidebar">
-            <div class="brand">
-                <div class="brand-logo">KMM</div>
-                <div class="brand-name">Sales Intelligence</div>
+        <a href="salesman_capability.html" class="active">👨‍💼 Salesman</a>
+
+        <a href="salesman.html" class="active">📈 Sales</a>
+
+        <a href="product.html">🚜 Product</a>
+
+        <a href="dealer.html">🏪 Dealer</a>
+
+        <a href="forecast.html">🎯 Forecast</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar dashboard-hero">
+        <div>
+          <h1><span>S</span>alesman Performance Dashboard</h1>
+          <p>วิเคราะห์ยอดขาย รายพนักงาน สินค้า พื้นที่ Source และค่าคอมมิชชั่น</p>
+        </div>
+        <div class="top-meta">
+          <div><span>Records</span><strong id="recordCount">-</strong></div>
+          <div><span>Total Commission</span><strong id="totalCommissionTop">-</strong></div>
+          <div><span>Last Refresh</span><strong id="lastRefresh">-</strong></div>
+        </div>
+      </header>
+
+      <section class="filter-card">
+        <div class="filter-group">
+          <label>Year</label>
+          <select id="yearFilter"></select>
+          <option>All years</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Month</label>
+          <select id="monthFilter"></select>
+          <option>All months</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Week</label>
+          <select id="weekFilter"></select>
+          <option>All weeks</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Dealer</label>
+          <select id="dealerFilter"></select>
+          <option>All dealers</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Core Product</label>
+          <select id="typeFilter"></select>
+          <option>All core products</option>
+          </select>
+        </div>
+
+        <button id="resetFilter" class="reset-btn">Reset</button>
+      </section>
+
+      <section class="kpi-grid">
+        <div class="kpi-card card"><span>Sales Units</span><strong id="salesUnits">-</strong><small>จำนวนขาย</small>
+        </div>
+        <div class="kpi-card card"><span>Sales Value</span><strong id="salesValue">-</strong><small>ยอดขายรวม</small>
+        </div>
+        <div class="kpi-card card"><span>Gross Profit</span><strong id="grossProfit">-</strong><small>GP1</small></div>
+        <div class="kpi-card card"><span>GP %</span><strong id="gpPercent">-</strong><small>คุณภาพกำไร</small></div>
+        <div class="kpi-card card commission-card"><span>Commission</span><strong
+            id="salesCommission">-</strong><small>Sales Commission</small></div>
+      </section>
+
+      <section class="cockpit-grid">
+        <div class="panel">
+          <h2>Salesman Ranking</h2>
+          <p>อันดับพนักงานขาย</p>
+          <div id="salesmanRankingList" class="compact-list"></div>
+        </div>
+        <div class="panel">
+          <h2>Weekly Sales Trend</h2>
+          <p>ยอดขายรายสัปดาห์</p>
+          <div class="chart-box compact-chart"><canvas id="weeklySalesTrendChart"></canvas></div>
+        </div>
+        <div class="panel">
+          <h2>Monthly Sales Trend</h2>
+          <p>ยอดขายรายเดือน</p>
+          <div class="chart-box compact-chart"><canvas id="monthlyTrendChart"></canvas></div>
+        </div>
+        <div class="panel">
+          <h2>Sales Quality</h2>
+          <p>คุณภาพยอดขาย</p>
+          <div id="salesQualityList" class="quality-grid compact-quality"></div>
+        </div>
+      </section>
+
+      <section class="dashboard-grid-2">
+        <div class="panel product-special-card">
+          <div class="product-special-header">
+            <div>
+              <h2>Product <span>Specialization</span></h2>
+              <p>สัดส่วนยอดขายตามประเภทสินค้าที่ถนัด</p>
             </div>
-
-            <nav class="nav-menu">
-                <a href="executive.html">🏠 Executive</a>
-                <a class="active" href="salesman.html">👨‍💼 Salesman</a>
-                <a>📈 Sales</a>
-                <a>🚜 Product</a>
-                <a>🏪 Dealer</a>
-                <a>🎯 Forecast</a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <strong>KUBOTA</strong>
-                <span>For Earth, For Life</span>
+            <div class="product-special-icon">🚜</div>
+          </div>
+          <div class="product-special-body">
+            <div class="product-chart-area">
+              <canvas id="productSpecializationChart"></canvas>
+              <div class="product-chart-center">
+                <div class="center-icon">📦</div><strong id="productTotalUnits">-</strong><span>Total Products
+                  Sold</span>
+              </div>
             </div>
-        </aside>
+            <div id="productSpecializationLegend" class="product-special-legend"></div>
+          </div>
+          <div id="productSpecializationInsight" class="product-special-insight"></div>
+        </div>
 
-        <main class="main-content">
+        <div class="panel age-panel">
+          <div class="age-header">
+            <div>
+              <h2>Customer <span>Age</span></h2>
+              <p>ช่วงอายุลูกค้า</p>
+            </div>
+            <div class="age-icon">👥</div>
+          </div>
+          <div class="age-content">
+            <div class="age-chart-wrap"><canvas id="customerAgeChart"></canvas>
+              <div class="age-center"><strong id="ageTotal">-</strong><span>Total Customers</span></div>
+            </div>
+            <div id="ageLegend" class="age-legend"></div>
+          </div>
+          <div id="ageInsight" class="age-insight"></div>
+        </div>
+      </section>
 
-            <header class="topbar">
-                <div>
-                    <h1>Salesman Performance & Commission</h1>
-                    <p>สรุปยอดขายและ Sales Commission รายพนักงาน</p>
-                </div>
+      <section class="cockpit-analysis-grid">
+        <div class="panel">
+          <h2>Top Models</h2>
+          <p>รุ่นขายดี</p>
+          <div id="topModelAnalysisList" class="compact-list"></div>
+        </div>
+        <div class="panel">
+          <h2>Region</h2>
+          <p>พื้นที่ขาย</p>
+          <div id="salesByRegionList" class="compact-list"></div>
+        </div>
+        <div class="panel">
+          <h2>Lead Source</h2>
+          <p>ที่มาลูกค้า</p>
+          <div id="leadSourceList" class="compact-list"></div>
+        </div>
+        <div class="panel">
+          <h2>Executive Insight</h2>
+          <p>Coaching ทีมขาย</p>
+          <div id="salesmanDeepInsight" class="insight-card-grid compact-insight"></div>
+        </div>
+      </section>
 
-                <div class="top-meta">
-                    <div>
-                        <span>Records</span>
-                        <strong id="recordCount">-</strong>
-                    </div>
-                    <div>
-                        <span>Total Commission</span>
-                        <strong id="totalCommissionTop">-</strong>
-                    </div>
-                    <div>
-                        <span>Last Refresh</span>
-                        <strong id="lastRefresh">-</strong>
-                    </div>
-                </div>
-            </header>
+      <section class="panel">
+        <h2>Salesman Commission Summary</h2>
+        <p>ตารางสรุปยอดขาย GP และ Commission รายพนักงาน</p>
+        <div class="salesman-table-wrap">
+          <table class="salesman-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Salesman</th>
+                <th class="text-right">Units</th>
+                <th class="text-right">Sales Value</th>
+                <th class="text-right">GP</th>
+                <th class="text-right">GP %</th>
+                <th class="text-right">Commission</th>
+                <th class="text-right">Com / Unit</th>
+              </tr>
+            </thead>
+            <tbody id="salesmanTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
 
-            <section class="filter-card">
-                <div class="filter-group">
-                    <label>Year</label>
-                    <select id="yearFilter"></select>
-                </div>
-
-                <div class="filter-group">
-                    <label>Month</label>
-                    <select id="monthFilter"></select>
-                </div>
-
-                <div class="filter-group">
-                    <label>Week</label>
-                    <select id="weekFilter"></select>
-                </div>
-
-                <div class="filter-group">
-                    <label>Dealer</label>
-                    <select id="dealerFilter"></select>
-                </div>
-
-                <div class="filter-group">
-                    <label>Salesman</label>
-                    <select id="salesmanFilter"></select>
-                </div>
-
-                <button id="resetFilter" class="reset-btn">Reset</button>
-            </section>
-
-            <section class="kpi-grid">
-                <div class="kpi-card card">
-                    <span>Sales Units</span>
-                    <strong id="salesUnits">-</strong>
-                    <small>Core product units</small>
-                </div>
-
-                <div class="kpi-card card">
-                    <span>Sales Value</span>
-                    <strong id="salesValue">-</strong>
-                    <small>Revenue</small>
-                </div>
-
-                <div class="kpi-card card">
-                    <span>Gross Profit</span>
-                    <strong id="grossProfit">-</strong>
-                    <small>GP1</small>
-                </div>
-
-                <div class="kpi-card card">
-                    <span>GP %</span>
-                    <strong id="gpPercent">-</strong>
-                    <small>Gross margin</small>
-                </div>
-
-                <div class="kpi-card card commission-card">
-                    <span>Sales Commission</span>
-                    <strong id="salesCommission">-</strong>
-                    <small>รวม Incentive ทุกช่อง</small>
-                </div>
-            </section>
-
-            <section class="salesman-grid">
-                <div class="panel large">
-                    <h2>Salesman Ranking</h2>
-                    <p>อันดับพนักงานขายตามยอดขายและค่าคอมมิชชั่น</p>
-                    <div id="salesmanRankingList" class="salesman-ranking-list"></div>
-                </div>
-
-                <div class="panel">
-                    <h2>Commission Mix</h2>
-                    <p>สัดส่วน Commission รายพนักงาน</p>
-                    <div class="chart-box">
-                        <canvas id="commissionChart"></canvas>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel">
-                <h2>Salesman Commission Summary</h2>
-                <p>ตารางสรุปยอดขายและ Sales Commission รายพนักงาน</p>
-
-                <div class="salesman-table-wrap">
-                    <table class="salesman-table">
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Salesman</th>
-                                <th class="text-right">Units</th>
-                                <th class="text-right">Sales Value</th>
-                                <th class="text-right">GP</th>
-                                <th class="text-right">GP %</th>
-                                <th class="text-right">Sales Commission</th>
-                                <th class="text-right">Com / Unit</th>
-                            </tr>
-                        </thead>
-                        <tbody id="salesmanTableBody"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section class="panel">
-                <h2>AI Salesman Insight</h2>
-                <p>สรุปเชิงบริหารจากข้อมูลรายพนักงาน</p>
-                <div id="salesmanAIInsight" class="salesman-ai"></div>
-            </section>
-
-        </main>
-    </div>
-
-    <script src="js/dataEngine.js"></script>
-    <script src="js/salesman.js"></script>
+  <script src="js/dataEngine.js"></script>
+  <script src="js/salesman.js"></script>
 </body>
 
 </html>

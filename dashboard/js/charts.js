@@ -99,3 +99,8 @@ function renderProductMixChart(data) {
         }
     });
 }
+plugins: {
+    legend: {
+        display: false
+    }
+}

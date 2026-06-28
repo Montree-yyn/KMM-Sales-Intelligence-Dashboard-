@@ -1,253 +1,68 @@
-let commissionChart = null;
+/* ===========================
+   KMM Salesman Dashboard V2
+   Clean Refactor - no duplicate variables
+=========================== */
+let charts = { commission:null, monthly:null, weekly:null, product:null, age:null };
+const KMM_COLORS = ["#ff5a00", "#12b89d", "#ffb000", "#ff8a3d", "#9aa3af", "#d6dbe3"];
 
 window.addEventListener("DOMContentLoaded", async () => {
+  try {
     await loadDashboardData();
-    populateSalesmanFilters();
-    bindSalesmanEvents();
-    updateSalesmanDashboard();
+    initSalesmanDashboard();
+  } catch (err) {
+    console.error("Salesman dashboard init error:", err);
+  }
 });
 
-function getSalesmanName(item) {
-    return item["SL Name"] || item.slName || item.salesman || item.salesmanName || "Unknown";
+function initSalesmanDashboard(){ populateFilters(); bindEvents(); updateDashboard(); }
+function $(id){ return document.getElementById(id); }
+function setHTML(id,v){ const el=$(id); if(el) el.innerHTML=v; }
+function num(v){ const n=Number(v); return Number.isFinite(n)?n:0; }
+function text(v,d="Unknown"){ return v!==undefined&&v!==null&&String(v).trim()!==""?String(v).trim():d; }
+function money(v){ return typeof formatMoney==="function" ? formatMoney(v) : compact(v); }
+function compact(v){ const n=num(v); if(Math.abs(n)>=1e9) return (n/1e9).toFixed(1)+"B"; if(Math.abs(n)>=1e6) return (n/1e6).toFixed(1)+"M"; if(Math.abs(n)>=1e3) return (n/1e3).toFixed(1)+"K"; return n.toLocaleString(); }
+function unique(arr){ return [...new Set(arr.filter(x=>x!==undefined&&x!==null&&String(x).trim()!==""))]; }
+function getWeekNo(v){ const m=String(v||"").match(/\d+/); return m?Number(m[0]):0; }
+function monthName(m){ return ["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][Number(m)] || m || "-"; }
+
+function getData(){ return typeof getCoreProductData==="function" ? getCoreProductData() : (window.allData || []); }
+function salesmanName(x){ return text(x["Sales Staff"] || x.salesStaff || x.salesman, "Unknown"); }
+function leadSource(x){ return text(x.source || x["Source (ที่มาลูกค้า)"] || x.Source || x["Lead Source"] || x["ที่มาลูกค้า"], "Unknown"); }
+function salesValue(x){ return num(x.msrp || x.salesValue); }
+function gpValue(x){ return num(x.gp1 || x.grossProfit); }
+function commission(x){ return num(x.commission); }
+function customerAge(x){ return num(x.customerAge || x.age || x.Age || x["Customer Age"] || x["Age (อายุ)"] || x["อายุ"]); }
+
+function populateFilters(){
+  const data=getData();
+  fillSelect("yearFilter", unique(data.map(x=>x.year)).sort(), "All years");
+  fillSelect("monthFilter", unique(data.map(x=>x.month)).sort((a,b)=>num(a)-num(b)), "All months", monthName);
+  fillSelect("weekFilter", unique(data.map(x=>x.week)).sort((a,b)=>getWeekNo(a)-getWeekNo(b)), "All weeks", v=>"W"+String(getWeekNo(v)).padStart(2,"0"));
+  fillSelect("dealerFilter", unique(data.map(x=>x.dealer)).sort(), "All dealers");
+  fillSelect("salesmanFilter", unique(data.map(salesmanName)).sort(), "All salesmen");
 }
+function fillSelect(id,values,label,fmt){ const s=$(id); if(!s) return; s.innerHTML=`<option value="">${label}</option>`; values.forEach(v=>{ const o=document.createElement("option"); o.value=v; o.textContent=fmt?fmt(v):v; s.appendChild(o); }); }
+function bindEvents(){ ["yearFilter","monthFilter","weekFilter","dealerFilter","salesmanFilter"].forEach(id=>{ const el=$(id); if(el) el.addEventListener("change",updateDashboard); }); const r=$("resetFilter"); if(r) r.addEventListener("click",()=>{["yearFilter","monthFilter","weekFilter","dealerFilter","salesmanFilter"].forEach(id=>{const el=$(id); if(el) el.value=""}); updateDashboard();}); }
+function filteredData(){ const y=$("yearFilter")?.value||"", m=$("monthFilter")?.value||"", w=$("weekFilter")?.value||"", d=$("dealerFilter")?.value||"", s=$("salesmanFilter")?.value||""; return getData().filter(x=>(!y||String(x.year)===String(y))&&(!m||String(x.month)===String(m))&&(!w||getWeekNo(x.week)===getWeekNo(w))&&(!d||String(x.dealer)===String(d))&&(!s||salesmanName(x)===s)); }
 
-function getSalesCommission(item) {
-    return (
-        Number(item["Volume Incentive"] || 0) +
-        Number(item["Model Incentive"] || 0) +
-        Number(item["Special Incentive (Cash)"] || 0) +
-        Number(item["Broker"] || 0) +
-        Number(item["Admin Commission"] || 0) +
-        Number(item["Admin Member Plus"] || 0) +
-        Number(item["Leader Com"] || 0)
-    );
+function updateDashboard(){
+  const data=filteredData(); const kpi=buildKPI(data); const summary=groupSalesman(data);
+  updateKPI(data,kpi); renderList("salesmanRankingList", summary.slice(0,10), "commission"); renderCommissionChart(summary); renderWeeklyChart(data); renderMonthlyChart(data);
+  renderProductSpecial(data); renderCustomerAge(data); renderList("topModelAnalysisList", groupBy(data,x=>text(x.model)).slice(0,8)); renderList("salesByRegionList", groupBy(data,x=>text(x.region)).slice(0,8)); renderList("leadSourceList", groupBy(data,leadSource).slice(0,8)); renderQuality(kpi); renderInsight(data,kpi,summary); renderTable(summary);
 }
-
-function populateSalesmanFilters() {
-    const data = getCoreProductData();
-
-    fillSelect("yearFilter", getUniqueValues(data, "year").sort(), "All years");
-    fillSelect("monthFilter", getUniqueValues(data, "month").sort((a, b) => Number(a) - Number(b)), "All months", formatMonth);
-    fillSelect("weekFilter", getUniqueValues(data, "week").sort((a, b) => getWeekNo(a) - getWeekNo(b)), "All weeks", v => "W" + String(getWeekNo(v)).padStart(2, "0"));
-    fillSelect("dealerFilter", getUniqueValues(data, "dealer").sort(), "All dealers");
-
-    const salesmen = [...new Set(data.map(getSalesmanName).filter(Boolean))].sort();
-    fillSelect("salesmanFilter", salesmen, "All salesmen");
-}
-
-function fillSelect(id, values, defaultLabel, formatter) {
-    const select = document.getElementById(id);
-    if (!select) return;
-
-    select.innerHTML = `<option value="">${defaultLabel}</option>`;
-
-    values.forEach(value => {
-        const option = document.createElement("option");
-        option.value = value;
-        option.textContent = formatter ? formatter(value) : value;
-        select.appendChild(option);
-    });
-}
-
-function bindSalesmanEvents() {
-    ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "salesmanFilter"].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener("change", updateSalesmanDashboard);
-    });
-
-    const reset = document.getElementById("resetFilter");
-    if (reset) {
-        reset.addEventListener("click", () => {
-            ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "salesmanFilter"].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = "";
-            });
-            updateSalesmanDashboard();
-        });
-    }
-}
-
-function getSalesmanFilteredData() {
-    const year = document.getElementById("yearFilter").value;
-    const month = document.getElementById("monthFilter").value;
-    const week = document.getElementById("weekFilter").value;
-    const dealer = document.getElementById("dealerFilter").value;
-    const salesman = document.getElementById("salesmanFilter").value;
-
-    return getCoreProductData().filter(item => {
-        return (
-            (!year || String(item.year) === String(year)) &&
-            (!month || String(item.month) === String(month)) &&
-            (!week || getWeekNo(item.week) === getWeekNo(week)) &&
-            (!dealer || String(item.dealer) === String(dealer)) &&
-            (!salesman || getSalesmanName(item) === salesman)
-        );
-    });
-}
-
-function updateSalesmanDashboard() {
-    const data = getSalesmanFilteredData();
-    const kpi = getKPIData(data);
-    const totalCommission = data.reduce((sum, item) => sum + getSalesCommission(item), 0);
-
-    document.getElementById("recordCount").innerHTML = data.length.toLocaleString();
-    document.getElementById("lastRefresh").innerHTML = getLastRefresh();
-
-    document.getElementById("salesUnits").innerHTML = kpi.units.toLocaleString();
-    document.getElementById("salesValue").innerHTML = formatMoney(kpi.salesValue);
-    document.getElementById("grossProfit").innerHTML = formatMoney(kpi.grossProfit);
-    document.getElementById("gpPercent").innerHTML = kpi.gpPercent.toFixed(1) + "%";
-    document.getElementById("salesCommission").innerHTML = formatMoney(totalCommission);
-    document.getElementById("totalCommissionTop").innerHTML = formatMoney(totalCommission);
-
-    const summary = buildSalesmanSummary(data);
-
-    renderSalesmanRanking(summary);
-    renderSalesmanTable(summary);
-    renderCommissionChart(summary);
-    renderSalesmanAI(summary);
-}
-
-function buildSalesmanSummary(data) {
-    const map = {};
-
-    data.forEach(item => {
-        const name = getSalesmanName(item);
-
-        if (!map[name]) {
-            map[name] = {
-                name,
-                units: 0,
-                salesValue: 0,
-                grossProfit: 0,
-                commission: 0
-            };
-        }
-
-        map[name].units += 1;
-        map[name].salesValue += Number(item.msrp || item.salesValue || 0);
-        map[name].grossProfit += Number(item.gp1 || item.grossProfit || 0);
-        map[name].commission += getSalesCommission(item);
-    });
-
-    return Object.values(map)
-        .map(item => ({
-            ...item,
-            gpPercent: item.salesValue > 0 ? (item.grossProfit / item.salesValue) * 100 : 0,
-            commissionPerUnit: item.units > 0 ? item.commission / item.units : 0
-        }))
-        .sort((a, b) => b.units - a.units);
-}
-
-function renderSalesmanRanking(summary) {
-    const target = document.getElementById("salesmanRankingList");
-    if (!target) return;
-
-    const maxUnits = summary.length ? summary[0].units : 1;
-
-    target.innerHTML = summary.slice(0, 10).map((item, index) => {
-        const percent = maxUnits > 0 ? (item.units / maxUnits) * 100 : 0;
-
-        return `
-      <div class="salesman-rank-item">
-        <div class="salesman-rank-no">${index + 1}</div>
-        <div>
-          <div class="salesman-rank-name">${item.name}</div>
-          <div class="salesman-rank-meta">
-            ${item.units} units | GP ${item.gpPercent.toFixed(1)}% | Com/Unit ${formatMoney(item.commissionPerUnit)}
-          </div>
-          <div class="salesman-rank-bar">
-            <div class="salesman-rank-fill" style="width:${percent}%"></div>
-          </div>
-        </div>
-        <div class="salesman-rank-value">${formatMoney(item.commission)}</div>
-      </div>
-    `;
-    }).join("");
-}
-
-function renderSalesmanTable(summary) {
-    const tbody = document.getElementById("salesmanTableBody");
-    if (!tbody) return;
-
-    tbody.innerHTML = summary.map((item, index) => `
-    <tr>
-      <td>${index + 1}</td>
-      <td>${item.name}</td>
-      <td class="text-right">${item.units.toLocaleString()}</td>
-      <td class="text-right">${formatMoney(item.salesValue)}</td>
-      <td class="text-right">${formatMoney(item.grossProfit)}</td>
-      <td class="text-right">${item.gpPercent.toFixed(1)}%</td>
-      <td class="text-right">${formatMoney(item.commission)}</td>
-      <td class="text-right">${formatMoney(item.commissionPerUnit)}</td>
-    </tr>
-  `).join("");
-}
-
-function renderCommissionChart(summary) {
-    const canvas = document.getElementById("commissionChart");
-    if (!canvas) return;
-
-    const top = summary
-        .slice()
-        .sort((a, b) => b.commission - a.commission)
-        .slice(0, 8);
-
-    if (commissionChart) commissionChart.destroy();
-
-    commissionChart = new Chart(canvas, {
-        type: "doughnut",
-        data: {
-            labels: top.map(x => x.name),
-            datasets: [{
-                data: top.map(x => x.commission),
-                backgroundColor: ["#ff6f00", "#13b99a", "#2563eb", "#16a34a", "#f59e0b", "#dc2626", "#7c3aed", "#0891b2"],
-                borderColor: "#fff",
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: "62%",
-            plugins: {
-                legend: { position: "bottom" }
-            }
-        }
-    });
-}
-
-function renderSalesmanAI(summary) {
-    const target = document.getElementById("salesmanAIInsight");
-    if (!target) return;
-
-    if (!summary.length) {
-        target.innerHTML = `<div class="salesman-ai-card"><strong>No data</strong><p>Please adjust filters.</p></div>`;
-        return;
-    }
-
-    const byCommission = summary.slice().sort((a, b) => b.commission - a.commission);
-    const topSales = summary[0];
-    const topCom = byCommission[0];
-    const totalCom = summary.reduce((sum, item) => sum + item.commission, 0);
-
-    target.innerHTML = `
-    <div class="salesman-ai-card">
-      <span>Top Salesman</span>
-      <strong>${topSales.name}</strong>
-      <p>${topSales.units} units, GP ${topSales.gpPercent.toFixed(1)}%</p>
-    </div>
-
-    <div class="salesman-ai-card">
-      <span>Top Commission</span>
-      <strong>${topCom.name}</strong>
-      <p>${formatMoney(topCom.commission)} total commission</p>
-    </div>
-
-    <div class="salesman-ai-card">
-      <span>Total Commission</span>
-      <strong>${formatMoney(totalCom)}</strong>
-      <p>รวมจาก Volume, Model, Special, Broker, Admin, Member Plus และ Leader Com</p>
-    </div>
-  `;
-}
+function buildKPI(data){ const units=data.length, sv=data.reduce((s,x)=>s+salesValue(x),0), gp=data.reduce((s,x)=>s+gpValue(x),0), com=data.reduce((s,x)=>s+commission(x),0); return {units,salesValue:sv,grossProfit:gp,commission:com,gpPercent:sv?gp/sv*100:0,avgPrice:units?sv/units:0,commissionPerUnit:units?com/units:0,commissionRate:sv?com/sv*100:0}; }
+function updateKPI(data,k){ setHTML("recordCount",data.length.toLocaleString()); setHTML("lastRefresh", typeof getLastRefresh==="function"?getLastRefresh():new Date().toLocaleString()); setHTML("salesUnits",k.units.toLocaleString()); setHTML("salesValue",money(k.salesValue)); setHTML("grossProfit",money(k.grossProfit)); setHTML("gpPercent",k.gpPercent.toFixed(1)+"%"); setHTML("salesCommission",money(k.commission)); setHTML("totalCommissionTop",money(k.commission)); }
+function groupBy(data,getter){ const m={}; data.forEach(x=>{ const key=getter(x)||"Unknown"; if(!m[key]) m[key]={name:key,units:0,salesValue:0,grossProfit:0,commission:0}; m[key].units++; m[key].salesValue+=salesValue(x); m[key].grossProfit+=gpValue(x); m[key].commission+=commission(x); }); return Object.values(m).map(r=>({...r,share:data.length?r.units/data.length*100:0,gpPercent:r.salesValue?r.grossProfit/r.salesValue*100:0,commissionPerUnit:r.units?r.commission/r.units:0})).sort((a,b)=>b.units-a.units); }
+function groupSalesman(data){ return groupBy(data,salesmanName); }
+function renderList(id,rows,valueField="units"){ const t=$(id); if(!t) return; if(!rows.length){ t.innerHTML="<p>No data available.</p>"; return; } const max=Math.max(...rows.map(x=>x.units),1); t.innerHTML=rows.map((r,i)=>`<div class="clean-item"><div class="clean-rank">${i+1}</div><div><div class="clean-name">${r.name}</div><div class="clean-meta">${r.units.toLocaleString()} units | Share ${r.share.toFixed(1)}% | GP ${r.gpPercent.toFixed(1)}% | Com ${money(r.commission)}</div><div class="clean-bar"><div class="clean-fill" style="width:${(r.units/max*100).toFixed(1)}%"></div></div></div><div class="clean-value">${valueField==="commission"?money(r.commission):r.units.toLocaleString()}</div></div>`).join(""); }
+function renderQuality(k){ const t=$("salesQualityList"); if(!t)return; t.innerHTML=`<div class="quality-card"><span>Average Price</span><strong>${money(k.avgPrice)}</strong><p>มูลค่าเฉลี่ยต่อคัน</p></div><div class="quality-card"><span>Commission / Unit</span><strong>${money(k.commissionPerUnit)}</strong><p>ค่าคอมเฉลี่ยต่อคัน</p></div><div class="quality-card"><span>Commission Rate</span><strong>${k.commissionRate.toFixed(2)}%</strong><p>ค่าคอมเทียบกับยอดขาย</p></div><div class="quality-card"><span>GP Quality</span><strong>${k.gpPercent.toFixed(1)}%</strong><p>${k.gpPercent<8?"ควรตรวจสอบส่วนลด":"คุณภาพกำไรใช้ได้"}</p></div>`; }
+function destroyChart(name){ if(charts[name]){ charts[name].destroy(); charts[name]=null; } }
+function renderCommissionChart(summary){ const c=$("commissionChart"); if(!c||typeof Chart==="undefined")return; const rows=[...summary].sort((a,b)=>b.commission-a.commission).slice(0,8); destroyChart("commission"); charts.commission=new Chart(c,{type:"doughnut",data:{labels:rows.map(x=>x.name),datasets:[{data:rows.map(x=>x.commission),backgroundColor:KMM_COLORS,borderColor:"#fff",borderWidth:4,hoverOffset:10}]},options:{responsive:true,maintainAspectRatio:false,cutout:"65%",plugins:{legend:{position:"bottom"},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${money(ctx.raw)}`}}}}}); }
+function renderWeeklyChart(data){ const c=$("weeklySalesTrendChart"); if(!c||typeof Chart==="undefined")return; const rows=groupByWeek(data); destroyChart("weekly"); charts.weekly=new Chart(c,{type:"line",data:{labels:rows.map(x=>x.label),datasets:[{label:"Sales Units",data:rows.map(x=>x.units),borderColor:"#ff5a00",backgroundColor:"rgba(255,90,0,.12)",borderWidth:2,pointRadius:2,tension:.35,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:8,font:{size:10}},grid:{display:false}},y:{beginAtZero:true,ticks:{precision:0,font:{size:10}}}}}}); }
+function renderMonthlyChart(data){ const c=$("monthlyTrendChart"); if(!c||typeof Chart==="undefined")return; const map={}; data.forEach(x=>{const m=num(x.month); if(!m)return; if(!map[m])map[m]={month:m,units:0}; map[m].units++;}); const rows=Object.values(map).sort((a,b)=>a.month-b.month); destroyChart("monthly"); charts.monthly=new Chart(c,{type:"bar",data:{labels:rows.map(x=>monthName(x.month)),datasets:[{data:rows.map(x=>x.units),backgroundColor:"#ff5a00",borderRadius:10}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{precision:0}}}}}); }
+function groupByWeek(data){ const map={}; data.forEach(x=>{const n=getWeekNo(x.week); if(!n)return; const label="W"+String(n).padStart(2,"0"); if(!map[label])map[label]={label,weekNo:n,units:0}; map[label].units++;}); return Object.values(map).sort((a,b)=>a.weekNo-b.weekNo); }
+function renderProductSpecial(data){ const canvas=$("productSpecializationChart"), legend=$("productSpecializationLegend"), totalEl=$("productTotalUnits"), insight=$("productSpecializationInsight"); if(!canvas||!legend||typeof Chart==="undefined")return; const rows=groupBy(data,x=>text(x.type)).filter(x=>x.name!=="Unknown").slice(0,6); const total=rows.reduce((s,x)=>s+x.units,0); if(totalEl) totalEl.textContent=total.toLocaleString(); destroyChart("product"); if(!rows.length){legend.innerHTML="<p>No product data available.</p>";return;} const percentPlugin={id:"productPercentPlugin",afterDatasetsDraw(chart){const{ctx}=chart,ds=chart.data.datasets[0],meta=chart.getDatasetMeta(0);ctx.save();ctx.font="900 15px Inter, Arial";ctx.textAlign="center";ctx.textBaseline="middle";meta.data.forEach((arc,i)=>{const p=total?ds.data[i]/total*100:0;if(p<4)return;const pos=arc.tooltipPosition();ctx.fillStyle="#fff";ctx.shadowColor="rgba(0,0,0,.25)";ctx.shadowBlur=4;ctx.fillText(`${p.toFixed(1)}%`,pos.x,pos.y);});ctx.restore();}}; charts.product=new Chart(canvas,{type:"doughnut",data:{labels:rows.map(x=>x.name),datasets:[{data:rows.map(x=>x.units),backgroundColor:KMM_COLORS,borderColor:"#fff",borderWidth:8,hoverOffset:16,spacing:7,borderRadius:18}]},options:{responsive:true,maintainAspectRatio:false,cutout:"58%",layout:{padding:12},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${(ctx.raw||0).toLocaleString()} units (${(total?ctx.raw/total*100:0).toFixed(1)}%)`}}},animation:{animateRotate:true,animateScale:true,duration:900}},plugins:[percentPlugin]}); legend.innerHTML=rows.map((r,i)=>{const p=total?r.units/total*100:0,c=KMM_COLORS[i];return `<div class="product-special-row"><div class="product-special-dot" style="background:${c}"></div><div class="product-special-name">${r.name}</div><div class="product-special-count">${r.units.toLocaleString()}</div><div class="product-special-percent">${p.toFixed(1)}%</div><div class="product-special-bar"><div class="product-special-fill" style="width:${p}%;background:${c}"></div></div></div>`;}).join(""); const top=rows[0], p=total?top.units/total*100:0; if(insight) insight.innerHTML=`📈 สินค้าที่ถนัดหลัก: <strong>${top.name}</strong> คิดเป็น <strong>${p.toFixed(1)}%</strong> ของยอดขายทั้งหมด`; }
+function ageBucket(age){ if(!age)return "Unknown"; if(age<25)return "ต่ำกว่า 25 ปี"; if(age<=35)return "25 - 35 ปี"; if(age<=50)return "36 - 50 ปี"; return "มากกว่า 50 ปี"; }
+function renderCustomerAge(data){ const canvas=$("customerAgeChart"), legend=$("ageLegend"), totalEl=$("ageTotal"), insight=$("ageInsight"); if(!canvas||!legend||typeof Chart==="undefined")return; const source=data.map(customerAge).filter(x=>x>0); if(!source.length){ if(totalEl)totalEl.textContent="-"; legend.innerHTML="<p>ยังไม่มีข้อมูลอายุลูกค้าใน JSON</p>"; return; } const bucket={}; source.forEach(a=>{const b=ageBucket(a); bucket[b]=(bucket[b]||0)+1;}); const order=["ต่ำกว่า 25 ปี","25 - 35 ปี","36 - 50 ปี","มากกว่า 50 ปี"]; const rows=order.map(name=>({name,units:bucket[name]||0})).filter(x=>x.units>0); const total=rows.reduce((s,x)=>s+x.units,0); if(totalEl)totalEl.textContent=total.toLocaleString(); destroyChart("age"); charts.age=new Chart(canvas,{type:"doughnut",data:{labels:rows.map(x=>x.name),datasets:[{data:rows.map(x=>x.units),backgroundColor:["#ff5a00","#ff7a18","#ff9a54","#9aa3af"],borderColor:"#fff",borderWidth:8,hoverOffset:14,spacing:6,borderRadius:18}]},options:{responsive:true,maintainAspectRatio:false,cutout:"62%",plugins:{legend:{display:false}}}}); legend.innerHTML=rows.map((r,i)=>{const p=total?r.units/total*100:0,c=["#ff5a00","#ff7a18","#ff9a54","#9aa3af"][i];return `<div class="age-row"><div class="age-dot" style="background:${c}"></div><div class="age-name">${r.name}</div><div class="age-count">${r.units.toLocaleString()}</div><div class="age-percent">${p.toFixed(1)}%</div><div class="age-bar"><div class="age-fill" style="width:${p}%;background:${c}"></div></div></div>`;}).join(""); const top=rows.sort((a,b)=>b.units-a.units)[0]; if(insight) insight.innerHTML=`📌 กลุ่มอายุหลักของลูกค้า: <strong>${top.name}</strong> คิดเป็น <strong>${(total?top.units/total*100:0).toFixed(1)}%</strong>`; }
+function renderInsight(data,kpi,summary){ const t=$("salesmanDeepInsight"); if(!t)return; const topSales=summary[0]||{name:"-",units:0}; const topModel=groupBy(data,x=>text(x.model))[0]||{name:"-",units:0,share:0}; const topRegion=groupBy(data,x=>text(x.region))[0]||{name:"-",units:0,share:0}; const topSource=groupBy(data,leadSource)[0]||{name:"-",units:0,share:0}; t.innerHTML=`<div class="insight-mini-card"><span>Top Salesman</span><strong>${topSales.name}</strong><p>${topSales.units||0} units</p></div><div class="insight-mini-card"><span>Top Model</span><strong>${topModel.name}</strong><p>${topModel.units} units / ${topModel.share.toFixed(1)}%</p></div><div class="insight-mini-card"><span>Top Region</span><strong>${topRegion.name}</strong><p>${topRegion.units} units / ${topRegion.share.toFixed(1)}%</p></div><div class="insight-mini-card"><span>Top Source</span><strong>${topSource.name}</strong><p>${topSource.units} units / ${topSource.share.toFixed(1)}%</p></div><div class="insight-mini-card"><span>GP Quality</span><strong>${kpi.gpPercent.toFixed(1)}%</strong><p>${kpi.gpPercent<8?"Review discount":"Maintain focus"}</p></div>`; }
+function renderTable(rows){ const tb=$("salesmanTableBody"); if(!tb)return; tb.innerHTML=rows.map((r,i)=>`<tr><td>${i+1}</td><td>${r.name}</td><td class="text-right">${r.units.toLocaleString()}</td><td class="text-right">${money(r.salesValue)}</td><td class="text-right">${money(r.grossProfit)}</td><td class="text-right">${r.gpPercent.toFixed(1)}%</td><td class="text-right">${money(r.commission)}</td><td class="text-right">${money(r.commissionPerUnit)}</td></tr>`).join(""); }
