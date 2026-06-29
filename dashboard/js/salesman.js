@@ -45,6 +45,7 @@
     renderProductSpecialization(types, models);
     renderLeadSource(sources);
     renderCoachingInsight(summary, salesmen, sources, models);
+    BI.v12?.render(data, { salesman: "v12SalesmanKpi" });
   }
 
   function renderMatrix(salesmen) {

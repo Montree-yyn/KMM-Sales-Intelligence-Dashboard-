@@ -47,6 +47,7 @@
     renderStockAge();
     renderCollections();
     renderCoverage(dealers);
+    BI.v12?.render(rows, { dealerScorecard: "v12DealerScorecard" });
 
     U.setText("aiBestDealer", dealers[0]?.name || "-");
     U.setText("aiWarningDealer", dealers.at(-1)?.name || "-");

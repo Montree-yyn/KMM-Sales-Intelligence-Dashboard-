@@ -60,6 +60,13 @@
     renderPipeline(summary, groups.months);
     renderForecastGap(summary, groups.months, groups.dealers, intelligence);
     renderRiskOpportunity(intelligence);
+    BI.v12?.render(data, {
+      briefing: true,
+      booking: "v12BookingGrid",
+      stock: "v12StockGrid",
+      dealerScorecard: "v12DealerScorecard",
+      salesman: "v12SalesmanKpi"
+    });
     renderAlertCenter(intelligence.alerts);
     renderCards("dealerCards", groups.dealers.slice(0, 3), "dealer.html", "Dealer");
     renderCards("productCards", groups.types.slice(0, 3), "product.html", "Product");

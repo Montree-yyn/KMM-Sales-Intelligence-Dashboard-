@@ -138,9 +138,21 @@ V11 Enterprise Edition is a controlled sprint on top of V10.1 Stable. It improve
 - Mobile and tablet polish improves Thai wrapping, sidebar readability, button wrapping, and horizontal overflow containment.
 - Protected files remain unchanged: `dashboard/data/dashboard_data.json` and `tools/update_dashboard.py`.
 
+## V12 Business Intelligence Platform
+
+V12 adds a Thai-first Business Intelligence foundation on top of the existing static dashboard pages. It keeps the same browser-only runtime and uses `dashboard/data/dashboard_data.json` as the only data source.
+
+- Executive Overview now includes a Weekly Executive Briefing with Thai summary, key risks, key opportunities, and next actions.
+- Booking Intelligence foundation adds aging booking, deposit signal, booking conversion placeholder, and dealer booking risk signals.
+- Stock Intelligence foundation adds stock aging proxy, fast moving / slow moving model signals, product availability guidance, and dealer stock risk language.
+- Dealer Scorecard foundation adds sales, booking proxy, stock signal, GP, collection proxy, risk level, and recommendation.
+- Salesman KPI foundation adds sales units, GP, booking proxy, activity placeholder, and coaching recommendation.
+- Product, Dealer, and Salesman pages each receive focused V12 panels that refresh with the current filters.
+- V12 remains static HTML/CSS/JS only, with no backend, no npm workflow, no data schema change, and no changes to `dashboard/data/dashboard_data.json` or `tools/update_dashboard.py`.
+
 ## Near-Term Priorities
 
-1. V12 Authentication: replace static credentials with a real identity provider or server-side authentication, token/session validation, audit logs, role claims, and tenant-aware authorization.
+1. V13 Authentication: replace static credentials with a real identity provider or server-side authentication, token/session validation, audit logs, role claims, and tenant-aware authorization.
 2. Real Export Center: implement reviewed PDF and PowerPoint exports with print fidelity, safe file naming, and clear static-vs-service architecture.
 3. Multi-company datasets: add tenant/company identifiers, dataset partitioning, export isolation, and company-specific permissions before activating real company switching.
 4. Copilot: improve natural language intent, cross-page search, and report generation from copilot answers while staying rule-based until an approved service layer exists.
