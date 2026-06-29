@@ -3,11 +3,11 @@
 
   const SESSION_KEY = "kmm.security.session";
   const DEFAULT_TIMEOUT_MINUTES = 15;
-  const VERSION = "V8.1-V9 Security Platform";
+  const VERSION = "V10 Production Release";
 
-  // V8.1 temporary protection only: static local credentials protect casual
+  // V10 temporary protection only: static local credentials protect casual
   // access in GitHub Pages, but they are visible in browser source and must be
-  // replaced by real identity-provider or server-side authentication in V10.
+  // replaced by real identity-provider or server-side authentication in V11.
   const LOCAL_USERS = {
     superadmin: { password: "KMM@2026!", role: "SuperAdmin" },
     executive: { password: "Exec@2026", role: "Executive" },

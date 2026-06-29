@@ -64,7 +64,11 @@
   }
 
   function monthName(month) {
-    return ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][Number(month)] || month || "-";
+    const isThai = window.KMMI18n && window.KMMI18n.getLanguage() === "th";
+    const labels = isThai
+      ? ["", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
+      : ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return labels[Number(month)] || month || "-";
   }
 
   function unique(values) {

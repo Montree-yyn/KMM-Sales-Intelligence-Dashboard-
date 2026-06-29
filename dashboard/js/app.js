@@ -6,27 +6,39 @@ window.addEventListener("DOMContentLoaded", async () => {
     updateDashboard();
 });
 
+function t(key) {
+    return window.KMMI18n ? window.KMMI18n.t(key) : key;
+}
+
+function isThai() {
+    return window.KMMI18n ? window.KMMI18n.getLanguage() === "th" : true;
+}
+
+function unitText(value) {
+    return isThai() ? `${Number(value || 0).toLocaleString()} คัน` : `${Number(value || 0).toLocaleString()} units`;
+}
+
 function populateFilters() {
     const data = getCoreProductData();
 
-    fillSelect("yearFilter", getUniqueValues(data, "year").sort(), "All years");
+    fillSelect("yearFilter", getUniqueValues(data, "year").sort(), t("filter.allYears"));
 
     fillSelect(
         "monthFilter",
         getUniqueValues(data, "month").sort((a, b) => Number(a) - Number(b)),
-        "All months",
+        t("filter.allMonths"),
         formatMonth
     );
 
     fillSelect(
         "weekFilter",
         getUniqueValues(data, "week").sort((a, b) => getWeekNo(a) - getWeekNo(b)),
-        "All weeks",
+        t("filter.allWeeks"),
         value => "W" + String(getWeekNo(value)).padStart(2, "0")
     );
 
-    fillSelect("dealerFilter", getUniqueValues(data, "dealer").sort(), "All dealers");
-    fillSelect("typeFilter", getUniqueValues(data, "type").sort(), "All core products");
+    fillSelect("dealerFilter", getUniqueValues(data, "dealer").sort(), t("filter.allDealers"));
+    fillSelect("typeFilter", getUniqueValues(data, "type").sort(), t("filter.allTypes"));
 }
 
 function fillSelect(id, values, defaultLabel, labelFormatter) {
@@ -162,35 +174,35 @@ function updateAICommandCenter(data) {
     const topModel = getTopItem(data, "model");
 
     const summary = [
-        `Core product sales reached ${kpi.units.toLocaleString()} units.`,
-        `${topDealer.name} is the leading dealer with ${topDealer.share.toFixed(1)}% contribution.`,
-        `${topProduct.name} is the strongest product group.`,
-        `${topModel.name} is the best-selling model.`,
-        `Current GP margin is ${kpi.gpPercent.toFixed(1)}%.`
+        isThai() ? `ยอดขายสินค้าหลักอยู่ที่ ${unitText(kpi.units)}` : `Core product sales reached ${unitText(kpi.units)}.`,
+        isThai() ? `${topDealer.name} เป็น Dealer ผู้นำด้วยสัดส่วน ${topDealer.share.toFixed(1)}%` : `${topDealer.name} is the leading dealer with ${topDealer.share.toFixed(1)}% contribution.`,
+        isThai() ? `${topProduct.name} เป็นกลุ่มสินค้าที่แข็งแรงที่สุด` : `${topProduct.name} is the strongest product group.`,
+        isThai() ? `${topModel.name} เป็นรุ่นขายดีที่สุด` : `${topModel.name} is the best-selling model.`,
+        isThai() ? `GP margin ปัจจุบันอยู่ที่ ${kpi.gpPercent.toFixed(1)}%` : `Current GP margin is ${kpi.gpPercent.toFixed(1)}%.`
     ];
 
     const recommendation = [];
 
     if (kpi.gpPercent < 8) {
-        recommendation.push("GP margin is weak. Review discount policy and prioritize higher-margin models.");
+        recommendation.push(isThai() ? "GP margin อ่อน ควรทบทวนนโยบายส่วนลดและให้ความสำคัญกับรุ่นที่กำไรสูงกว่า" : "GP margin is weak. Review discount policy and prioritize higher-margin models.");
     } else if (kpi.gpPercent < 10) {
-        recommendation.push("GP margin is below preferred level. Monitor discount and campaign conditions.");
+        recommendation.push(isThai() ? "GP margin ต่ำกว่าระดับที่ต้องการ ควรติดตามส่วนลดและเงื่อนไขแคมเปญ" : "GP margin is below preferred level. Monitor discount and campaign conditions.");
     }
 
     if (topDealer.share > 60) {
-        recommendation.push("Dealer contribution is concentrated. Strengthen activity in other dealers to reduce dependency.");
+        recommendation.push(isThai() ? "ยอดขายกระจุกตัวที่ Dealer หลัก ควรเพิ่มกิจกรรมใน Dealer อื่นเพื่อลดการพึ่งพา" : "Dealer contribution is concentrated. Strengthen activity in other dealers to reduce dependency.");
     }
 
     if (topProduct.share > 70) {
-        recommendation.push("Product mix is concentrated. Review demand risk and balance sales activities across core products.");
+        recommendation.push(isThai() ? "สัดส่วนสินค้ากระจุกตัว ควรทบทวนความเสี่ยง demand และกระจายกิจกรรมขายในสินค้าหลัก" : "Product mix is concentrated. Review demand risk and balance sales activities across core products.");
     }
 
     if (data.length < 10) {
-        recommendation.push("Filtered sales volume is low. Check whether the selected period or filter is too narrow.");
+        recommendation.push(isThai() ? "ยอดขายตามตัวกรองมีจำนวนน้อย ควรตรวจสอบว่าช่วงเวลาหรือตัวกรองแคบเกินไปหรือไม่" : "Filtered sales volume is low. Check whether the selected period or filter is too narrow.");
     }
 
     if (!recommendation.length) {
-        recommendation.push("Business performance is balanced. Maintain follow-up discipline and weekly closing rhythm.");
+        recommendation.push(isThai() ? "ผลงานธุรกิจสมดุล ให้รักษาวินัย follow-up และจังหวะปิดการขายรายสัปดาห์" : "Business performance is balanced. Maintain follow-up discipline and weekly closing rhythm.");
     }
 
     renderBulletList("aiSummaryList", summary);
@@ -283,11 +295,11 @@ function setScore(scoreId, statusId, score) {
 }
 
 function getScoreStatus(score) {
-    if (score >= 90) return "Excellent";
-    if (score >= 80) return "Strong";
-    if (score >= 70) return "Stable";
-    if (score >= 50) return "Watch";
-    return "Critical";
+    if (score >= 90) return isThai() ? "ยอดเยี่ยม" : "Excellent";
+    if (score >= 80) return isThai() ? "แข็งแรง" : "Strong";
+    if (score >= 70) return isThai() ? "มั่นคง" : "Stable";
+    if (score >= 50) return isThai() ? "ต้องติดตาม" : "Watch";
+    return isThai() ? "วิกฤต" : "Critical";
 }
 
 function getScoreEmoji(score) {
@@ -304,10 +316,10 @@ function updatePipeline(data) {
     const ready = Math.round(pipeline * 0.55);
     const delivery = Math.round(ready * 0.42);
 
-    document.getElementById("bookingFunnel").innerHTML = "Booking " + booking;
-    document.getElementById("pipelineFunnel").innerHTML = "Pipeline " + pipeline;
-    document.getElementById("readyFunnel").innerHTML = "Ready " + ready;
-    document.getElementById("deliveryFunnel").innerHTML = "Delivery " + delivery;
+    document.getElementById("bookingFunnel").innerHTML = (isThai() ? "ยอดจอง " : "Booking ") + booking;
+    document.getElementById("pipelineFunnel").innerHTML = (isThai() ? "Pipeline " : "Pipeline ") + pipeline;
+    document.getElementById("readyFunnel").innerHTML = (isThai() ? "พร้อมส่งมอบ " : "Ready ") + ready;
+    document.getElementById("deliveryFunnel").innerHTML = (isThai() ? "ส่งมอบ " : "Delivery ") + delivery;
 }
 
 function updateRiskAlert(data) {
@@ -318,23 +330,23 @@ function updateRiskAlert(data) {
     const risks = [];
 
     if (kpi.gpPercent < 8) {
-        risks.push("🔴 GP margin is below 8%. Review discount and pricing policy.");
+        risks.push(isThai() ? "🔴 GP margin ต่ำกว่า 8% ควรทบทวนส่วนลดและนโยบายราคา" : "🔴 GP margin is below 8%. Review discount and pricing policy.");
     }
 
     if (topDealer.share > 60) {
-        risks.push("🟠 Dealer concentration is high. Sales depend heavily on " + topDealer.name + ".");
+        risks.push(isThai() ? "🟠 การกระจุกตัว Dealer สูง ยอดขายพึ่งพา " + topDealer.name + " มาก" : "🟠 Dealer concentration is high. Sales depend heavily on " + topDealer.name + ".");
     }
 
     if (topProduct.share > 70) {
-        risks.push("🟡 Product mix is concentrated in " + topProduct.name + ".");
+        risks.push(isThai() ? "🟡 สัดส่วนสินค้ากระจุกตัวที่ " + topProduct.name : "🟡 Product mix is concentrated in " + topProduct.name + ".");
     }
 
     if (data.length < 10) {
-        risks.push("🟠 Low sales volume in current filter. Check selected period.");
+        risks.push(isThai() ? "🟠 จำนวนขายในตัวกรองปัจจุบันต่ำ ควรตรวจสอบช่วงเวลาที่เลือก" : "🟠 Low sales volume in current filter. Check selected period.");
     }
 
     if (!risks.length) {
-        risks.push("🟢 No critical risk detected from current filters.");
+        risks.push(isThai() ? "🟢 ไม่พบความเสี่ยงวิกฤตจากตัวกรองปัจจุบัน" : "🟢 No critical risk detected from current filters.");
     }
 
     renderCardList("riskList", risks);
@@ -347,10 +359,10 @@ function updateQuickInsights(data) {
     const topModel = getTopItem(data, "model");
 
     const insights = [
-        "Top dealer: " + topDealer.name + " (" + topDealer.share.toFixed(1) + "%)",
-        "Top product: " + topProduct.name,
-        "Top model: " + topModel.name,
-        "Average price: " + formatMoney(kpi.averagePrice)
+        (isThai() ? "Dealer อันดับหนึ่ง: " : "Top dealer: ") + topDealer.name + " (" + topDealer.share.toFixed(1) + "%)",
+        (isThai() ? "สินค้าหลัก: " : "Top product: ") + topProduct.name,
+        (isThai() ? "รุ่นขายสูงสุด: " : "Top model: ") + topModel.name,
+        (isThai() ? "ราคาเฉลี่ย: " : "Average price: ") + formatMoney(kpi.averagePrice)
     ];
 
     renderCardList("quickInsights", insights);

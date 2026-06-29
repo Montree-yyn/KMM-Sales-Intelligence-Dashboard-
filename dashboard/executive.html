@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KMM V7.1 Executive Intelligence Cockpit</title>
+  <title>KMM V10 Production Release Executive Cockpit</title>
   <link rel="stylesheet" href="css/bi-core.css">
   <script src="js/i18n.js"></script>
   <script src="js/auth.js"></script>
@@ -70,29 +70,29 @@
       <section class="copilot-panel" aria-label="Enterprise AI Copilot">
         <div class="copilot-header">
           <div>
-            <div class="enterprise-eyebrow">V8 Enterprise AI Copilot</div>
-            <h2>Ask business questions from current dashboard data</h2>
-            <p>Rule-based answers use the active filters and local dashboard_data.json only.</p>
+            <div class="enterprise-eyebrow" data-i18n="ai.copilotThai">Enterprise AI Copilot</div>
+            <h2 data-i18n="ai.askTitle">Ask business questions from current dashboard data</h2>
+            <p data-i18n="ai.localOnly">Local dashboard_data.json only</p>
           </div>
-          <div class="copilot-status">No external API</div>
+          <div class="copilot-status" data-i18n="ai.noExternal">No external API</div>
         </div>
         <div class="copilot-input-row">
-          <label class="sr-only" for="copilotQuestion">Ask the AI Copilot</label>
-          <input id="copilotQuestion" type="text" placeholder="Ask about sales, dealer risk, product push, forecast risk, or next best action">
-          <button type="button" id="copilotAskButton" class="copilot-submit">Ask</button>
+          <label class="sr-only" for="copilotQuestion" data-i18n="ai.askPrompt">Ask the AI Copilot</label>
+          <input id="copilotQuestion" type="text" data-i18n-placeholder="ai.questionPlaceholder" placeholder="Ask about sales, dealer risk, product push, forecast risk, or next best action">
+          <button type="button" id="copilotAskButton" class="copilot-submit" data-i18n="button.ask">Ask</button>
         </div>
         <div class="copilot-presets" aria-label="Preset copilot questions">
-          <button type="button" data-copilot-question="Current sales performance">Current sales performance</button>
-          <button type="button" data-copilot-question="Dealer needing attention">Dealer needing attention</button>
-          <button type="button" data-copilot-question="Product to push">Product to push</button>
-          <button type="button" data-copilot-question="Forecast risk">Forecast risk</button>
-          <button type="button" data-copilot-question="Next best action">Next best action</button>
+          <button type="button" data-copilot-question="ผลงานยอดขายปัจจุบัน" data-i18n="ai.currentSales">Current sales performance</button>
+          <button type="button" data-copilot-question="Dealer ที่ต้องติดตาม" data-i18n="ai.dealerAttention">Dealer needing attention</button>
+          <button type="button" data-copilot-question="รุ่นสินค้าที่ควรผลักดัน" data-i18n="ai.productPush">Product to push</button>
+          <button type="button" data-copilot-question="ความเสี่ยงคาดการณ์" data-i18n="ai.forecastRisk">Forecast risk</button>
+          <button type="button" data-copilot-question="การดำเนินการถัดไป" data-i18n="ai.nextBestAction">Next best action</button>
         </div>
         <div id="copilotAnswer" class="copilot-answer" aria-live="polite">
           <article class="copilot-card placeholder">
-            <span>Ready</span>
-            <strong>Ask the copilot a business question</strong>
-            <p>Answers will update here from the current filtered sales records without reloading the page.</p>
+            <span data-i18n="ai.ready">Ready</span>
+            <strong data-i18n="ai.askPrompt">Ask the copilot a business question</strong>
+            <p data-i18n="ai.answerHere">Answers will update here from the current filtered sales records without reloading the page.</p>
           </article>
         </div>
       </section>
@@ -111,29 +111,29 @@
 
       <section class="report-center-v71" aria-label="Production Report Center">
         <div class="report-center-copy">
-          <div class="enterprise-eyebrow">Production Report Center</div>
-          <h2>V7.1 executive-ready reports</h2>
-          <p>Generate local, rule-based report text from the current filtered dashboard data. No external API is used.</p>
+          <div class="enterprise-eyebrow" data-i18n="report.center">Production Report Center</div>
+          <h2 data-i18n="report.ready">V10 executive-ready reports</h2>
+          <p data-i18n="ai.localOnly">Local dashboard_data.json only</p>
         </div>
         <div class="report-actions-v71">
-          <button type="button" class="report-button-v71" data-enterprise-report="weekly">Weekly Report</button>
-          <button type="button" class="report-button-v71" data-enterprise-report="monthly">Monthly Report</button>
-          <button type="button" class="report-button-v71" data-enterprise-report="executive">Executive Summary</button>
-          <button type="button" class="report-button-v71" data-enterprise-report="dealer">Dealer Review</button>
+          <button type="button" class="report-button-v71" data-enterprise-report="weekly" data-i18n="report.weekly">Weekly Report</button>
+          <button type="button" class="report-button-v71" data-enterprise-report="monthly" data-i18n="report.monthly">Monthly Report</button>
+          <button type="button" class="report-button-v71" data-enterprise-report="executive" data-i18n="report.executive">Executive Summary</button>
+          <button type="button" class="report-button-v71" data-enterprise-report="dealer" data-i18n="report.dealer">Dealer Review</button>
         </div>
       </section>
 
       <section class="export-center-v6" aria-label="Export Center">
         <div>
-          <div class="enterprise-eyebrow">Export Center</div>
-          <h2>V7.1 practical export foundation</h2>
-          <p>CSV and PNG attempt lightweight browser downloads. PDF and PowerPoint remain prepared placeholders for V7.2.</p>
+          <div class="enterprise-eyebrow" data-i18n="export.center">Export Center</div>
+          <h2 data-i18n="export.ready">V10 Export Center prepared.</h2>
+          <p data-i18n="message.footer">V10 Production Release | Static GitHub Pages dashboard | Local data only | CSV/PNG export foundation | PDF/PPT placeholders</p>
         </div>
         <div class="export-actions">
-          <button type="button" class="export-button" data-enterprise-export="PDF">Export PDF</button>
-          <button type="button" class="export-button" data-enterprise-export="PowerPoint">Export PowerPoint</button>
-          <button type="button" class="export-button" data-enterprise-export="Excel">Export Excel</button>
-          <button type="button" class="export-button" data-enterprise-export="PNG">Export PNG</button>
+          <button type="button" class="export-button" data-enterprise-export="PDF" data-i18n="export.pdf">Export PDF</button>
+          <button type="button" class="export-button" data-enterprise-export="PowerPoint" data-i18n="export.powerpoint">Export PowerPoint</button>
+          <button type="button" class="export-button" data-enterprise-export="Excel" data-i18n="export.csv">Export CSV</button>
+          <button type="button" class="export-button" data-enterprise-export="PNG" data-i18n="export.png">Export PNG</button>
         </div>
       </section>
 

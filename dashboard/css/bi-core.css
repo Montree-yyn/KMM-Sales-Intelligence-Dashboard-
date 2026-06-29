@@ -114,6 +114,52 @@ html[data-language="th"] .nav-menu small {
   font-weight: 800;
 }
 
+.security-note {
+  display: grid;
+  gap: 2px;
+  max-width: 280px;
+  padding: 8px 10px;
+  border: 1px solid rgba(180, 83, 9, 0.24);
+  border-radius: 8px;
+  background: #fff8eb;
+  color: #7c2d12;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.security-note strong,
+.security-note span {
+  display: block;
+}
+
+.settings-security-note {
+  display: grid;
+  gap: 6px;
+  margin: 16px 0 22px;
+  padding: 16px;
+  border: 1px solid rgba(180, 83, 9, 0.26);
+  border-radius: 8px;
+  background: #fff8eb;
+  color: #7c2d12;
+}
+
+.settings-security-note span {
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.settings-security-note strong {
+  color: #9a3412;
+  font-size: 18px;
+}
+
+.settings-security-note p,
+.settings-security-note small {
+  margin: 0;
+  color: #7c2d12;
+}
+
 @media (max-width: 720px) {
   .enterprise-actions,
   .export-actions,
