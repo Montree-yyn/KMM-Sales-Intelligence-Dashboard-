@@ -44,12 +44,26 @@ V6 Executive Intelligence includes:
 - Improved KPI walls, glass cards, insight cards, alert cards, action cards, spacing, chart containment, and mobile wrapping.
 - No external AI API calls, no backend, no npm workflow, and no build tooling.
 
+## V7.1 Production Ready Upgrade
+
+V7.1 upgrades the V7 Enterprise Platform for real executive review while preserving the static GitHub Pages deployment model.
+
+- Production Report Center on `dashboard/executive.html` with Weekly Report, Monthly Report, Executive Summary, and Dealer Review buttons.
+- Report modals generate professional rule-based report text from the current filtered `dashboard/data/dashboard_data.json` rows only.
+- AI Executive Summary now includes overall sales result, leading dealer, leading product, GP margin signal, forecast risk, and recommended next action.
+- Export Center practical foundation adds CSV summary download through the existing Excel button and a browser-native PNG dashboard capture attempt.
+- PDF export remains a prepared V7.2 placeholder with the message `PDF export is prepared for V7.2.`
+- PowerPoint export remains a prepared V7.2 placeholder with the message `PowerPoint export is prepared for V7.2.`
+- Presentation Mode hides the sidebar, expands executive content, and toggles back without changing routes or data.
+- UI polish improves report cards, modals, export buttons, mobile wrapping, print output, and horizontal overflow protection.
+- Protected data generation files remain unchanged: `dashboard/data/dashboard_data.json` and `tools/update_dashboard.py`.
+
 ## Near-Term Priorities
 
-1. V6 Export Center: replace placeholders with lightweight static exports only when risk is acceptable.
+1. V7.2 Export Center: implement real PDF and PowerPoint exports with reviewed lightweight/static-safe technology.
 2. AI Copilot: define a future approved architecture before any external AI API integration.
 3. PWA: explore installable mobile access and offline caching while preserving static hosting.
-4. Multi-company engine: evaluate company-level filters, branding, data partitioning, and tenant-safe configuration.
+4. V8 multi-company engine: evaluate company-level filters, branding, data partitioning, and tenant-safe configuration.
 5. Keep dashboard pages aligned with the shared CSS and JS modules.
 6. Maintain clean Excel-to-JSON updates through `tools/update_dashboard.py`.
 7. Keep AI insight generation rule-based until a backend or approved API integration exists.
@@ -76,7 +90,7 @@ V6 status: delivered as a rule-based Executive Intelligence Cockpit across the e
 
 ### Export Center
 
-Replace the V6 placeholder buttons with static-friendly export features for PDF, PowerPoint, Excel, and PNG. Avoid heavy libraries until bundle size, browser compatibility, and GitHub Pages constraints are reviewed.
+V7.1 delivers practical CSV export and a safe browser-native PNG capture attempt. V7.2 should replace the PDF and PowerPoint placeholders with real board-pack exports after bundle size, browser compatibility, print fidelity, and GitHub Pages constraints are reviewed.
 
 ### Forecast AI
 
@@ -88,7 +102,7 @@ Explore a progressive web app layer for mobile access, offline caching, and inst
 
 ### Multi-Company
 
-Add company-level segmentation only after the dashboard data contract supports safe company identifiers, permissions expectations, and branding rules.
+V8 should introduce company-level segmentation only after the dashboard data contract supports safe company identifiers, permissions expectations, branding rules, tenant-safe filters, and export isolation.
 
 ## Release Principles
 

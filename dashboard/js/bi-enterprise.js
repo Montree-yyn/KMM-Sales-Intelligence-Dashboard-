@@ -7,9 +7,9 @@
   const pages = {
     "executive.html": {
       module: "executive",
-      eyebrow: "V6 Executive Intelligence Cockpit",
+      eyebrow: "V7.1 Production Ready Executive Cockpit",
       title: "Executive Intelligence Cockpit",
-      subtitle: "Company-wide revenue, unit sales, margin quality, dealer concentration, product focus, and forecast action in one leadership view.",
+      subtitle: "Company-wide revenue, unit sales, margin quality, dealer concentration, production reports, practical exports, and forecast action in one leadership view.",
       insight: "executive",
       icon: "⌂",
       modules: ["Executive", "Sales", "Product", "Dealer"]
@@ -63,6 +63,13 @@
 
   const kpiIcons = ["◒", "◈", "◐", "%", "◇", "↔"];
   const exportKinds = ["PDF", "PowerPoint", "Excel", "PNG"];
+  const exportLabels = {
+    PDF: "Export PDF",
+    PowerPoint: "Export PowerPoint",
+    Excel: "Export CSV",
+    PNG: "Export PNG"
+  };
+  let latestRows = [];
 
   function el(tag, className, html) {
     const node = document.createElement(tag);
@@ -83,6 +90,16 @@
     if (Array.isArray(rows)) return rows;
     if (BI.filters && BI.filters.applyFilters) return BI.filters.applyFilters(utils.getCoreProductData());
     return utils.getCoreProductData();
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      "\"": "&quot;",
+      "'": "&#39;"
+    }[char]));
   }
 
   function groupedTop(rows, getter) {
@@ -238,6 +255,116 @@
     return library[type] || library.executive;
   }
 
+  function executiveSummary(rows) {
+    if (!rows.length) {
+      return {
+        overall: "No records match the current filters. Executive summary will update when data is available.",
+        leadingDealer: "Dealer leadership cannot be calculated for the current filter.",
+        leadingProduct: "Product leadership cannot be calculated for the current filter.",
+        margin: "GP margin signal is unavailable because the filtered sales value is zero.",
+        forecastRisk: "Forecast risk is pending until filtered records are available.",
+        nextAction: "Broaden or reset filters before making an executive decision.",
+        forecast: 0,
+        target: 0,
+        gap: 0
+      };
+    }
+
+    const kpi = utils.kpi(rows);
+    const dealer = groupedTop(rows, (item) => item.dealer);
+    const product = groupedTop(rows, (item) => item.model);
+    const lowMarginProduct = utils.groupBy(rows, (item) => item.model).sort((a, b) => a.gpPct - b.gpPct)[0] || product;
+    const forecast = Math.round(kpi.units * 1.08);
+    const target = Math.max(400, Math.round(kpi.units * 1.12));
+    const gap = forecast - target;
+    const marginSignal = kpi.gpPct < 8 ? "margin pressure" : kpi.gpPct < 11 ? "margin watch" : "stable margin";
+    const riskSignal = gap < 0 ? "forecast shortfall" : "forecast on track";
+    const nextAction = kpi.gpPct < 8
+      ? `Protect margin before adding volume pressure, starting with ${lowMarginProduct.name}.`
+      : gap < 0
+        ? `Close the ${Math.abs(gap).toLocaleString()} unit forecast gap through high-probability dealer follow-up.`
+        : `Maintain weekly close rhythm and secure availability for ${product.name}.`;
+
+    return {
+      overall: `${kpi.units.toLocaleString()} units delivered with ${utils.formatMoney(kpi.sales)} sales value in the current filter.`,
+      leadingDealer: `${dealer.name} is the leading dealer with ${dealer.units.toLocaleString()} units and ${utils.formatPercent(dealer.share)} share.`,
+      leadingProduct: `${product.name} is the leading product with ${product.units.toLocaleString()} units and ${utils.formatPercent(product.share)} share.`,
+      margin: `${utils.formatPercent(kpi.gpPct)} GP margin indicates ${marginSignal}. Lowest model pressure: ${lowMarginProduct.name} at ${utils.formatPercent(lowMarginProduct.gpPct)}.`,
+      forecastRisk: `${forecast.toLocaleString()} unit rule-based forecast versus ${target.toLocaleString()} baseline target shows ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units: ${riskSignal}.`,
+      nextAction,
+      forecast,
+      target,
+      gap
+    };
+  }
+
+  function reportLines(kind, rows) {
+    const summary = executiveSummary(rows);
+    const titleMap = {
+      weekly: "Weekly Sales Intelligence Report",
+      monthly: "Monthly Sales Intelligence Report",
+      executive: "Executive Summary",
+      dealer: "Dealer Review"
+    };
+    const title = titleMap[kind] || titleMap.executive;
+    const kpi = utils.kpi(rows);
+    const dealers = utils.groupBy(rows, (item) => item.dealer);
+    const products = utils.groupBy(rows, (item) => item.model);
+    const salesmen = utils.groupBy(rows, utils.salesmanName);
+    const topDealer = safeTop(dealers);
+    const weakDealer = safeBottom(dealers);
+    const topProduct = safeTop(products);
+    const topSalesman = safeTop(salesmen);
+
+    if (!rows.length) {
+      return {
+        title,
+        meta: "Current filter has no matching rows.",
+        lines: [
+          summary.overall,
+          summary.leadingDealer,
+          summary.leadingProduct,
+          summary.margin,
+          summary.forecastRisk,
+          summary.nextAction
+        ]
+      };
+    }
+
+    const reportSpecific = {
+      weekly: [
+        `Weekly focus: ${topDealer.name} and ${topProduct.name} should anchor the next close rhythm.`,
+        `Sales execution: ${topSalesman.name} is the leading salesman signal in the active data.`,
+        `Risk watch: ${summary.gap < 0 ? "recover forecast gap" : "protect margin while ahead of baseline"}.`
+      ],
+      monthly: [
+        `Monthly result: ${kpi.units.toLocaleString()} filtered units and ${utils.formatMoney(kpi.gp)} GP.`,
+        `Portfolio signal: ${topProduct.name} leads product contribution; review substitute offers where concentration rises.`,
+        "Management rhythm: review dealer, salesman, and margin scorecards before month-end close."
+      ],
+      executive: [
+        summary.overall,
+        summary.leadingDealer,
+        summary.leadingProduct,
+        summary.margin,
+        summary.forecastRisk,
+        `Recommended next action: ${summary.nextAction}`
+      ],
+      dealer: [
+        `Dealer leader: ${topDealer.name} with ${topDealer.units.toLocaleString()} units and ${utils.formatPercent(topDealer.gpPct)} GP margin.`,
+        `Dealer to review: ${weakDealer.name} has the lowest filtered contribution.`,
+        `Network balance: top dealer share is ${utils.formatPercent(topDealer.share)}.`,
+        `Recommended next action: lift activity, stock visibility, and weekly follow-up for ${weakDealer.name}.`
+      ]
+    };
+
+    return {
+      title,
+      meta: `Generated from ${rows.length.toLocaleString()} filtered local records. Last refresh ${utils.lastRefresh()}.`,
+      lines: reportSpecific[kind] || reportSpecific.executive
+    };
+  }
+
   function ensureHeader() {
     const config = pageConfig();
     const header = document.querySelector(".page-head, .topbar");
@@ -254,10 +381,11 @@
       </div>
       <div class="enterprise-actions" aria-label="Dashboard actions">
         <button type="button" class="enterprise-action primary" data-enterprise-action="ai">AI Summary</button>
+        ${config.module === "executive" ? '<button type="button" class="enterprise-action" data-enterprise-action="presentation">Presentation Mode</button>' : ""}
         <button type="button" class="enterprise-action" data-enterprise-action="refresh">Refresh View</button>
         <button type="button" class="enterprise-action" data-enterprise-export="PDF">Export PDF</button>
         <button type="button" class="enterprise-action" data-enterprise-export="PowerPoint">Export PowerPoint</button>
-        <button type="button" class="enterprise-action" data-enterprise-export="Excel">Export Excel</button>
+        <button type="button" class="enterprise-action" data-enterprise-export="Excel">Export CSV</button>
         <button type="button" class="enterprise-action" data-enterprise-export="PNG">Export PNG</button>
       </div>`;
   }
@@ -303,7 +431,7 @@
         <div class="enterprise-eyebrow">Export Foundation</div>
         <h2>Prepared Outputs</h2>
         <div class="export-actions" id="enterpriseExportActions"></div>
-        <p id="enterpriseExportStatus" class="export-status">V6 Export Center prepared.</p>
+        <p id="enterpriseExportStatus" class="export-status">V7.1 Export Center prepared.</p>
       </div>`;
 
     const anchor = document.querySelector(".ai-strip");
@@ -355,11 +483,160 @@
     toast.timer = window.setTimeout(() => node.classList.remove("show"), 2600);
   }
 
-  function handleExport(kind) {
-    const message = "V6 Export Center prepared.";
+  function downloadFile(filename, mime, content) {
+    const blob = content instanceof Blob ? content : new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const link = el("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function csvCell(value) {
+    return `"${String(value ?? "").replace(/"/g, '""')}"`;
+  }
+
+  function exportCsv(rows) {
+    const data = rowsForInsight(rows || latestRows);
+    const kpi = utils.kpi(data);
+    const summary = executiveSummary(data);
+    const table = [
+      ["Metric", "Value"],
+      ["Filtered units", kpi.units],
+      ["Sales value", kpi.sales],
+      ["Gross profit", kpi.gp],
+      ["GP margin", utils.formatPercent(kpi.gpPct)],
+      ["Forecast", summary.forecast],
+      ["Target baseline", summary.target],
+      ["Forecast gap", summary.gap],
+      ["Overall sales result", summary.overall],
+      ["Leading dealer", summary.leadingDealer],
+      ["Leading product", summary.leadingProduct],
+      ["GP margin signal", summary.margin],
+      ["Forecast risk", summary.forecastRisk],
+      ["Recommended next action", summary.nextAction]
+    ];
+    downloadFile("kmm-v7-1-executive-summary.csv", "text/csv;charset=utf-8", table.map((row) => row.map(csvCell).join(",")).join("\n"));
+  }
+
+  async function exportPng() {
+    const target = document.querySelector(".main-content");
+    if (!target) throw new Error("Dashboard area is not available.");
+
+    const clone = target.cloneNode(true);
+    clone.querySelectorAll("canvas").forEach((canvasClone, index) => {
+      const sourceCanvas = target.querySelectorAll("canvas")[index];
+      const image = new Image();
+      image.alt = "Rendered chart";
+      image.src = sourceCanvas?.toDataURL("image/png") || "";
+      image.style.width = "100%";
+      image.style.height = "100%";
+      canvasClone.replaceWith(image);
+    });
+
+    const width = Math.min(1600, Math.max(900, target.scrollWidth));
+    const height = Math.min(2200, Math.max(900, target.scrollHeight));
+    clone.style.width = `${width}px`;
+    clone.style.minHeight = `${height}px`;
+    clone.style.padding = "24px";
+    clone.style.background = "#f6f7fb";
+
+    const styleText = [...document.styleSheets].map((sheet) => {
+      try {
+        return [...sheet.cssRules].map((rule) => rule.cssText).join("\n");
+      } catch (error) {
+        return "";
+      }
+    }).join("\n");
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+        <foreignObject width="100%" height="100%">
+          <div xmlns="http://www.w3.org/1999/xhtml">
+            <style>${styleText}</style>
+            ${clone.outerHTML}
+          </div>
+        </foreignObject>
+      </svg>`;
+    const image = new Image();
+    const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
+    await new Promise((resolve, reject) => {
+      image.onload = resolve;
+      image.onerror = reject;
+      image.src = url;
+    });
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext("2d").drawImage(image, 0, 0);
+    URL.revokeObjectURL(url);
+    await new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error("PNG export failed."));
+          return;
+        }
+        downloadFile("kmm-v7-1-dashboard.png", "image/png", blob);
+        resolve();
+      }, "image/png");
+    });
+  }
+
+  async function handleExport(kind) {
+    let message = "Export action completed.";
     const status = document.getElementById("enterpriseExportStatus");
-    if (status) status.textContent = `${kind} placeholder: ${message}`;
+    if (kind === "PDF") message = "PDF export is prepared for V7.2.";
+    if (kind === "PowerPoint") message = "PowerPoint export is prepared for V7.2.";
+    if (kind === "Excel") {
+      exportCsv();
+      message = "CSV summary downloaded from the current filtered dashboard data.";
+    }
+    if (kind === "PNG") {
+      try {
+        await exportPng();
+        message = "PNG export attempted for the current dashboard area.";
+      } catch (error) {
+        message = "PNG export could not be completed safely in this browser.";
+      }
+    }
+    if (status) status.textContent = message;
     toast(message);
+  }
+
+  function showReport(kind) {
+    const report = reportLines(kind, rowsForInsight(latestRows));
+    let modal = document.getElementById("enterpriseReportModal");
+    if (!modal) {
+      modal = el("div", "enterprise-modal-backdrop");
+      modal.id = "enterpriseReportModal";
+      modal.setAttribute("role", "dialog");
+      modal.setAttribute("aria-modal", "true");
+      modal.innerHTML = `
+        <section class="enterprise-modal-panel">
+          <button type="button" class="enterprise-modal-close" data-enterprise-modal-close aria-label="Close report">Close</button>
+          <div class="enterprise-eyebrow">V7.1 Production Report</div>
+          <h2 id="enterpriseReportTitle"></h2>
+          <p id="enterpriseReportMeta"></p>
+          <div id="enterpriseReportBody" class="enterprise-report-body"></div>
+        </section>`;
+      document.body.appendChild(modal);
+    }
+    utils.setText("enterpriseReportTitle", report.title);
+    utils.setText("enterpriseReportMeta", report.meta);
+    const body = document.getElementById("enterpriseReportBody");
+    if (body) body.innerHTML = report.lines.map((line) => `<p>${escapeHtml(line)}</p>`).join("");
+    modal.classList.add("show");
+  }
+
+  function togglePresentationMode() {
+    const enabled = !document.body.classList.contains("presentation-mode");
+    document.body.classList.toggle("presentation-mode", enabled);
+    document.querySelectorAll("[data-enterprise-action='presentation']").forEach((button) => {
+      button.textContent = enabled ? "Exit Presentation" : "Presentation Mode";
+    });
+    toast(enabled ? "Presentation Mode enabled." : "Presentation Mode disabled.");
   }
 
   function renderAiInsight(targetId, insight) {
@@ -569,7 +846,7 @@
     const target = document.getElementById("enterpriseExportActions");
     if (!target || target.dataset.ready === "true") return;
     exportKinds.forEach((kind) => {
-      const button = el("button", "export-button", `${kind} placeholder`);
+      const button = el("button", "export-button", exportLabels[kind] || `Export ${kind}`);
       button.type = "button";
       button.dataset.enterpriseExport = kind;
       target.appendChild(button);
@@ -598,13 +875,26 @@
         handleExport(exportButton.dataset.enterpriseExport);
         return;
       }
+      const reportButton = event.target.closest("[data-enterprise-report]");
+      if (reportButton) {
+        showReport(reportButton.dataset.enterpriseReport);
+        return;
+      }
+      if (event.target.closest("[data-enterprise-modal-close]") || event.target.id === "enterpriseReportModal") {
+        document.getElementById("enterpriseReportModal")?.classList.remove("show");
+        return;
+      }
       const action = event.target.closest("[data-enterprise-action]")?.dataset.enterpriseAction;
       if (action === "ai") {
-        toast("AI Summary uses local rule-based insight in V5. External AI is prepared for a later phase.");
+        const summary = executiveSummary(rowsForInsight(latestRows));
+        toast(`AI Summary: ${summary.overall} ${summary.nextAction}`);
       }
       if (action === "refresh") {
         BI.enterprise.refresh();
         toast("Dashboard view refreshed from current filters.");
+      }
+      if (action === "presentation") {
+        togglePresentationMode();
       }
     });
   }
@@ -659,8 +949,10 @@
 
   function refresh(rows) {
     const data = rowsForInsight(rows);
+    latestRows = data;
     const config = pageConfig();
     const insight = insightFor(config.insight, data);
+    const summary = executiveSummary(data);
     ensureHeader();
     ensureInsightPanel();
     ensureIntelligenceDeck();
@@ -672,17 +964,17 @@
     renderIntelligenceDeck(data);
     renderInsightEngine(data);
     utils.setText("enterpriseLastRefresh", utils.lastRefresh());
-    utils.setText("enterpriseInsightHeadline", insight.headline);
-    utils.setText("enterpriseInsightDetail", insight.detail);
-    utils.setText("enterpriseInsightAction", insight.action);
-    utils.setText("enterpriseInsightRisk", insight.risk);
+    utils.setText("enterpriseInsightHeadline", summary.overall || insight.headline);
+    utils.setText("enterpriseInsightDetail", `${summary.leadingDealer} ${summary.leadingProduct} ${summary.margin}` || insight.detail);
+    utils.setText("enterpriseInsightAction", summary.nextAction || insight.action);
+    utils.setText("enterpriseInsightRisk", summary.forecastRisk || insight.risk);
   }
 
   function ensureFooter() {
     if (document.getElementById("enterpriseFooter")) return;
     const footer = el("footer", "enterprise-footer");
     footer.id = "enterpriseFooter";
-    footer.innerHTML = "<strong>KMM Sales Intelligence V6 Enterprise BI</strong><span>Static GitHub Pages dashboard | Local data only | AI and export actions are safe placeholders</span>";
+    footer.innerHTML = "<strong>KMM Sales Intelligence V7.1 Production Ready</strong><span>Static GitHub Pages dashboard | Local data only | CSV/PNG export foundation | V7.2 PDF/PPT roadmap</span>";
     document.querySelector(".main-content")?.appendChild(footer);
   }
 
@@ -706,6 +998,8 @@
     init,
     refresh,
     insightFor,
+    executiveSummary,
+    reportLines,
     handleExport,
     renderAiInsight,
     premiumCard,

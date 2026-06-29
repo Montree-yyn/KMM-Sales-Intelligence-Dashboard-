@@ -210,6 +210,8 @@
     const gapRisk = gap < 0;
     const hasBookingFields = data.some((item) => Object.keys(item).some((key) => /book|pipeline|stock/i.test(key)));
     const stockSignal = hasBookingFields ? "Source contains booking, pipeline, or stock-like fields." : "No explicit stock or booking fields found; using booking proxy.";
+    const marginSignal = summary.gpPct < 8 ? "margin pressure" : summary.gpPct < 11 ? "margin watch" : "stable margin";
+    const forecastSignal = gapRisk ? `${Math.abs(gap).toLocaleString()} units below baseline` : `${gap.toLocaleString()} units above baseline`;
 
     return {
       topDealer,
@@ -226,7 +228,7 @@
       target,
       gap,
       stockSignal,
-      topSignal: data.length ? `${topDealer.name} leads with ${topDealer.units.toLocaleString()} units while ${topModel.name} anchors demand.` : "No records match the current filters.",
+      topSignal: data.length ? `${summary.units.toLocaleString()} units delivered; ${topDealer.name} leads dealers, ${topModel.name} leads products, GP is ${U.formatPercent(summary.gpPct)} (${marginSignal}), and forecast is ${forecastSignal}.` : "No records match the current filters. Executive summary will update when data is available.",
       mainRisk: gpRisk ? `GP margin is ${U.formatPercent(summary.gpPct)}` : concentrationRisk ? `${topDealer.name} holds ${U.formatPercent(topDealer.share)} share` : gapRisk ? `${Math.abs(gap).toLocaleString()} unit forecast gap` : "No red risk in current filter",
       recommendedAction: data.length ? recommendedAction(gpRisk, concentrationRisk, gapRisk, lowMarginModel, weakDealer, topModel) : "Broaden filters to restore executive coverage.",
       alerts: [
