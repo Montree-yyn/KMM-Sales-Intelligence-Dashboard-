@@ -5,11 +5,13 @@
   const F = BI.filters;
   const C = BI.charts;
   const filterIds = ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "salesmanFilter"];
+  let activeCopilotQuestion = "";
 
   window.addEventListener("DOMContentLoaded", async () => {
     await U.loadDashboardData();
     F.fillFilters(U.getCoreProductData(), { yearLabel: "All years" });
     F.bindFilters(update, filterIds);
+    bindCopilot();
     update();
   });
 
@@ -46,6 +48,72 @@
     renderCards("dealerCards", groups.dealers.slice(0, 3), "dealer.html", "Dealer");
     renderCards("productCards", groups.types.slice(0, 3), "product.html", "Product");
     renderExecutiveStrip(summary, groups, intelligence);
+    if (activeCopilotQuestion) renderCopilotAnswer(activeCopilotQuestion, data);
+  }
+
+  function bindCopilot() {
+    const input = document.getElementById("copilotQuestion");
+    const askButton = document.getElementById("copilotAskButton");
+    const submit = () => runCopilot(input?.value || activeCopilotQuestion);
+
+    askButton?.addEventListener("click", submit);
+    input?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        submit();
+      }
+    });
+
+    document.querySelectorAll("[data-copilot-question]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const question = button.getAttribute("data-copilot-question") || "";
+        if (input) input.value = question;
+        runCopilot(question);
+      });
+    });
+  }
+
+  function runCopilot(question) {
+    const cleanQuestion = String(question || "").trim();
+    activeCopilotQuestion = cleanQuestion || "Current sales performance";
+    const input = document.getElementById("copilotQuestion");
+    if (input && !cleanQuestion) input.value = activeCopilotQuestion;
+    renderCopilotAnswer(activeCopilotQuestion, rows());
+  }
+
+  function renderCopilotAnswer(question, data) {
+    const answer = BI.enterprise?.generateCopilotAnswer
+      ? BI.enterprise.generateCopilotAnswer(data, question)
+      : null;
+    const target = document.getElementById("copilotAnswer");
+    if (!target || !answer) return;
+
+    target.replaceChildren();
+    const lead = document.createElement("article");
+    lead.className = `copilot-card lead ${answer.intent || "summary"}`;
+    lead.append(
+      copilotNode("span", "Copilot answer"),
+      copilotNode("strong", answer.headline || "Rule-based answer unavailable"),
+      copilotNode("p", answer.meta || "Generated from local dashboard data.")
+    );
+    target.appendChild(lead);
+
+    (answer.cards || []).forEach((card) => {
+      const node = document.createElement("article");
+      node.className = `copilot-card ${card.type || ""}`;
+      node.append(
+        copilotNode("span", card.label || "Insight"),
+        copilotNode("strong", card.title || "-"),
+        copilotNode("p", card.text || "This signal is not available for the current filters.")
+      );
+      target.appendChild(node);
+    });
+  }
+
+  function copilotNode(tag, text) {
+    const node = document.createElement(tag);
+    node.textContent = text;
+    return node;
   }
 
   function monthlyRows(data) {

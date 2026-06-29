@@ -298,6 +298,147 @@
     };
   }
 
+  function detectCopilotIntent(question) {
+    const text = String(question || "").toLowerCase();
+    if (/(dealer|branch|network|attention|watch|weak|risk dealer)/.test(text)) return "dealer";
+    if (/(product|model|push|portfolio|mix|gp model|margin model)/.test(text)) return "product";
+    if (/(forecast|target|gap|risk|projection|next period)/.test(text)) return "forecast";
+    if (/(action|recommend|next best|priority|do next|decision)/.test(text)) return "action";
+    if (/(sales|performance|revenue|kpi|current|unit|gp|margin)/.test(text)) return "sales";
+    return "summary";
+  }
+
+  function copilotPlaceholder(question, rows) {
+    return {
+      intent: detectCopilotIntent(question),
+      question: String(question || "").trim(),
+      headline: "Copilot answer pending filtered data",
+      meta: "No matching rows in the current filter selection.",
+      cards: [
+        {
+          type: "kpi",
+          label: "KPI summary",
+          title: "No sales records available",
+          text: "The copilot cannot calculate sales units, value, or GP margin until the current filters return records."
+        },
+        {
+          type: "dealer",
+          label: "Dealer insight",
+          title: "Dealer signal unavailable",
+          text: "Dealer leadership and attention signals will appear when filtered dealer records are available."
+        },
+        {
+          type: "product",
+          label: "Product insight",
+          title: "Product signal unavailable",
+          text: "Product push guidance needs filtered model and product type records."
+        },
+        {
+          type: "forecast",
+          label: "Forecast insight",
+          title: "Forecast risk pending",
+          text: "The rule-based forecast placeholder will update after sales records are available."
+        },
+        {
+          type: "action",
+          label: "Recommended action",
+          title: "Reset or broaden filters",
+          text: rows && rows.length === 0 ? "Use broader filters before making an executive decision." : "Load dashboard_data.json to activate local copilot answers."
+        }
+      ]
+    };
+  }
+
+  function generateCopilotAnswer(rows, question) {
+    const data = rowsForInsight(rows);
+    const prompt = String(question || "").trim();
+    if (!data.length) return copilotPlaceholder(prompt, data);
+
+    const intent = detectCopilotIntent(prompt);
+    const kpi = utils.kpi(data);
+    const summary = executiveSummary(data);
+    const dealers = utils.groupBy(data, (item) => item.dealer);
+    const products = utils.groupBy(data, (item) => item.model);
+    const types = utils.groupBy(data, (item) => item.type);
+    const salesmen = utils.groupBy(data, utils.salesmanName);
+    const topDealer = safeTop(dealers);
+    const weakDealer = safeBottom(dealers);
+    const topProduct = safeTop(products);
+    const highGpProduct = safeTop(products.slice().sort((a, b) => b.gpPct - a.gpPct));
+    const lowGpProduct = safeTop(products.slice().sort((a, b) => a.gpPct - b.gpPct));
+    const topType = safeTop(types);
+    const topSalesman = safeTop(salesmen);
+    const forecast = summary.forecast || Math.round(kpi.units * 1.08);
+    const target = summary.target || Math.max(400, Math.round(kpi.units * 1.12));
+    const gap = forecast - target;
+    const dealerRisk = topDealer.share > 45 ? "High concentration" : weakDealer.units <= 1 ? "Low activity pocket" : "Balanced watch";
+    const marginRisk = kpi.gpPct < 8 ? "margin pressure" : kpi.gpPct < 11 ? "margin watch" : "healthy margin";
+    const forecastRisk = gap < 0 ? "target gap" : "on track";
+    const productPush = highGpProduct.name !== "-" ? highGpProduct : topProduct;
+    const nextAction = copilotAction(intent, { gap, kpi, weakDealer, topDealer, topProduct, productPush, lowGpProduct, topSalesman });
+    const headlineMap = {
+      sales: `Sales performance: ${kpi.units.toLocaleString()} units and ${utils.formatMoney(kpi.sales)} sales value`,
+      dealer: `Dealer attention: review ${weakDealer.name} while managing ${topDealer.name} concentration`,
+      product: `Product push: prioritize ${productPush.name} with ${utils.formatPercent(productPush.gpPct)} GP margin`,
+      forecast: `Forecast risk: ${forecast.toLocaleString()} units versus ${target.toLocaleString()} target`,
+      action: `Next best action: ${nextAction}`,
+      summary: "Executive copilot summary from current filters"
+    };
+
+    return {
+      intent,
+      question: prompt,
+      headline: headlineMap[intent] || headlineMap.summary,
+      meta: `Generated from ${data.length.toLocaleString()} filtered local records. Intent: ${intent}.`,
+      cards: [
+        {
+          type: "kpi",
+          label: "KPI summary",
+          title: `${kpi.units.toLocaleString()} units | ${utils.formatMoney(kpi.sales)} sales`,
+          text: `Gross profit is ${utils.formatMoney(kpi.gp)} and GP margin is ${utils.formatPercent(kpi.gpPct)}, indicating ${marginRisk}.`
+        },
+        {
+          type: "dealer",
+          label: "Dealer insight",
+          title: `${weakDealer.name} needs attention`,
+          text: `${topDealer.name} leads with ${topDealer.units.toLocaleString()} units and ${utils.formatPercent(topDealer.share)} share. ${weakDealer.name} is lowest in the current filter; dealer risk signal is ${dealerRisk}.`
+        },
+        {
+          type: "product",
+          label: "Product insight",
+          title: `${productPush.name} is the push candidate`,
+          text: `${topProduct.name} leads volume with ${topProduct.units.toLocaleString()} units. ${topType.name} leads product type mix, while ${lowGpProduct.name} should be watched for GP quality.`
+        },
+        {
+          type: "forecast",
+          label: "Forecast insight",
+          title: `${gap >= 0 ? "+" : ""}${gap.toLocaleString()} unit forecast gap`,
+          text: `Rule-based forecast is ${forecast.toLocaleString()} units against ${target.toLocaleString()} baseline target, showing ${forecastRisk}.`
+        },
+        {
+          type: "action",
+          label: "Recommended action",
+          title: "Next best action",
+          text: nextAction
+        }
+      ]
+    };
+  }
+
+  function copilotAction(intent, context) {
+    if (intent === "dealer") return `Lift activity and stock visibility for ${context.weakDealer.name}, while reducing over-reliance on ${context.topDealer.name}.`;
+    if (intent === "product") return `Push ${context.productPush.name} first, then review margin pressure on ${context.lowGpProduct.name}.`;
+    if (intent === "forecast") {
+      return context.gap < 0
+        ? `Recover ${Math.abs(context.gap).toLocaleString()} units through high-probability dealer and salesman follow-up.`
+        : "Protect GP quality while keeping the close rhythm ahead of the baseline target.";
+    }
+    if (intent === "sales") return `Use ${context.topDealer.name}, ${context.topProduct.name}, and ${context.topSalesman.name} as the performance benchmark for the next review.`;
+    return context.gap < 0
+      ? `Close the forecast gap first, starting with ${context.weakDealer.name} follow-up and ${context.topProduct.name} deal conversion.`
+      : `Maintain weekly close discipline and keep ${context.productPush.name} available across priority dealers.`;
+  }
+
   function reportLines(kind, rows) {
     const summary = executiveSummary(rows);
     const titleMap = {
@@ -999,6 +1140,7 @@
     refresh,
     insightFor,
     executiveSummary,
+    generateCopilotAnswer,
     reportLines,
     handleExport,
     renderAiInsight,
