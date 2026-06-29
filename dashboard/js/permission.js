@@ -5,6 +5,7 @@
     "executive.html": "executive",
     "sales.html": "sales",
     "salesman.html": "salesman",
+    "salesman_capability.html": "salesman",
     "product.html": "product",
     "dealer.html": "dealer",
     "forecast.html": "forecast",

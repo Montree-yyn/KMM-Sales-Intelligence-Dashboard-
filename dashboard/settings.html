@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KMM Security Settings</title>
+  <title>KMM V10 Security Settings</title>
   <link rel="stylesheet" href="css/bi-core.css">
   <script src="js/i18n.js"></script>
   <script src="js/auth.js"></script>
@@ -36,6 +36,12 @@
       <section class="settings-panel">
         <h2 data-i18n="settings.section">Session Settings</h2>
         <p data-i18n="settings.note">Changes are stored in sessionStorage for the current browser session.</p>
+        <div class="settings-security-note" role="note">
+          <span data-i18n="settings.adminArea">Admin / Security Area</span>
+          <strong data-i18n="settings.securityWarningTitle">Internal-use security note</strong>
+          <p data-i18n="settings.securityWarningBody">Static credentials are temporary protection only. V11 should move to real authentication before broader rollout.</p>
+          <small data-i18n="settings.securityWarningDetail">Use this release only inside trusted internal workflows. Do not publish credentials outside the approved team.</small>
+        </div>
         <form id="settingsForm" class="settings-form">
           <div class="settings-grid">
             <div class="settings-field">

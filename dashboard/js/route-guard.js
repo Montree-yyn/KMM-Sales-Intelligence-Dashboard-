@@ -74,6 +74,10 @@
         <span>${t(`role.${session.role}`)}</span>
         <strong>${session.username}</strong>
       </button>
+      <div class="security-note" title="${t("security.v11Auth")}">
+        <strong>V10</strong>
+        <span>${t("security.internalUse")}</span>
+      </div>
     `;
     header.appendChild(bar);
     if (window.KMMI18n) window.KMMI18n.applyTranslations(bar);

@@ -7,7 +7,7 @@
   const pages = {
     "executive.html": {
       module: "executive",
-      eyebrow: "V7.1 Production Ready Executive Cockpit",
+      eyebrow: "V10 Production Release Executive Cockpit",
       title: "Executive Intelligence Cockpit",
       subtitle: "Company-wide revenue, unit sales, margin quality, dealer concentration, production reports, practical exports, and forecast action in one leadership view.",
       insight: "executive",
@@ -16,7 +16,7 @@
     },
     "salesman.html": {
       module: "salesman",
-      eyebrow: "V5.2 Performance Coaching",
+      eyebrow: "V10 Performance Coaching",
       title: "Sales Performance",
       subtitle: "Salesman productivity, achievement ranking, activity quality, and coaching opportunities.",
       insight: "salesman",
@@ -25,7 +25,7 @@
     },
     "sales.html": {
       module: "sales",
-      eyebrow: "V5.2 Commercial Analytics",
+      eyebrow: "V10 Commercial Analytics",
       title: "Sales Analytics",
       subtitle: "Period performance, channel mix, payment behavior, and product contribution trends.",
       insight: "sales",
@@ -34,7 +34,7 @@
     },
     "product.html": {
       module: "product",
-      eyebrow: "V5.2 Product Intelligence",
+      eyebrow: "V10 Product Intelligence",
       title: "Product Intelligence",
       subtitle: "Model demand, product mix, GP quality, inventory signals, and cross-dealer movement.",
       insight: "product",
@@ -43,7 +43,7 @@
     },
     "dealer.html": {
       module: "dealer",
-      eyebrow: "V5.2 Dealer Network Health",
+      eyebrow: "V10 Dealer Network Health",
       title: "Dealer Intelligence",
       subtitle: "Dealer contribution, health signals, pipeline conversion, stock age, and coverage priorities.",
       insight: "dealer",
@@ -52,7 +52,7 @@
     },
     "forecast.html": {
       module: "forecast",
-      eyebrow: "V5.2 Forecast AI Foundation",
+      eyebrow: "V10 Forecast Foundation",
       title: "Sales Forecast AI",
       subtitle: "Rule-based forecast, target gap, pipeline probability, and next-action guidance.",
       insight: "forecast",
@@ -96,12 +96,12 @@
   };
 
   const pageEyebrows = {
-    executive: ["V7.1 Production Ready Executive Cockpit", "V7.1 ห้องควบคุมผู้บริหารพร้อมใช้งาน"],
-    salesman: ["V5.2 Performance Coaching", "V5.2 โค้ชผลงานพนักงานขาย"],
-    sales: ["V5.2 Commercial Analytics", "V5.2 วิเคราะห์ยอดขายเชิงพาณิชย์"],
-    product: ["V5.2 Product Intelligence", "V5.2 วิเคราะห์สินค้า"],
-    dealer: ["V5.2 Dealer Network Health", "V5.2 สุขภาพเครือข่าย Dealer"],
-    forecast: ["V5.2 Forecast AI Foundation", "V5.2 พื้นฐานคาดการณ์ AI"]
+    executive: ["V10 Production Release Executive Cockpit", "V10 ห้องควบคุมผู้บริหาร Production Release"],
+    salesman: ["V10 Performance Coaching", "V10 โค้ชผลงานพนักงานขาย"],
+    sales: ["V10 Commercial Analytics", "V10 วิเคราะห์ยอดขายเชิงพาณิชย์"],
+    product: ["V10 Product Intelligence", "V10 วิเคราะห์สินค้า"],
+    dealer: ["V10 Dealer Network Health", "V10 สุขภาพเครือข่าย Dealer"],
+    forecast: ["V10 Forecast Foundation", "V10 พื้นฐานคาดการณ์"]
   };
 
   function t(key) {
@@ -114,6 +114,11 @@
 
   function unitText(value) {
     return isThai() ? `${Number(value || 0).toLocaleString()} คัน` : `${Number(value || 0).toLocaleString()} units`;
+  }
+
+  function monthName(value) {
+    const monthsTh = ["", "ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+    return isThai() ? (monthsTh[Number(value)] || value || "-") : utils.monthName(value);
   }
 
   function local(en, th) {
@@ -220,7 +225,7 @@
     const productType = groupedTop(rows, (item) => item.type);
     const lowMarginProduct = utils.groupBy(rows, (item) => item.model).sort((a, b) => a.gpPct - b.gpPct)[0] || product;
     const salesman = groupedTop(rows, utils.salesmanName);
-    const monthly = utils.groupBy(rows, (item) => utils.monthName(item.month)).sort((a, b) => b.units - a.units);
+    const monthly = utils.groupBy(rows, (item) => monthName(item.month)).sort((a, b) => b.units - a.units);
     const forecast = Math.round(kpi.units * 1.08);
     const target = Math.max(400, Math.round(kpi.units * 1.12));
     const gap = forecast - target;
@@ -287,7 +292,7 @@
     const salesman = groupedTop(rows, utils.salesmanName);
     const product = groupedTop(rows, (item) => item.model);
     const typeMix = groupedTop(rows, (item) => item.type);
-    const monthly = utils.groupBy(rows, (item) => utils.monthName(item.month)).sort((a, b) => b.units - a.units);
+    const monthly = utils.groupBy(rows, (item) => monthName(item.month)).sort((a, b) => b.units - a.units);
     const weakestDealer = utils.groupBy(rows, (item) => item.dealer).at(-1) || dealer;
     const forecast = Math.round(kpi.units * 1.08);
     const marginSignal = kpi.gpPct < 8
@@ -381,11 +386,11 @@
 
   function detectCopilotIntent(question) {
     const text = String(question || "").toLowerCase();
-    if (/(dealer|branch|network|attention|watch|weak|risk dealer)/.test(text)) return "dealer";
-    if (/(product|model|push|portfolio|mix|gp model|margin model)/.test(text)) return "product";
-    if (/(forecast|target|gap|risk|projection|next period)/.test(text)) return "forecast";
-    if (/(action|recommend|next best|priority|do next|decision)/.test(text)) return "action";
-    if (/(sales|performance|revenue|kpi|current|unit|gp|margin)/.test(text)) return "sales";
+    if (/(dealer|branch|network|attention|watch|weak|risk dealer|สาขา|ดีลเลอร์|ตัวแทน|เครือข่าย|ต้องติดตาม|ความเสี่ยง dealer)/.test(text)) return "dealer";
+    if (/(product|model|push|portfolio|mix|gp model|margin model|สินค้า|รุ่น|ผลักดัน|สัดส่วน|พอร์ต|gp)/.test(text)) return "product";
+    if (/(forecast|target|gap|risk|projection|next period|คาดการณ์|เป้าหมาย|ส่วนต่าง|ความเสี่ยง|เดือนหน้า)/.test(text)) return "forecast";
+    if (/(action|recommend|next best|priority|do next|decision|ทำอะไร|คำแนะนำ|ถัดไป|ควรทำ|ลำดับความสำคัญ|ตัดสินใจ)/.test(text)) return "action";
+    if (/(sales|performance|revenue|kpi|current|unit|gp|margin|ยอดขาย|ผลงาน|รายได้|จำนวนขาย|กำไร)/.test(text)) return "sales";
     return "summary";
   }
 
@@ -654,7 +659,7 @@
         <div class="enterprise-eyebrow" data-i18n="export.foundation">Export Foundation</div>
         <h2 data-i18n="export.preparedOutputs">Prepared Outputs</h2>
         <div class="export-actions" id="enterpriseExportActions"></div>
-        <p id="enterpriseExportStatus" class="export-status" data-i18n="export.ready">V7.1 Export Center prepared.</p>
+        <p id="enterpriseExportStatus" class="export-status" data-i18n="export.ready">V10 Export Center prepared.</p>
       </div>`;
 
     const anchor = document.querySelector(".ai-strip");
@@ -673,7 +678,7 @@
       <div class="enterprise-ai-heading">
         <div>
           <div class="enterprise-eyebrow" data-i18n="ai.engine">AI Insight Engine</div>
-          <h2 data-i18n="ai.ruleBased">V6 Rule-Based Insights</h2>
+          <h2 data-i18n="ai.ruleBased">V10 Rule-Based Insights</h2>
         </div>
         <span data-i18n="ai.localOnly">Local dashboard_data.json only</span>
       </div>
@@ -730,22 +735,22 @@
     const kpi = utils.kpi(data);
     const summary = executiveSummary(data);
     const table = [
-      ["Metric", "Value"],
-      ["Filtered units", kpi.units],
-      ["Sales value", kpi.sales],
-      ["Gross profit", kpi.gp],
-      ["GP margin", utils.formatPercent(kpi.gpPct)],
-      ["Forecast", summary.forecast],
-      ["Target baseline", summary.target],
-      ["Forecast gap", summary.gap],
-      ["Overall sales result", summary.overall],
-      ["Leading dealer", summary.leadingDealer],
-      ["Leading product", summary.leadingProduct],
-      ["GP margin signal", summary.margin],
-      ["Forecast risk", summary.forecastRisk],
-      ["Recommended next action", summary.nextAction]
+      [local("Metric", "หัวข้อ"), local("Value", "ค่า")],
+      [t("label.filteredUnits"), kpi.units],
+      [t("kpi.salesValue"), kpi.sales],
+      [t("kpi.grossProfit"), kpi.gp],
+      [t("kpi.gpMargin"), utils.formatPercent(kpi.gpPct)],
+      [t("kpi.forecast"), summary.forecast],
+      [t("label.targetBaseline"), summary.target],
+      [t("kpi.forecastGap"), summary.gap],
+      [local("Overall sales result", "ภาพรวมยอดขาย"), summary.overall],
+      [local("Leading dealer", "Dealer ผู้นำ"), summary.leadingDealer],
+      [local("Leading product", "สินค้าผู้นำ"), summary.leadingProduct],
+      [local("GP margin signal", "สัญญาณ GP margin"), summary.margin],
+      [local("Forecast risk", "ความเสี่ยงคาดการณ์"), summary.forecastRisk],
+      [t("ai.recommendedAction"), summary.nextAction]
     ];
-    downloadFile("kmm-v7-1-executive-summary.csv", "text/csv;charset=utf-8", table.map((row) => row.map(csvCell).join(",")).join("\n"));
+    downloadFile("kmm-v10-executive-summary.csv", "text/csv;charset=utf-8", "\uFEFF" + table.map((row) => row.map(csvCell).join(",")).join("\n"));
   }
 
   async function exportPng() {
@@ -756,7 +761,7 @@
     clone.querySelectorAll("canvas").forEach((canvasClone, index) => {
       const sourceCanvas = target.querySelectorAll("canvas")[index];
       const image = new Image();
-      image.alt = "Rendered chart";
+      image.alt = local("Rendered chart", "กราฟที่แสดงผลแล้ว");
       image.src = sourceCanvas?.toDataURL("image/png") || "";
       image.style.width = "100%";
       image.style.height = "100%";
@@ -804,7 +809,7 @@
           reject(new Error(t("error.pngFailed")));
           return;
         }
-        downloadFile("kmm-v7-1-dashboard.png", "image/png", blob);
+        downloadFile("kmm-v10-dashboard.png", "image/png", blob);
         resolve();
       }, "image/png");
     });
@@ -842,7 +847,7 @@
       modal.innerHTML = `
         <section class="enterprise-modal-panel">
           <button type="button" class="enterprise-modal-close" data-enterprise-modal-close data-i18n-aria="button.close" aria-label="Close report" data-i18n="button.close">Close</button>
-          <div class="enterprise-eyebrow" data-i18n="report.production">V7.1 Production Report</div>
+          <div class="enterprise-eyebrow" data-i18n="report.production">V10 Production Report</div>
           <h2 id="enterpriseReportTitle"></h2>
           <p id="enterpriseReportMeta"></p>
           <div id="enterpriseReportBody" class="enterprise-report-body"></div>
@@ -892,7 +897,7 @@
 
     deck = el("section", "enterprise-intelligence-deck");
     deck.id = "enterpriseIntelligenceDeck";
-    deck.setAttribute("aria-label", "V6 Enterprise Intelligence");
+    deck.setAttribute("aria-label", "V10 Enterprise Intelligence");
     const anchor = document.querySelector(".kpi-grid");
     if (anchor) anchor.insertAdjacentElement("afterend", deck);
     else document.querySelector(".main-content")?.appendChild(deck);
@@ -924,7 +929,7 @@
   }
 
   function placeholderCard(title, value, text) {
-    return `<article class="intel-placeholder-card"><span>${local("V6 foundation", "พื้นฐาน V6")}</span><strong>${title}</strong><b>${value}</b><p>${text}</p></article>`;
+    return `<article class="intel-placeholder-card"><span>${local("V10 foundation", "พื้นฐาน V10")}</span><strong>${title}</strong><b>${value}</b><p>${text}</p></article>`;
   }
 
   function renderCommonKpiWall(summary, groups) {
@@ -949,7 +954,7 @@
       models: utils.groupBy(rows, (item) => item.model),
       types: utils.groupBy(rows, (item) => item.type),
       sources: utils.groupBy(rows, utils.sourceName),
-      months: utils.groupBy(rows, (item) => utils.monthName(item.month)).reverse()
+      months: utils.groupBy(rows, (item) => monthName(item.month)).reverse()
     };
   }
 
@@ -970,7 +975,7 @@
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.nextBestActions")}</div>${actionCard(local("Protect margin", "ปกป้องกำไร"), local(`Review discounting on ${lowMargin.name}.`, `ทบทวนส่วนลดของ ${lowMargin.name}`))}${actionCard(local("Lift secondary dealers", "ยกระดับ Dealer รอง"), local(`Follow up with ${weakDealer.name} on activity and stock blockers.`, `ติดตาม ${weakDealer.name} เรื่องกิจกรรมและข้อจำกัดสต็อก`))}${actionCard(local("Secure availability", "ยืนยันความพร้อมสินค้า"), local(`Keep ${topModel.name} supply visible for close planning.`, `ทำให้ supply ของ ${topModel.name} ชัดเจนสำหรับแผนปิดการขาย`))}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.dealerSnapshot")}</div>${groups.dealers.slice(0, 5).map((row) => miniRow(row.name, unitText(row.units), `GP ${utils.formatPercent(row.gpPct)}`)).join("")}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.productSnapshot")}</div>${groups.types.slice(0, 5).map((row) => miniRow(row.name, local(`${utils.formatPercent(row.share)} mix`, `สัดส่วน ${utils.formatPercent(row.share)}`), unitText(row.units))).join("")}</section>
-        <section class="intel-panel">${placeholderCard(t("label.monthlyGapForecast"), `${gap >= 0 ? "+" : ""}${unitText(gap)}`, local("Placeholder for V6 forecast center with target, actual, gap, and confidence controls.", "Placeholder สำหรับศูนย์คาดการณ์ V6 พร้อมเป้าหมาย ยอดจริง ส่วนต่าง และความเชื่อมั่น"))}</section>
+        <section class="intel-panel">${placeholderCard(t("label.monthlyGapForecast"), `${gap >= 0 ? "+" : ""}${unitText(gap)}`, local("V10 static forecast center with target, actual, gap, and confidence controls.", "ศูนย์คาดการณ์ Static V10 พร้อมเป้าหมาย ยอดจริง ส่วนต่าง และความเชื่อมั่น"))}</section>
       </div>`;
   }
 
@@ -1200,7 +1205,7 @@
     if (document.getElementById("enterpriseFooter")) return;
     const footer = el("footer", "enterprise-footer");
     footer.id = "enterpriseFooter";
-    footer.innerHTML = `<strong>KMM Sales Intelligence V7.1 Production Ready</strong><span>${t("message.footer")}</span>`;
+    footer.innerHTML = `<strong>KMM Sales Intelligence V10 Production Release</strong><span>${t("message.footer")}</span>`;
     document.querySelector(".main-content")?.appendChild(footer);
   }
 

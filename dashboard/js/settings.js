@@ -49,6 +49,7 @@
     document.getElementById("settingsUsername").value = settings.username;
     document.getElementById("settingsRole").value = window.KMMI18n ? window.KMMI18n.t(`role.${settings.role}`) : settings.role;
     document.getElementById("settingsVersion").value = settings.version;
+    updateCompanyLabels();
 
     form.addEventListener("submit", event => {
       event.preventDefault();
@@ -63,6 +64,14 @@
       if (status) {
         status.textContent = window.KMMI18n ? window.KMMI18n.t("settings.saved") : "Settings saved for this session.";
       }
+      const refreshed = readSettings();
+      if (refreshed) {
+        document.getElementById("settingsCompany").value = refreshed.company;
+        document.getElementById("settingsLanguage").value = refreshed.language;
+        document.getElementById("settingsRole").value = window.KMMI18n ? window.KMMI18n.t(`role.${refreshed.role}`) : refreshed.role;
+        document.getElementById("settingsVersion").value = refreshed.version;
+        updateCompanyLabels();
+      }
     });
 
     document.getElementById("settingsLanguage").addEventListener("change", event => {
@@ -70,6 +79,15 @@
       const role = document.getElementById("settingsRole");
       if (role) role.value = window.KMMI18n ? window.KMMI18n.t(`role.${settings.role}`) : settings.role;
       event.target.value = selected;
+      updateCompanyLabels();
+    });
+  }
+
+  function updateCompanyLabels() {
+    const company = document.getElementById("settingsCompany");
+    if (!company || !window.KMMSecurity.company) return;
+    Array.from(company.options).forEach(option => {
+      option.textContent = window.KMMSecurity.company.getCompanyLabel(option.value);
     });
   }
 
