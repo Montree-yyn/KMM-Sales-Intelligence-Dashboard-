@@ -27,15 +27,34 @@
   function readSession() {
     try {
       const raw = sessionStorage.getItem(SESSION_KEY);
-      return raw ? JSON.parse(raw) : null;
+      const session = raw ? JSON.parse(raw) : null;
+      return sanitizeSession(session);
     } catch (error) {
       clearSession();
       return null;
     }
   }
 
+  function sanitizeSession(session) {
+    if (!session || typeof session !== "object") return null;
+    let changed = false;
+    ["password", "currentPassword", "suppliedPassword"].forEach(key => {
+      if (Object.prototype.hasOwnProperty.call(session, key)) {
+        delete session[key];
+        changed = true;
+      }
+    });
+    session.role = normalizeRole(session.role);
+    session.timeoutMinutes = Number(session.timeoutMinutes) || DEFAULT_TIMEOUT_MINUTES;
+    session.company = session.company || "KMM";
+    session.language = session.language || "th";
+    if (changed) writeSession(session);
+    return session;
+  }
+
   function writeSession(session) {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    const safeSession = sanitizeSession(Object.assign({}, session));
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(safeSession));
   }
 
   function clearSession(reason) {
@@ -132,6 +151,7 @@
     getLogoutReason,
     isExpired,
     readSession,
+    sanitizeSession,
     touchSession,
     writeSession
   };

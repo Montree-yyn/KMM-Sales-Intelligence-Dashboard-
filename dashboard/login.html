@@ -87,11 +87,19 @@
         }
       }
 
+      const existingSession = window.KMMSecurity.auth.readSession();
+      if (existingSession && !window.KMMSecurity.auth.isExpired(existingSession)) {
+        window.location.href = safeReturnTo();
+        return;
+      }
+
       form.addEventListener("submit", event => {
         event.preventDefault();
         const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value;
+        const passwordInput = document.getElementById("password");
+        const password = passwordInput.value;
         const result = window.KMMSecurity.auth.authenticate(username, password);
+        passwordInput.value = "";
 
         if (!result.ok) {
           hint.textContent = result.error;

@@ -113,6 +113,19 @@ V9 stabilizes the V8.1 security platform and Thai-first dashboard experience for
 
 Security limitation: V9 still uses static credentials delivered in JavaScript as temporary V8.1 protection for casual access only. V10 must replace this with real authentication.
 
+## V10.1 Stabilization
+
+V10.1 completes a controlled stabilization pass over the existing static V10 production dashboard. It does not restart the architecture and keeps the dashboard static, browser-only, and GitHub Pages compatible.
+
+- Thai remains the default language, with broader coverage across static HTML and JS-generated text.
+- Login, password validation, session timeout, and logout behavior are stabilized without storing passwords in session state.
+- Settings is improved for language, company, role, timeout, theme, and version review.
+- Thai readability, line height, button wrapping, sidebar labels, and mobile overflow handling are improved in the shared CSS baseline.
+- Report Center generates Thai local summaries without external services.
+- Export Center supports CSV summary download and attempts PNG export; PDF and PowerPoint remain clear Thai placeholders.
+- AI Copilot keeps Thai preset questions and local rule-based Thai answers.
+- Protected files remain unchanged: `dashboard/data/dashboard_data.json` and `tools/update_dashboard.py`.
+
 ## Near-Term Priorities
 
 1. V10 Authentication: replace static credentials with a real identity provider or server-side authentication, token/session validation, audit logs, role claims, and tenant-aware authorization.
