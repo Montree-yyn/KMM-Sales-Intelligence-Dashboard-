@@ -98,15 +98,30 @@ V8.1-V9 adds full Thai language support while preserving English as fallback and
 - Noto Sans Thai, Thai-friendly line height, wrapping buttons, and readable sidebar labels are part of the shared CSS baseline.
 - The implementation does not change `dashboard/data/dashboard_data.json`, `tools/update_dashboard.py`, backend behavior, npm dependencies, or build tooling.
 
+## V9 Stabilization & Thai Production Upgrade
+
+V9 stabilizes the V8.1 security platform and Thai-first dashboard experience for production use under the current static hosting constraints.
+
+- Thai is the default language for login, settings, route/session messages, dashboard headers, side navigation, filters, KPI cards, generated AI insight cards, copilot answers, report center text, export buttons, and toasts.
+- English remains available as fallback through `dashboard/js/i18n.js` and the language selector.
+- Login requires username and password; invalid users and wrong passwords fail before a session is created.
+- Session storage keeps only non-password session metadata.
+- Protected dashboard URLs redirect unauthenticated or expired users to `dashboard/login.html`.
+- CSS improves Thai font rendering, line-height, wrapping, sidebar readability, and mobile overflow protection.
+- PDF and PowerPoint exports remain clear placeholders; CSV and PNG stay static/browser-safe foundations.
+- Company selector remains a framework placeholder until approved tenant-safe datasets exist.
+
+Security limitation: V9 still uses static credentials delivered in JavaScript as temporary V8.1 protection for casual access only. V10 must replace this with real authentication.
+
 ## Near-Term Priorities
 
-1. V8.1 Copilot: improve natural language intent, cross-page search, and report generation from copilot answers.
-2. V7.2 Export Center: implement real PDF and PowerPoint exports with reviewed lightweight/static-safe technology.
-3. PWA: explore installable mobile access and offline caching while preserving static hosting.
-4. V8.1-V9 security and company engine: mature role policies, company-specific branding, dataset partitioning, and tenant-safe configuration.
-5. Keep dashboard pages aligned with the shared CSS and JS modules.
-6. Maintain clean Excel-to-JSON updates through `tools/update_dashboard.py`.
-7. Keep AI insight and copilot generation rule-based until a backend or approved API integration exists.
+1. V10 Authentication: replace static credentials with a real identity provider or server-side authentication, token/session validation, audit logs, role claims, and tenant-aware authorization.
+2. Real Export Center: implement reviewed PDF and PowerPoint exports with print fidelity, safe file naming, and clear static-vs-service architecture.
+3. Multi-company datasets: add tenant/company identifiers, dataset partitioning, export isolation, and company-specific permissions before activating real company switching.
+4. Copilot: improve natural language intent, cross-page search, and report generation from copilot answers while staying rule-based until an approved service layer exists.
+5. PWA: explore installable mobile access and offline caching while preserving static hosting.
+6. Keep dashboard pages aligned with the shared CSS and JS modules.
+7. Maintain clean Excel-to-JSON updates through `tools/update_dashboard.py`.
 
 ## Future Roadmap
 
@@ -132,6 +147,8 @@ V8 status: delivered as a rule-based Executive Intelligence Cockpit and Enterpri
 
 V7.1 delivers practical CSV export and a safe browser-native PNG capture attempt. V7.2 should replace the PDF and PowerPoint placeholders with real board-pack exports after bundle size, browser compatibility, print fidelity, and GitHub Pages constraints are reviewed.
 
+Future real exports should support executive board packs, filtered report snapshots, Thai text rendering, and predictable file names. If browser-only export quality is insufficient, the roadmap should explicitly approve an authenticated export service rather than hiding backend work inside the static app.
+
 ### Forecast AI
 
 Continue improving the existing Forecast AI page with stronger scenario modeling, better target-gap analysis, regional forecast views, and clearer confidence indicators.
@@ -146,9 +163,13 @@ V8 should introduce company-level segmentation only after the dashboard data con
 
 V8.1-V9 now includes the browser-side company framework for KMM, KM, and TS. The current selector stores the active company in `sessionStorage` and exposes theme and dataset placeholders. Future work should connect those placeholders to approved company-specific datasets only after the data contract includes tenant identifiers and export isolation rules.
 
+The future multi-company dataset roadmap must define tenant keys, dataset ownership, permission inheritance, export boundaries, and cross-company visibility rules before any production company switch can affect data.
+
 ### Future Cloud Authentication
 
 The current security platform is a static front-end framework, not a backend authentication service. V8.1 uses static local credentials only as temporary protection for casual access. Future cloud authentication should add Firebase Auth, Microsoft Entra ID, Google Workspace, or server-side authentication with real identity provider validation, server-side session validation, token refresh, audit logging, password policy, tenant-aware authorization, and secure secrets handling. Any cloud authentication design must explicitly preserve or replace the current GitHub Pages hosting model.
+
+V10 should remove static credentials from browser JavaScript, enforce password/identity policy outside the client, validate roles from trusted claims, expire/refresh tokens safely, and record audit events for login, logout, access denial, export, and company switching.
 
 ## Release Principles
 

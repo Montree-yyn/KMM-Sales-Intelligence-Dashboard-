@@ -127,6 +127,10 @@ Browser-only i18n framework loaded from `dashboard/js/i18n.js`. Public functions
 
 The core CSS imports Noto Sans Thai and applies Thai-friendly line height. Buttons, sidebar labels, security controls, and export/report actions allow wrapping so Thai business labels remain readable on mobile and desktop.
 
+V9 stabilization extends Thai-first component behavior to generated AI insight cards, copilot answer cards, report modals, export toasts, security messages, role labels, company labels, enterprise deck panels, and executive briefing chips. Components should prefer `data-i18n` for static markup and `KMMI18n.t(key)` or shared language-aware helpers for JavaScript-rendered text.
+
+Thai labels can be longer than English labels, so reusable components must keep flexible widths, `min-width: 0`, normal wrapping, and no horizontal overflow at mobile widths. Buttons may wrap to multiple lines when that preserves readability.
+
 ## Filters
 
 ### `.filter-bar`
@@ -298,6 +302,10 @@ The security components are deliberately plain HTML, CSS, and JavaScript:
 Future cloud authentication should reuse these visible components where useful, but replace local session trust with server-validated identity and tenant-aware permissions.
 - PowerPoint button shows `PowerPoint export is prepared for V7.2.`
 
+### V9 Security Notice Component Rule
+
+Any visible security copy must make clear that static credentials are temporary V8.1 protection only. The login form requires username and password, wrong passwords fail, and the session stores no password. This is still not production-grade authentication because the credential list is delivered in browser JavaScript.
+
 ### `.report-center-v71`
 
 Executive-only Production Report Center on `dashboard/executive.html`. It contains Weekly Report, Monthly Report, Executive Summary, and Dealer Review buttons. Buttons use `data-enterprise-report` and open the shared report modal with rule-based text from filtered `dashboard/data/dashboard_data.json` rows.
@@ -449,6 +457,15 @@ Visible export-ready controls for PDF, PowerPoint, Excel, and PNG. V7.1 handlers
 - Reuse existing page aggregators for cross-page data search rather than duplicating business logic.
 - Generate copilot reports through the existing V7.1 modal/export patterns where possible.
 - Keep future OpenAI/API integration optional and gated behind approved architecture for secrets, privacy, cost, and hosting constraints.
+
+## V9 Stabilization Rules
+
+- Thai is the production default for visible dashboard text.
+- English fallback must remain available through the language selector.
+- JavaScript-generated insight, report, export, toast, permission, role, and session text must be language-aware.
+- Export controls may download CSV and attempt PNG, but PDF and PowerPoint remain explicit placeholders until real export architecture is approved.
+- Multi-company UI remains a framework placeholder until tenant-safe datasets, permissions, and export isolation exist.
+- Do not modify `dashboard/data/dashboard_data.json` or `tools/update_dashboard.py` for UI-only stabilization.
 
 ## Specialized Modules
 

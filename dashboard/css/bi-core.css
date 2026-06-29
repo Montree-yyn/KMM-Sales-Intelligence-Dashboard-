@@ -18,7 +18,15 @@ textarea {
 
 html[lang="th"],
 html[data-language="th"] {
-  line-height: 1.55;
+  line-height: 1.62;
+}
+
+* {
+  min-width: 0;
+}
+
+body {
+  overflow-x: hidden;
 }
 
 button,
@@ -35,10 +43,51 @@ button,
   line-height: 1.35;
 }
 
+html[data-language="th"] h1,
+html[data-language="th"] h2,
+html[data-language="th"] h3,
+html[data-language="th"] p,
+html[data-language="th"] span,
+html[data-language="th"] small,
+html[data-language="th"] strong,
+html[data-language="th"] label,
+html[data-language="th"] td,
+html[data-language="th"] th {
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
 .nav-menu strong,
 .nav-menu small {
   display: block;
   line-height: 1.35;
+}
+
+.nav-menu a span:last-child {
+  min-width: 0;
+}
+
+html[data-language="th"] .nav-menu strong {
+  font-size: 13px;
+}
+
+html[data-language="th"] .nav-menu small {
+  font-size: 11px;
+}
+
+.enterprise-actions,
+.export-actions,
+.report-actions-v71,
+.copilot-presets,
+.settings-actions {
+  flex-wrap: wrap;
+}
+
+.enterprise-action,
+.export-button,
+.report-button-v71,
+.copilot-presets button {
+  min-height: 42px;
 }
 
 .language-switch {
@@ -63,4 +112,24 @@ button,
   color: #101828;
   padding: 0 12px;
   font-weight: 800;
+}
+
+@media (max-width: 720px) {
+  .enterprise-actions,
+  .export-actions,
+  .report-actions-v71,
+  .copilot-input-row,
+  .security-bar {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .enterprise-action,
+  .export-button,
+  .report-button-v71,
+  .copilot-submit,
+  .login-button,
+  .settings-save {
+    width: 100%;
+  }
 }

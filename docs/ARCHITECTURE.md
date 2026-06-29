@@ -76,7 +76,20 @@ data/
 
 The framework translates explicit `data-i18n`, `data-i18n-placeholder`, and `data-i18n-aria` attributes and also maps known static dashboard text to dictionary keys. This keeps generated one-line dashboard pages usable without changing the data contract or adding a build step. English remains the fallback for missing keys.
 
-Thai-first UX is applied to navigation, login, settings, filters, KPI labels, export/report controls, security bar labels, role labels, company labels, and safe AI/report status text. Longer calculated insight sentences can still include English business terms when they combine live dealer/product names and computed values.
+Thai-first UX is applied to navigation, login, settings, filters, KPI labels, export/report controls, security bar labels, role labels, company labels, and safe AI/report status text. V9 stabilization extends this to JavaScript-generated AI insight cards, copilot answers, report modal text, export toasts, enterprise deck panels, and executive briefing text while preserving English fallback through `window.KMMI18n.t(key)`.
+
+## V9 Stabilization Layer
+
+V9 Stabilization keeps the same static runtime but hardens the production UX for Thai users:
+
+- Thai remains the default language, including dynamic JavaScript-generated insight/report/export/security text.
+- English remains the fallback language through the shared dictionary and language selector.
+- `bi-core.css` imports Noto Sans Thai, raises Thai line-height, allows button/sidebar wrapping, and prevents horizontal overflow on mobile.
+- Static security remains temporary V8.1 protection only. Usernames and passwords are validated before session creation, but credentials are delivered in JavaScript and are not a replacement for real authentication.
+- The password is never written to `sessionStorage`; only username, role, company, theme, language, timeout, timestamps, and version metadata are stored.
+- Protected routes redirect unauthenticated or expired sessions back to `dashboard/login.html`.
+
+The stabilization pass does not modify `dashboard/data/dashboard_data.json`, `tools/update_dashboard.py`, backend behavior, npm dependencies, or build tooling.
 
 ## V8.1-V9 Enterprise Security Platform
 
@@ -265,6 +278,8 @@ V8.1-V9 sits above the V8 copilot as a static security shell. The copilot remain
 
 Future cloud authentication should replace the current static session placeholder with a real identity layer. Required decisions include identity provider, token lifetime, refresh flow, server-side authorization, tenant claims, audit logging, logout propagation, secret handling, and whether GitHub Pages remains the hosting surface or becomes a static client served beside a cloud API.
 
+V10 authentication should specifically add server-validated identity, secure password/secret handling, token refresh, tenant-aware authorization, audit logs, role claims, logout propagation, and rate limiting. The current static credentials must be removed when V10 authentication lands.
+
 ## Export Foundation
 
 The V7.1 export layer keeps PDF and PowerPoint static-safe placeholders while adding practical browser downloads:
@@ -275,6 +290,12 @@ The V7.1 export layer keeps PDF and PowerPoint static-safe placeholders while ad
 - PowerPoint placeholder message: `PowerPoint export is prepared for V7.2.`
 
 No npm package, backend service, external API, or build step is introduced. V7.2 can add real PDF and PowerPoint exports after the export technology is reviewed for static hosting compatibility.
+
+Future real export work should produce reviewed PDF/PowerPoint board packs from the same filtered local data, define print fidelity expectations, avoid leaking private filesystem paths, and decide whether export generation remains browser-only or moves to an authenticated service.
+
+## Multi-Company Dataset Roadmap
+
+`company.js` currently exposes KMM, KM, and TS as browser-side metadata with theme and dataset placeholders. A future multi-company release must add approved company identifiers to the data contract, tenant-aware filters, export isolation, permission rules, company-specific branding, and separate or partitioned datasets before the selector can be considered tenant-safe.
 
 ## Data Source
 
