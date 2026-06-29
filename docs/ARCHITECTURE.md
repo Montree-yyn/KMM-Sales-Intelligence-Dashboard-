@@ -146,6 +146,15 @@ V7.1 extends `bi-enterprise.js` with production-ready executive review helpers w
 - PDF and PowerPoint export actions intentionally remain V7.2 placeholders with explicit user-facing messages.
 - Presentation Mode toggles a CSS class that hides the sidebar and expands dashboard content without changing data, routes, or storage.
 
+V8 extends the same layer with an Enterprise AI Copilot:
+
+- `BI.enterprise.generateCopilotAnswer(rows, question)` generates deterministic answer cards from filtered local rows.
+- Copilot intent detection uses keyword rules for sales performance, dealer attention, product push, forecast risk, and next-best-action questions.
+- Each answer includes KPI summary, dealer insight, product insight, forecast insight, and recommended action cards.
+- `dashboard/js/executive.js` wires the visible copilot panel to active filters, preset question buttons, the Ask button, and Enter-key submission.
+- The copilot uses DOM text rendering for answers and does not call external APIs.
+- Missing or empty filtered data returns professional placeholders instead of errors.
+
 ## v5 Module Framework
 
 The current six pages remain the production entry points. The module framework documents where future dashboards fit without changing existing paths:
@@ -159,7 +168,7 @@ The current six pages remain the production entry points. The module framework d
 
 ## Enterprise Intelligence Foundation
 
-The V5.2 intelligence layer is intentionally rule-based and browser-only. It does not call external APIs. Each page passes filtered rows to `BI.enterprise.refresh(rows)`, which generates the shared insight panel, V5.2 intelligence deck, six-card rule engine, export foundation, and footer from loaded dashboard data. If no rows match the filters, the insight card shows a no-data placeholder.
+The Enterprise intelligence layer is intentionally rule-based and browser-only. It does not call external APIs. Each page passes filtered rows to `BI.enterprise.refresh(rows)`, which generates the shared insight panel, intelligence deck, six-card rule engine, export foundation, and footer from loaded dashboard data. If no rows match the filters, the insight card shows a no-data placeholder.
 
 Current insight types:
 
@@ -178,6 +187,15 @@ Current V5.2 deck types:
 - Product Intelligence.
 - Dealer Intelligence.
 - Forecast Intelligence.
+
+The V8 copilot sits on top of this foundation on `dashboard/executive.html`. It reads the same filtered rows already used by the executive KPIs, charts, briefing, reports, and exports. It does not introduce a new data file, backend endpoint, npm dependency, build process, or storage layer.
+
+## V8.1 Architecture Roadmap
+
+- Better natural language intent: add broader keyword dictionaries, phrase normalization, and confidence labels while staying deterministic.
+- Cross-page data search: let copilot answers cite signals from Sales, Salesman, Product, Dealer, and Forecast modules through shared front-end aggregators.
+- Report generation from copilot: convert copilot answers into report modal content and downloadable static-safe summaries.
+- Future OpenAI/API integration option: only after an explicit architecture decision covering service boundaries, secrets, privacy, cost control, offline behavior, and GitHub Pages compatibility.
 
 ## Export Foundation
 

@@ -61,6 +61,36 @@
         </div>
       </section>
 
+      <section class="copilot-panel" aria-label="Enterprise AI Copilot">
+        <div class="copilot-header">
+          <div>
+            <div class="enterprise-eyebrow">V8 Enterprise AI Copilot</div>
+            <h2>Ask business questions from current dashboard data</h2>
+            <p>Rule-based answers use the active filters and local dashboard_data.json only.</p>
+          </div>
+          <div class="copilot-status">No external API</div>
+        </div>
+        <div class="copilot-input-row">
+          <label class="sr-only" for="copilotQuestion">Ask the AI Copilot</label>
+          <input id="copilotQuestion" type="text" placeholder="Ask about sales, dealer risk, product push, forecast risk, or next best action">
+          <button type="button" id="copilotAskButton" class="copilot-submit">Ask</button>
+        </div>
+        <div class="copilot-presets" aria-label="Preset copilot questions">
+          <button type="button" data-copilot-question="Current sales performance">Current sales performance</button>
+          <button type="button" data-copilot-question="Dealer needing attention">Dealer needing attention</button>
+          <button type="button" data-copilot-question="Product to push">Product to push</button>
+          <button type="button" data-copilot-question="Forecast risk">Forecast risk</button>
+          <button type="button" data-copilot-question="Next best action">Next best action</button>
+        </div>
+        <div id="copilotAnswer" class="copilot-answer" aria-live="polite">
+          <article class="copilot-card placeholder">
+            <span>Ready</span>
+            <strong>Ask the copilot a business question</strong>
+            <p>Answers will update here from the current filtered sales records without reloading the page.</p>
+          </article>
+        </div>
+      </section>
+
       <section class="v6-cockpit-grid">
         <div class="panel v6-panel span-2"><h2>Sales Trend Chart</h2><p><a href="sales.html">Open Sales Analytics</a></p><div class="chart-box lg"><canvas id="trendChart"></canvas></div></div>
         <div class="panel v6-panel"><h2>Forecast Gap Panel</h2><p>Rule-based target gap from local data</p><div id="forecastGapPanel" class="risk-list"></div></div>

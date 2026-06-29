@@ -58,15 +58,36 @@ V7.1 upgrades the V7 Enterprise Platform for real executive review while preserv
 - UI polish improves report cards, modals, export buttons, mobile wrapping, print output, and horizontal overflow protection.
 - Protected data generation files remain unchanged: `dashboard/data/dashboard_data.json` and `tools/update_dashboard.py`.
 
+## V8 Enterprise AI Copilot
+
+V8 builds on V7.1 Production Ready with a practical executive copilot on `dashboard/executive.html`. It remains static, browser-only, and GitHub Pages compatible.
+
+- Visible Enterprise AI Copilot section on the Executive Intelligence Cockpit.
+- Free-text question input with preset prompts for current sales performance, dealer needing attention, product to push, forecast risk, and next best action.
+- Rule-based answer engine in `dashboard/js/bi-enterprise.js` using filtered rows from `dashboard/data/dashboard_data.json`.
+- Intent detection from business keywords for sales, dealer, product, forecast, and action questions.
+- Answer cards for KPI summary, dealer insight, product insight, forecast insight, and recommended action.
+- Executive integration in `dashboard/js/executive.js` so copilot answers refresh from current filters without page reload.
+- Professional no-data placeholders when filtered data is unavailable.
+- No external AI API calls, no backend, no npm workflow, no build tooling, and no data contract change.
+
+## V8.1 Roadmap
+
+1. Better natural language intent handling with richer synonym coverage and confidence scoring.
+2. Cross-page data search that can answer questions spanning Executive, Sales, Salesman, Product, Dealer, and Forecast views.
+3. Report generation from copilot answers, reusing the V7.1 Production Report Center patterns.
+4. Optional future OpenAI/API integration after an approved static-safe or service-backed architecture decision.
+5. Persisted copilot prompt history, if storage and privacy expectations are approved.
+
 ## Near-Term Priorities
 
-1. V7.2 Export Center: implement real PDF and PowerPoint exports with reviewed lightweight/static-safe technology.
-2. AI Copilot: define a future approved architecture before any external AI API integration.
+1. V8.1 Copilot: improve natural language intent, cross-page search, and report generation from copilot answers.
+2. V7.2 Export Center: implement real PDF and PowerPoint exports with reviewed lightweight/static-safe technology.
 3. PWA: explore installable mobile access and offline caching while preserving static hosting.
 4. V8 multi-company engine: evaluate company-level filters, branding, data partitioning, and tenant-safe configuration.
 5. Keep dashboard pages aligned with the shared CSS and JS modules.
 6. Maintain clean Excel-to-JSON updates through `tools/update_dashboard.py`.
-7. Keep AI insight generation rule-based until a backend or approved API integration exists.
+7. Keep AI insight and copilot generation rule-based until a backend or approved API integration exists.
 
 ## Future Roadmap
 
@@ -86,7 +107,7 @@ Add inventory visibility for current stock, stock aging, slow-moving models, pro
 
 Add an executive summary layer that converts KPI movements into concise business observations. This should remain static and browser-compatible unless an explicit future architecture decision adds a service layer.
 
-V6 status: delivered as a rule-based Executive Intelligence Cockpit across the executive page with the existing Enterprise Intelligence layer preserved across all six primary dashboard pages. Future work should focus on richer comparisons, target configuration, and optional approved AI Copilot architecture.
+V8 status: delivered as a rule-based Executive Intelligence Cockpit and Enterprise AI Copilot on the executive page, with the existing Enterprise Intelligence layer preserved across all six primary dashboard pages. Future work should focus on richer comparisons, target configuration, cross-page copilot search, report generation from copilot answers, and optional approved API architecture.
 
 ### Export Center
 
