@@ -137,6 +137,15 @@ Additional legacy or page-specific CSS files exist in `dashboard/css/`. New work
   - safe export placeholder handlers for PDF, PowerPoint, Excel, and PNG.
   - page footer and enterprise foundation panel injection.
 
+V7.1 extends `bi-enterprise.js` with production-ready executive review helpers while keeping the same static runtime:
+
+- `BI.enterprise.executiveSummary(rows)` creates a deterministic executive summary from filtered local rows.
+- `BI.enterprise.reportLines(kind, rows)` generates Weekly Report, Monthly Report, Executive Summary, and Dealer Review text for the executive Report Center.
+- The Excel export action downloads a CSV summary generated in the browser with `Blob` and relative/static-safe data only.
+- The PNG export action attempts a browser-native dashboard area capture by cloning the current dashboard and drawing an SVG `foreignObject` snapshot to canvas.
+- PDF and PowerPoint export actions intentionally remain V7.2 placeholders with explicit user-facing messages.
+- Presentation Mode toggles a CSS class that hides the sidebar and expands dashboard content without changing data, routes, or storage.
+
 ## v5 Module Framework
 
 The current six pages remain the production entry points. The module framework documents where future dashboards fit without changing existing paths:
@@ -172,7 +181,14 @@ Current V5.2 deck types:
 
 ## Export Foundation
 
-The V5.2 export layer adds visible buttons for PDF, PowerPoint, Excel, and PNG. The handlers are safe placeholders that show `Export Center is prepared for V5.3.` and never throw or call external libraries. Full file generation is deferred so the current GitHub Pages deployment remains lightweight.
+The V7.1 export layer keeps PDF and PowerPoint static-safe placeholders while adding practical browser downloads:
+
+- CSV summary export through the existing Excel button.
+- PNG dashboard capture attempt using browser APIs only.
+- PDF placeholder message: `PDF export is prepared for V7.2.`
+- PowerPoint placeholder message: `PowerPoint export is prepared for V7.2.`
+
+No npm package, backend service, external API, or build step is introduced. V7.2 can add real PDF and PowerPoint exports after the export technology is reviewed for static hosting compatibility.
 
 ## Data Source
 
@@ -200,3 +216,4 @@ The platform must remain compatible with GitHub Pages:
 - No server-side rendering.
 - No runtime dependency on private APIs.
 - Use relative paths that work from static files under `dashboard/`.
+- Do not expose private local filesystem paths or machine-specific URLs in generated report/export text.
