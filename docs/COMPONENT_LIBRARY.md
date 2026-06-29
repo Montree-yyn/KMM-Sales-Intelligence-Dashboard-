@@ -201,6 +201,34 @@ V11 executive guidance panel used on `dashboard/executive.html`. It gives three 
 
 V11 generated enterprise foundation card used by `bi-enterprise.js` for static placeholders such as forecast confidence, score foundations, and future matrix readiness. It replaces older placeholder wording while keeping a clearly static/browser-only meaning.
 
+### `.v12-bi-platform`
+
+Executive page section for the V12 Business Intelligence Platform. It contains the Thai-first weekly executive briefing, booking intelligence, stock intelligence, dealer scorecard, and salesman KPI foundations.
+
+### `.v12-platform-head`
+
+Header row for the V12 platform section. It pairs the section title and executive summary with `.v12-source-pill`, which labels the runtime as static data only.
+
+### `.v12-brief-grid` and `.v12-brief-card`
+
+Three-column executive briefing layout for key risks, opportunities, and next actions. It collapses to one column on mobile.
+
+### `.v12-signal-grid` and `.v12-signal-card`
+
+Reusable compact card grid for Booking Intelligence and Stock Intelligence signals. Cards support a label, primary value, supporting note, and `.v12-status` risk pill.
+
+### `.v12-table-scroll` and `.v12-table`
+
+Responsive scorecard table wrapper used by the Dealer Scorecard foundation. The table can scroll horizontally inside its panel on small screens without creating page-level horizontal overflow.
+
+### `.v12-salesman-grid` and `.v12-salesman-card`
+
+Responsive card grid for Salesman KPI foundation. Each card shows sales units, GP, booking proxy, activity placeholder, and coaching recommendation.
+
+### `.v12-status`
+
+Risk/status pill with `.good`, `.warn`, and `.bad` variants. Use it for V12 risk level, action state, and stable/warning/action signals.
+
 ## Chart Containers
 
 ### `.chart-box`

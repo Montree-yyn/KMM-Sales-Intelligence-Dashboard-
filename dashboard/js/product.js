@@ -46,6 +46,7 @@
     renderMatrix(models);
     renderHeatmap(rows);
     renderStockAge();
+    BI.v12?.render(rows, { stock: "v12StockGrid" });
 
     U.setText("aiTopModel", models[0]?.name || "-");
     U.setText("aiHighGP", models.slice().sort((a, b) => b.gpPct - a.gpPct)[0]?.name || "-");

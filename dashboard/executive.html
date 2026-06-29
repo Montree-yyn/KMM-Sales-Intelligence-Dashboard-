@@ -79,6 +79,44 @@
         </div>
       </section>
 
+      <section class="v12-bi-platform" aria-label="V12 Business Intelligence Platform">
+        <div class="v12-platform-head">
+          <div>
+            <div class="enterprise-eyebrow">V12 Business Intelligence Platform</div>
+            <h2>แพลตฟอร์ม Business Intelligence สำหรับผู้บริหาร</h2>
+            <p id="v12BriefSummary">กำลังประมวลผลสัญญาณจาก dashboard_data.json</p>
+          </div>
+          <span class="v12-source-pill">Static data only</span>
+        </div>
+        <div class="v12-brief-grid">
+          <article class="v12-brief-card"><h3>ความเสี่ยงหลัก</h3><ul id="v12KeyRisks"></ul></article>
+          <article class="v12-brief-card"><h3>โอกาสสำคัญ</h3><ul id="v12KeyOpportunities"></ul></article>
+          <article class="v12-brief-card"><h3>Next actions</h3><ul id="v12NextActions"></ul></article>
+        </div>
+        <div class="v12-module-grid">
+          <article class="panel v12-panel">
+            <h2>Booking Intelligence</h2>
+            <p>Aging booking, deposit signal, conversion placeholder และ dealer booking risk</p>
+            <div id="v12BookingGrid" class="v12-signal-grid"></div>
+          </article>
+          <article class="panel v12-panel">
+            <h2>Stock Intelligence</h2>
+            <p>Stock aging, fast / slow moving, availability signal และ dealer stock risk</p>
+            <div id="v12StockGrid" class="v12-signal-grid"></div>
+          </article>
+        </div>
+        <article class="panel v12-panel">
+          <h2>Dealer Scorecard Foundation</h2>
+          <p>Sales, booking, stock, GP, collection, risk level และ recommendation</p>
+          <div id="v12DealerScorecard"></div>
+        </article>
+        <article class="panel v12-panel">
+          <h2>Salesman KPI Foundation</h2>
+          <p>Sales units, GP, booking, activity placeholder และ coaching recommendation</p>
+          <div id="v12SalesmanKpi" class="v12-salesman-grid"></div>
+        </article>
+      </section>
+
       <section class="copilot-panel" aria-label="Enterprise AI Copilot">
         <div class="copilot-header">
           <div>
@@ -163,6 +201,7 @@
   <script src="js/bi-charts.js"></script>
   <script src="js/bi-core.js"></script>
   <script src="js/bi-enterprise.js"></script>
+  <script src="js/bi-v12.js"></script>
   <script src="js/executive.js"></script>
 </body>
 </html>

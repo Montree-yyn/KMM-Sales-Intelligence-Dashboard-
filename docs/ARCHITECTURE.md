@@ -33,6 +33,7 @@ dashboard/
     bi-charts.js
     bi-core.js
     bi-enterprise.js
+    bi-v12.js
     auth.js
     permission.js
     company.js
@@ -66,9 +67,11 @@ data/
    - `js/bi-filters.js`
    - `js/bi-charts.js`
    - `js/bi-core.js`
-9. The page loads its page-specific script, such as `js/executive.js`.
-10. On `DOMContentLoaded`, the page fetches `data/dashboard_data.json`.
-11. Shared utilities normalize product types, filter core product rows, calculate KPI values, and render charts/tables.
+9. Pages with V12 foundations load `js/bi-v12.js` after `js/bi-enterprise.js`.
+10. The page loads its page-specific script, such as `js/executive.js`.
+11. On `DOMContentLoaded`, the page fetches `data/dashboard_data.json`.
+12. Shared utilities normalize product types, filter core product rows, calculate KPI values, and render charts/tables.
+13. Page scripts call `BI.v12.render(filteredRows, targets)` where V12 Booking, Stock, Dealer Scorecard, Salesman KPI, or Weekly Executive Briefing panels exist.
 
 ## Thai-First I18n Framework
 
@@ -103,6 +106,20 @@ V11 Enterprise Edition keeps the V10.1 static architecture intact and adds a Tha
 - `dashboard/css/bi-core.css` contains Thai line-height, wrapping, mobile overflow protection, settings summary, and executive help panel styles.
 
 V11 still uses static credentials in browser JavaScript. This is a visible internal-use guard only and must be replaced by real authentication before wider production rollout.
+
+## V12 Business Intelligence Platform Layer
+
+V12 adds `dashboard/js/bi-v12.js` as a shared browser-only analyzer and renderer. It does not fetch additional files and does not modify the Excel-to-JSON data pipeline.
+
+- `BI.v12.analyze(rows)` creates deterministic intelligence objects from filtered local rows.
+- `BI.v12.render(rows, targets)` renders only the target panels present on the current page.
+- Booking signals are proxy metrics derived from delivered units, period aging, net received, and dealer mix because the current JSON does not contain a booking ledger.
+- Stock signals are proxy metrics derived from product/model velocity, sales recency, GP, and model mix because the current JSON does not contain current stock inventory.
+- Dealer scorecards combine sales units, booking proxy, stock signal, GP margin, collection proxy, risk level, and recommendation.
+- Salesman KPI cards combine sales units, GP margin, booking proxy, activity placeholder, and coaching recommendation.
+- Executive Weekly Briefing renders Thai-first summary, risks, opportunities, and next actions from the same filtered row set.
+
+This layer is intentionally additive. It keeps static HTML/CSS/JS only, no backend, no npm, no new build step, and no change to `dashboard/data/dashboard_data.json` or `tools/update_dashboard.py`.
 
 ## V8.1-V9 Enterprise Security Platform
 
@@ -233,6 +250,12 @@ V7.1 extends `bi-enterprise.js` with production-ready executive review helpers w
 - The PNG export action attempts a browser-native dashboard area capture by cloning the current dashboard and drawing an SVG `foreignObject` snapshot to canvas.
 - PDF and PowerPoint export actions intentionally remain V7.2 placeholders with explicit user-facing messages.
 - Presentation Mode toggles a CSS class that hides the sidebar and expands dashboard content without changing data, routes, or storage.
+
+V12 adds `bi-v12.js` for the Business Intelligence Platform foundations:
+
+- `BI.v12.analyze(rows)` for booking, stock, dealer scorecard, salesman KPI, and weekly briefing data models.
+- `BI.v12.render(rows, targets)` for targeted rendering into page-owned container IDs.
+- All calculations remain deterministic, local, and derived from the filtered `dashboard_data.json` rows.
 
 V8 extends the same layer with an Enterprise AI Copilot:
 
