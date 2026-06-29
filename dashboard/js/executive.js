@@ -294,8 +294,8 @@
     const gapRisk = gap < 0;
     const hasBookingFields = data.some((item) => Object.keys(item).some((key) => /book|แผนงานขาย|stock/i.test(key)));
     const stockSignal = hasBookingFields
-      ? (isThai() ? "แหล่งข้อมูลมีฟิลด์ลักษณะ booking, แผนงานขาย หรือ stock" : "Source contains booking, แผนงานขาย, or stock-like fields.")
-      : (isThai() ? "ยังไม่พบฟิลด์ stock หรือ booking โดยตรง จึงใช้ booking proxy" : "No explicit stock or booking fields found; using booking proxy.");
+      ? (isThai() ? "แหล่งข้อมูลมีฟิลด์ลักษณะยอดจอง แผนงานขาย หรือสต็อก" : "Source contains booking, pipeline, or stock-like fields.")
+      : (isThai() ? "ยังไม่พบฟิลด์สต็อกหรือยอดจองโดยตรง จึงใช้ค่าประมาณจากยอดส่งมอบ" : "No explicit stock or booking fields found; using booking proxy.");
     const marginSignal = summary.gpPct < 8
       ? (isThai() ? "แรงกดดันกำไร" : "margin pressure")
       : summary.gpPct < 11 ? (isThai() ? "ต้องติดตามกำไร" : "margin watch") : (isThai() ? "กำไรมั่นคง" : "stable margin");
@@ -335,7 +335,7 @@
   function recommendedAction(gpRisk, concentrationRisk, gapRisk, lowMarginModel, weakDealer, topModel) {
     if (gpRisk) return isThai() ? `ปกป้องกำไรก่อน: ทบทวนส่วนลดและเศรษฐศาสตร์ดีลของ ${lowMarginModel.name}` : `Protect margin first: review discounting and deal economics on ${lowMarginModel.name}.`;
     if (concentrationRisk) return isThai() ? `ลดการพึ่งพาเครือข่าย: เพิ่มกิจกรรมและติดตามสต็อกของ ${weakDealer.name}` : `Reduce network dependency: lift activity and stock follow-up for ${weakDealer.name}.`;
-    if (gapRisk) return isThai() ? `ปิดส่วนต่างด้วยดีลที่มีโอกาสสูง โดยใช้ ${topModel.name} เป็นตัวนำ` : `Close the gap through high-โอกาส deals led by ${topModel.name}.`;
+    if (gapRisk) return isThai() ? `ปิดส่วนต่างด้วยดีลที่มีโอกาสสูง โดยใช้ ${topModel.name} เป็นตัวนำ` : `Close the gap through high-probability deals led by ${topModel.name}.`;
     return isThai() ? `รักษาจังหวะการปิดการขายและทำให้ความพร้อมของ ${topModel.name} ชัดเจนในสาขาสำคัญ` : `Sustain close rhythm and keep ${topModel.name} availability visible across priority dealers.`;
   }
 
@@ -383,7 +383,7 @@
         <strong>${intel.forecast.toLocaleString()}</strong>
         <span>${t("label.ruleBasedForecastUnits")}</span>
       </div>
-      ${scoreRow(t("label.targetBaseline"), unitText(intel.target), isThai() ? "ตัวเตรียมพร้อมแบบคงที่ V6" : "Static V6 ตัวเตรียมพร้อม")}
+      ${scoreRow(t("label.targetBaseline"), unitText(intel.target), isThai() ? "ฐานเป้าหมายแบบคงที่สำหรับ V11" : "Static V11 planning baseline")}
       ${scoreRow(t("label.gap"), `${intel.gap >= 0 ? "+" : ""}${unitText(intel.gap)}`, intel.gap < 0 ? (isThai() ? "ต้องเร่งปิดการขาย" : "Needs close action") : (isThai() ? "สูงกว่าฐานเป้าหมาย" : "Above baseline"))}
       ${scoreRow(t("label.bestMonth"), bestMonth.name, unitText(bestMonth.units))}
       ${scoreRow(t("label.primaryLever"), topDealer.name, isThai() ? `สัดส่วน ${U.formatPercent(topDealer.share)}` : `${U.formatPercent(topDealer.share)} share`)}`);
@@ -418,7 +418,7 @@
   }
 
   function renderExecutiveStrip(summary, groups, intel) {
-    U.setText("aiSales", `${summary.units.toLocaleString()} units`);
+    U.setText("aiSales", unitText(summary.units));
     U.setText("aiGp", U.formatPercent(summary.gpPct));
     U.setText("healthScore", Math.min(99, Math.max(60, Math.round(summary.gpPct * 8))));
     U.setText("aiExecutiveFocus", groups.dealers[0]?.name || "-");

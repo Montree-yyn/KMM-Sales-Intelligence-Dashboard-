@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KMM V10 Security Settings</title>
+  <title>KMM V11 Enterprise Edition Settings</title>
   <link rel="stylesheet" href="css/bi-core.css">
   <script src="js/i18n.js"></script>
   <script src="js/auth.js"></script>
@@ -95,11 +95,50 @@
           </div>
         </form>
       </section>
+
+      <section class="settings-panel settings-enterprise-panel">
+        <h2 data-i18n="settings.systemSnapshot">ข้อมูลระบบปัจจุบัน</h2>
+        <div class="settings-summary-grid">
+          <article><span data-i18n="settings.currentUser">ผู้ใช้ปัจจุบัน</span><strong id="summaryUser">-</strong></article>
+          <article><span data-i18n="settings.role">สิทธิ์ผู้ใช้</span><strong id="summaryRole">-</strong></article>
+          <article><span data-i18n="settings.company">บริษัท</span><strong id="summaryCompany">-</strong></article>
+          <article><span data-i18n="settings.version">เวอร์ชัน</span><strong id="summaryVersion">-</strong></article>
+          <article><span data-i18n="settings.timeout">เวลาหมดอายุการใช้งาน</span><strong id="summaryTimeout">-</strong></article>
+        </div>
+      </section>
+
+      <section class="settings-panel settings-enterprise-panel">
+        <h2 data-i18n="settings.userFoundation">โครงสร้างจัดการผู้ใช้</h2>
+        <p data-i18n="settings.userFoundationBody">เตรียมพื้นที่สำหรับจัดการผู้ใช้ สิทธิ์ บริษัท และ permission ในอนาคต เวอร์ชัน static นี้ยังไม่มี backend authentication</p>
+        <div class="settings-placeholder-list">
+          <span data-i18n="role.SuperAdmin">ผู้ดูแลระบบสูงสุด</span>
+          <span data-i18n="role.Executive">ผู้บริหาร</span>
+          <span data-i18n="role.Manager">ผู้จัดการ</span>
+          <span data-i18n="role.Sales">ฝ่ายขาย</span>
+          <span data-i18n="role.Viewer">ผู้ดูข้อมูล</span>
+        </div>
+      </section>
+
+      <section class="settings-panel settings-enterprise-panel">
+        <h2 data-i18n="settings.aboutTitle">เกี่ยวกับ V11 Enterprise Edition</h2>
+        <p data-i18n="settings.aboutBody">แดชบอร์ดวิเคราะห์ยอดขายแบบ static ที่เน้นภาษาไทยสำหรับผู้บริหาร พร้อมศูนย์รายงาน โครงสร้างสิทธิ์ผู้ใช้ และการใช้งานบนมือถือ/แท็บเล็ต</p>
+      </section>
+
+      <section class="settings-panel settings-enterprise-panel">
+        <h2 data-i18n="settings.releaseNotes">Release Notes</h2>
+        <p data-i18n="settings.releaseNotesBody">V11 เน้นปรับ UX ภาษาไทย ข้อความช่วยอ่าน KPI รายงาน การตั้งค่า และ responsive stability โดยคงสถาปัตยกรรม V10.1 เดิม</p>
+      </section>
+
+      <section class="settings-panel settings-enterprise-panel">
+        <h2 data-i18n="settings.helpCenter">ศูนย์ช่วยเหลือ</h2>
+        <p data-i18n="settings.helpCenterBody">เริ่มจากตัวกรอง อ่าน KPI พร้อมคำอธิบาย ดู AI Summary สำหรับ action ของผู้บริหาร แล้วเปิดรายงานรายสัปดาห์ รายเดือน สรุปผู้บริหาร หรือรีวิวสาขา</p>
+      </section>
     </main>
   </div>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       window.KMMSecurity.settings.bindSettingsPage();
+      window.KMMSecurity.settings.renderEnterpriseSummary();
     });
   </script>
 </body>

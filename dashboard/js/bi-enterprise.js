@@ -7,16 +7,16 @@
   const pages = {
     "executive.html": {
       module: "executive",
-      eyebrow: "V10 Production Release Executive Cockpit",
+      eyebrow: "V11 Enterprise Edition Executive Cockpit",
       title: "Executive Intelligence Cockpit",
-      subtitle: "Company-wide revenue, unit sales, margin quality, dealer concentration, production reports, practical exports, and forecast action in one leadership view.",
+      subtitle: "Thai-first executive view for sales momentum, margin quality, dealer risk, product focus, report readiness, and forecast action.",
       insight: "executive",
       icon: "⌂",
       modules: ["Executive", "Sales", "Product", "Dealer"]
     },
     "salesman.html": {
       module: "salesman",
-      eyebrow: "V10 Performance Coaching",
+      eyebrow: "V11 Performance Coaching",
       title: "Sales Performance",
       subtitle: "Salesman productivity, achievement ranking, activity quality, and coaching opportunities.",
       insight: "salesman",
@@ -25,7 +25,7 @@
     },
     "sales.html": {
       module: "sales",
-      eyebrow: "V10 Commercial Analytics",
+      eyebrow: "V11 Commercial Analytics",
       title: "Sales Analytics",
       subtitle: "Period performance, channel mix, payment behavior, and product contribution trends.",
       insight: "sales",
@@ -34,7 +34,7 @@
     },
     "product.html": {
       module: "product",
-      eyebrow: "V10 Product Intelligence",
+      eyebrow: "V11 Product Intelligence",
       title: "Product Intelligence",
       subtitle: "Model demand, product mix, GP quality, inventory signals, and cross-dealer movement.",
       insight: "product",
@@ -43,7 +43,7 @@
     },
     "dealer.html": {
       module: "dealer",
-      eyebrow: "V10 Dealer Network Health",
+      eyebrow: "V11 Dealer Network Health",
       title: "Dealer Intelligence",
       subtitle: "Dealer contribution, health signals, แผนงานขาย conversion, stock age, and coverage priorities.",
       insight: "dealer",
@@ -52,9 +52,9 @@
     },
     "forecast.html": {
       module: "forecast",
-      eyebrow: "V10 Forecast Foundation",
+      eyebrow: "V11 Forecast Foundation",
       title: "Sales Forecast AI",
-      subtitle: "Rule-based forecast, target gap, แผนงานขาย โอกาส, and next-action guidance.",
+      subtitle: "Rule-based forecast, target gap, pipeline probability, and next-action guidance.",
       insight: "forecast",
       icon: "◎",
       modules: ["Forecast", "Pipeline", "Target", "Scenario"]
@@ -96,12 +96,12 @@
   };
 
   const pageEyebrows = {
-    executive: ["V10 Production Release Executive Cockpit", "V10 ห้องควบคุมผู้บริหาร Production Release"],
-    salesman: ["V10 Performance Coaching", "V10 โค้ชผลงานพนักงานขาย"],
-    sales: ["V10 Commercial Analytics", "V10 วิเคราะห์ยอดขายเชิงพาณิชย์"],
-    product: ["V10 Product Intelligence", "V10 วิเคราะห์สินค้า"],
-    dealer: ["V10 Dealer Network Health", "V10 สุขภาพเครือข่ายสาขา"],
-    forecast: ["V10 Forecast Foundation", "V10 พื้นฐานคาดการณ์"]
+    executive: ["V11 Enterprise Edition Executive Cockpit", "V11 ห้องควบคุมผู้บริหาร Enterprise Edition"],
+    salesman: ["V11 Performance Coaching", "V11 โค้ชผลงานพนักงานขาย"],
+    sales: ["V11 Commercial Analytics", "V11 วิเคราะห์ยอดขายเชิงพาณิชย์"],
+    product: ["V11 Product Intelligence", "V11 วิเคราะห์สินค้า"],
+    dealer: ["V11 Dealer Network Health", "V11 สุขภาพเครือข่ายสาขา"],
+    forecast: ["V11 Forecast Foundation", "V11 พื้นฐานคาดการณ์"]
   };
 
   function t(key) {
@@ -257,8 +257,8 @@
         title: labelForInsight("Forecast Risk"),
         severity: severityLabel(gap < 0 ? "Gap" : "On Track"),
         headline: local(`${forecast.toLocaleString()} unit rule-based forecast`, `คาดการณ์ตามกฎ ${unitText(forecast)}`),
-        detail: local(`Static target ตัวเตรียมพร้อม is ${target.toLocaleString()} units, leaving ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units gap.`, `เป้าหมายแบบคงที่ คือ ${unitText(target)} เหลือส่วนต่าง ${gap >= 0 ? "+" : ""}${unitText(gap)}`),
-        action: gap < 0 ? local("Prioritize high-โอกาส deals and top dealer follow-up.", "ให้ความสำคัญกับดีลโอกาสสูงและการติดตามสาขาหลัก") : local("Forecast is above baseline; protect GP while closing.", "คาดการณ์สูงกว่าฐานเป้าหมาย ให้ปกป้อง GP ระหว่างปิดการขาย")
+        detail: local(`Static planning baseline is ${target.toLocaleString()} units, leaving ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units gap.`, `ฐานเป้าหมายแบบคงที่ คือ ${unitText(target)} เหลือส่วนต่าง ${gap >= 0 ? "+" : ""}${unitText(gap)}`),
+        action: gap < 0 ? local("Prioritize high-probability deals and top dealer follow-up.", "ให้ความสำคัญกับดีลที่มีโอกาสปิดสูงและการติดตามสาขาหลัก") : local("Forecast is above baseline; protect GP while closing.", "คาดการณ์สูงกว่าฐานเป้าหมาย ให้ปกป้อง GP ระหว่างปิดการขาย")
       },
       {
         title: labelForInsight("Low GP Warning"),
@@ -368,7 +368,7 @@
     const nextAction = kpi.gpPct < 8
       ? local(`Protect margin before adding volume pressure, starting with ${lowMarginProduct.name}.`, `ปกป้องกำไรก่อนเร่งจำนวนขาย โดยเริ่มที่ ${lowMarginProduct.name}`)
       : gap < 0
-        ? local(`Close the ${Math.abs(gap).toLocaleString()} unit forecast gap through high-โอกาส dealer follow-up.`, `ปิดส่วนต่างคาดการณ์ ${unitText(Math.abs(gap))} ผ่านการติดตามสาขา ที่มีโอกาสสูง`)
+        ? local(`Close the ${Math.abs(gap).toLocaleString()} unit forecast gap through high-probability dealer follow-up.`, `ปิดส่วนต่างคาดการณ์ ${unitText(Math.abs(gap))} ผ่านการติดตามสาขาที่มีโอกาสสูง`)
         : local(`Maintain weekly close rhythm and secure availability for ${product.name}.`, `รักษาจังหวะปิดรายสัปดาห์และยืนยันความพร้อมของ ${product.name}`);
 
     return {
@@ -423,7 +423,7 @@
           type: "forecast",
           label: t("ai.forecastInsight"),
           title: t("ai.forecastRisk"),
-          text: local("The rule-based forecast ตัวเตรียมพร้อม will update after sales records are available.", "คาดการณ์ตามกฎจะอัปเดตหลังจากมีข้อมูลยอดขาย")
+          text: local("The rule-based forecast placeholder will update after sales records are available.", "คาดการณ์ตามกฎจะอัปเดตหลังจากมีข้อมูลยอดขาย")
         },
         {
           type: "action",
@@ -516,7 +516,7 @@
     if (intent === "product") return local(`Push ${context.productPush.name} first, then review margin pressure on ${context.lowGpProduct.name}.`, `ผลักดัน ${context.productPush.name} ก่อน แล้วทบทวนแรงกดดันกำไรของ ${context.lowGpProduct.name}`);
     if (intent === "forecast") {
       return context.gap < 0
-        ? local(`Recover ${Math.abs(context.gap).toLocaleString()} units through high-โอกาส dealer and salesman follow-up.`, `กู้คืน ${unitText(Math.abs(context.gap))} ผ่านการติดตามสาขา และพนักงานขายที่มีโอกาสสูง`)
+        ? local(`Recover ${Math.abs(context.gap).toLocaleString()} units through high-probability dealer and salesman follow-up.`, `กู้คืน ${unitText(Math.abs(context.gap))} ผ่านการติดตามสาขาและพนักงานขายที่มีโอกาสสูง`)
         : local("Protect GP quality while keeping the close rhythm ahead of the baseline target.", "ปกป้องคุณภาพ GP พร้อมรักษาจังหวะปิดการขายให้เหนือ baseline");
     }
     if (intent === "sales") return local(`Use ${context.topDealer.name}, ${context.topProduct.name}, and ${context.topSalesman.name} as the performance benchmark for the next review.`, `ใช้ ${context.topDealer.name}, ${context.topProduct.name} และ ${context.topSalesman.name} เป็นเกณฑ์เทียบผลงานในการรีวิวครั้งถัดไป`);
@@ -588,7 +588,7 @@
     return {
       title,
       meta: local(`Generated from ${rows.length.toLocaleString()} filtered local records. ${t("kpi.lastRefresh")} ${utils.lastRefresh()}.`, `สร้างจากข้อมูลภายใน ${rows.length.toLocaleString()} รายการตามตัวกรอง ${t("kpi.lastRefresh")} ${utils.lastRefresh()}`),
-      lines: reportSpecific[kind] || reportSpecific.executive
+      lines: [...(reportSpecific[kind] || reportSpecific.executive), t("report.previewOnly")]
     };
   }
 
@@ -659,7 +659,7 @@
         <div class="enterprise-eyebrow" data-i18n="export.foundation">Export Foundation</div>
         <h2 data-i18n="export.preparedOutputs">Prepared Outputs</h2>
         <div class="export-actions" id="enterpriseExportActions"></div>
-        <p id="enterpriseExportStatus" class="export-status" data-i18n="export.ready">V10 Export Center prepared.</p>
+        <p id="enterpriseExportStatus" class="export-status" data-i18n="export.ready">V11 Export Center prepared.</p>
       </div>`;
 
     const anchor = document.querySelector(".ai-strip");
@@ -678,7 +678,7 @@
       <div class="enterprise-ai-heading">
         <div>
           <div class="enterprise-eyebrow" data-i18n="ai.engine">AI Insight Engine</div>
-          <h2 data-i18n="ai.ruleBased">V10 Rule-Based Insights</h2>
+          <h2 data-i18n="ai.ruleBased">V11 Rule-Based Insights</h2>
         </div>
         <span data-i18n="ai.localOnly">Local dashboard_data.json only</span>
       </div>
@@ -750,7 +750,7 @@
       [local("Forecast risk", "ความเสี่ยงคาดการณ์"), summary.forecastRisk],
       [t("ai.recommendedAction"), summary.nextAction]
     ];
-    downloadFile("kmm-v10-executive-summary.csv", "text/csv;charset=utf-8", "\uFEFF" + table.map((row) => row.map(csvCell).join(",")).join("\n"));
+    downloadFile("kmm-v11-executive-summary.csv", "text/csv;charset=utf-8", "\uFEFF" + table.map((row) => row.map(csvCell).join(",")).join("\n"));
   }
 
   async function exportPng() {
@@ -809,7 +809,7 @@
           reject(new Error(t("error.pngFailed")));
           return;
         }
-        downloadFile("kmm-v10-dashboard.png", "image/png", blob);
+        downloadFile("kmm-v11-dashboard.png", "image/png", blob);
         resolve();
       }, "image/png");
     });
@@ -879,7 +879,7 @@
           reject(new Error(t("error.pngFailed")));
           return;
         }
-        downloadFile("kmm-v10-dashboard-summary.png", "image/png", blob);
+        downloadFile("kmm-v11-dashboard-summary.png", "image/png", blob);
         resolve();
       }, "image/png");
     });
@@ -890,7 +890,7 @@
     const status = document.getElementById("enterpriseExportStatus");
     if (kind === "PDF") message = t("export.pdfPrepared");
     if (kind === "PowerPoint") message = t("export.pptPrepared");
-    if (kind === "CSV") {
+    if (kind === "CSV" || kind === "Excel") {
       exportCsv();
       message = t("export.csvDownloaded");
     }
@@ -922,7 +922,7 @@
       modal.innerHTML = `
         <section class="enterprise-modal-panel">
           <button type="button" class="enterprise-modal-close" data-enterprise-modal-close data-i18n-aria="button.close" aria-label="Close report" data-i18n="button.close">Close</button>
-          <div class="enterprise-eyebrow" data-i18n="report.production">V10 Production Report</div>
+          <div class="enterprise-eyebrow" data-i18n="report.production">V11 Enterprise Report</div>
           <h2 id="enterpriseReportTitle"></h2>
           <p id="enterpriseReportMeta"></p>
           <div id="enterpriseReportBody" class="enterprise-report-body"></div>
@@ -972,7 +972,7 @@
 
     deck = el("section", "enterprise-intelligence-deck");
     deck.id = "enterpriseIntelligenceDeck";
-    deck.setAttribute("aria-label", "V10 Enterprise Intelligence");
+    deck.setAttribute("aria-label", "V11 Enterprise Intelligence");
     const anchor = document.querySelector(".kpi-grid");
     if (anchor) anchor.insertAdjacentElement("afterend", deck);
     else document.querySelector(".main-content")?.appendChild(deck);
@@ -1003,8 +1003,8 @@
     return `<article class="intel-action-card"><span>${tag}</span><strong>${title}</strong><p>${text}</p></article>`;
   }
 
-  function ตัวเตรียมพร้อมCard(title, value, text) {
-    return `<article class="intel-ตัวเตรียมพร้อม-card"><span>${local("V10 foundation", "พื้นฐาน V10")}</span><strong>${title}</strong><b>${value}</b><p>${text}</p></article>`;
+  function foundationCard(title, value, text) {
+    return `<article class="intel-foundation-card"><span>${local("V11 foundation", "พื้นฐาน V11")}</span><strong>${title}</strong><b>${value}</b><p>${text}</p></article>`;
   }
 
   function renderCommonKpiWall(summary, groups) {
@@ -1044,13 +1044,13 @@
     return `
       ${renderCommonKpiWall(summary, groups)}
       <div class="enterprise-intel-grid">
-        <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.executiveSummaryPanel")}</div><h2>${local(`${summary.units.toLocaleString()} units with ${utils.formatPercent(summary.gpPct)} GP margin`, `${unitText(summary.units)} พร้อม GP margin ${utils.formatPercent(summary.gpPct)}`)}</h2><p>${local(`${topDealer.name} leads dealer contribution while ${topModel.name} anchors product demand. The rule-based forecast shows ${gap >= 0 ? "an upside" : "a shortfall"} of ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units against ตัวเตรียมพร้อม target.`, `${topDealer.name} นำสัดส่วนสาขา ขณะที่ ${topModel.name} เป็นแกนความต้องการสินค้า คาดการณ์ตามกฎแสดง${gap >= 0 ? "ส่วนเพิ่ม" : "ส่วนขาด"} ${gap >= 0 ? "+" : ""}${unitText(gap)} เทียบเป้าหมาย ตัวเตรียมพร้อม`)}</p></section>
+        <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.executiveSummaryPanel")}</div><h2>${local(`${summary.units.toLocaleString()} units with ${utils.formatPercent(summary.gpPct)} GP margin`, `${unitText(summary.units)} พร้อม GP margin ${utils.formatPercent(summary.gpPct)}`)}</h2><p>${local(`${topDealer.name} leads dealer contribution while ${topModel.name} anchors product demand. The rule-based forecast shows ${gap >= 0 ? "an upside" : "a shortfall"} of ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units against the planning baseline.`, `${topDealer.name} นำสัดส่วนสาขา ขณะที่ ${topModel.name} เป็นแกนความต้องการสินค้า คาดการณ์ตามกฎแสดง${gap >= 0 ? "ส่วนเพิ่ม" : "ส่วนขาด"} ${gap >= 0 ? "+" : ""}${unitText(gap)} เทียบฐานเป้าหมาย`)}</p></section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.alertCenter")}</div>${alertCard(summary.gpPct < 8 ? local("High", "สูง") : local("Watch", "ติดตาม"), local("Margin Quality", "คุณภาพกำไร"), local(`${utils.formatPercent(summary.gpPct)} GP margin in the active filter.`, `GP margin ${utils.formatPercent(summary.gpPct)} ในตัวกรองปัจจุบัน`))}${alertCard(topDealer.share > 45 ? local("High", "สูง") : local("Review", "ทบทวน"), local("Dealer Dependency", "การพึ่งพาสาขา"), local(`${topDealer.name} contributes ${utils.formatPercent(topDealer.share)} of units.`, `${topDealer.name} คิดเป็น ${utils.formatPercent(topDealer.share)} ของจำนวนขาย`))}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.top5Risks")}</div>${[lowMargin, weakDealer, topDealer, topModel, safeTop(groups.types)].map((row, index) => miniRow(`${index + 1}. ${row.name}`, index === 0 ? local("Margin", "กำไร") : unitText(row.units), local(`Share ${utils.formatPercent(row.share || 0)}`, `สัดส่วน ${utils.formatPercent(row.share || 0)}`))).join("")}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.nextBestActions")}</div>${actionCard(local("Protect margin", "ปกป้องกำไร"), local(`Review discounting on ${lowMargin.name}.`, `ทบทวนส่วนลดของ ${lowMargin.name}`))}${actionCard(local("Lift secondary dealers", "ยกระดับ สาขารอง"), local(`Follow up with ${weakDealer.name} on activity and stock blockers.`, `ติดตาม ${weakDealer.name} เรื่องกิจกรรมและข้อจำกัดสต็อก`))}${actionCard(local("Secure availability", "ยืนยันความพร้อมสินค้า"), local(`Keep ${topModel.name} supply visible for close planning.`, `ทำให้ supply ของ ${topModel.name} ชัดเจนสำหรับแผนปิดการขาย`))}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.dealerSnapshot")}</div>${groups.dealers.slice(0, 5).map((row) => miniRow(row.name, unitText(row.units), `GP ${utils.formatPercent(row.gpPct)}`)).join("")}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.productSnapshot")}</div>${groups.types.slice(0, 5).map((row) => miniRow(row.name, local(`${utils.formatPercent(row.share)} mix`, `สัดส่วน ${utils.formatPercent(row.share)}`), unitText(row.units))).join("")}</section>
-        <section class="intel-panel">${ตัวเตรียมพร้อมCard(t("label.monthlyGapForecast"), `${gap >= 0 ? "+" : ""}${unitText(gap)}`, local("V10 static forecast center with target, actual, gap, and confidence controls.", "ศูนย์คาดการณ์ แบบคงที่ V10 พร้อมเป้าหมาย ยอดจริง ส่วนต่าง และความเชื่อมั่น"))}</section>
+        <section class="intel-panel">${foundationCard(t("label.monthlyGapForecast"), `${gap >= 0 ? "+" : ""}${unitText(gap)}`, local("V11 static forecast center with target, actual, gap, and confidence controls.", "ศูนย์คาดการณ์แบบคงที่ V11 พร้อมเป้าหมาย ยอดจริง ส่วนต่าง และความเชื่อมั่น"))}</section>
       </div>`;
   }
 
@@ -1061,11 +1061,11 @@
     return `
       ${renderCommonKpiWall(summary, groups)}
       <div class="enterprise-intel-grid">
-        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.salesFunnelPlaceholder")}</div>${ตัวเตรียมพร้อมCard(local("Lead to Delivery", "Lead ถึงส่งมอบ"), local(`${Math.round(summary.units * 1.6).toLocaleString()} bookings`, `ยอดจองประมาณ ${Math.round(summary.units * 1.6).toLocaleString()}`), local("Booking and landing snapshot is prepared when those fields are available in the source data.", "ภาพรวม ยอดจองและการส่งมอบ พร้อมใช้งานเมื่อข้อมูลต้นทางมีฟิลด์เหล่านี้"))}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.salesFunnelPlaceholder")}</div>${foundationCard(local("Lead to Delivery", "Lead ถึงส่งมอบ"), local(`${Math.round(summary.units * 1.6).toLocaleString()} bookings`, `ยอดจองประมาณ ${Math.round(summary.units * 1.6).toLocaleString()}`), local("Booking and delivery snapshot is prepared when those fields are available in the source data.", "ภาพรวมยอดจองและการส่งมอบพร้อมใช้งานเมื่อข้อมูลต้นทางมีฟิลด์เหล่านี้"))}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.salesTrendComparison")}</div>${groups.months.slice(-5).map((row) => miniRow(row.name, unitText(row.units), local(`Target ${Math.round(row.units * 1.15).toLocaleString()}`, `เป้าหมาย ${Math.round(row.units * 1.15).toLocaleString()}`))).join("")}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.salesSourceAnalysis")}</div>${groups.sources.slice(0, 5).map((row) => miniRow(row.name, unitText(row.units), local(`${utils.formatPercent(row.share)} share`, `สัดส่วน ${utils.formatPercent(row.share)}`))).join("")}</section>
         <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.aiSalesInsightPanel")}</div><h2>${local(`${bestMonth.name} is the strongest sales period`, `${bestMonth.name} เป็นช่วงขายที่แข็งแรงที่สุด`)}</h2><p>${local(`${source.name} is the leading source and ${model.name} should anchor the close plan. Current GP margin is ${utils.formatPercent(summary.gpPct)}.`, `${source.name} เป็นแหล่งลูกค้าหลัก และ ${model.name} ควรเป็นแกนแผนปิดการขาย GP margin ปัจจุบันคือ ${utils.formatPercent(summary.gpPct)}`)}</p></section>
-        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.actionRecommendationCards")}</div>${actionCard(local("Push high-โอกาส leads", "ผลักดัน lead โอกาสสูง"), local(`Prioritize ${source.name} leads with ${model.name} offers.`, `ให้ความสำคัญกับ lead จาก ${source.name} พร้อมข้อเสนอ ${model.name}`))}${actionCard(local("Protect payment quality", "ปกป้องคุณภาพการชำระเงิน"), local("Review payment mix before accelerating volume.", "ทบทวนสัดส่วนการชำระเงินก่อนเร่งจำนวนขาย"))}${actionCard(local("Use monthly rhythm", "ใช้จังหวะรายเดือน"), local(`Replicate ${bestMonth.name} activity cadence.`, `ทำซ้ำจังหวะกิจกรรมของ ${bestMonth.name}`))}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.actionRecommendationCards")}</div>${actionCard(local("Push high-probability leads", "ผลักดัน lead โอกาสสูง"), local(`Prioritize ${source.name} leads with ${model.name} offers.`, `ให้ความสำคัญกับ lead จาก ${source.name} พร้อมข้อเสนอ ${model.name}`))}${actionCard(local("Protect payment quality", "ปกป้องคุณภาพการชำระเงิน"), local("Review payment mix before accelerating volume.", "ทบทวนสัดส่วนการชำระเงินก่อนเร่งจำนวนขาย"))}${actionCard(local("Use monthly rhythm", "ใช้จังหวะรายเดือน"), local(`Replicate ${bestMonth.name} activity cadence.`, `ทำซ้ำจังหวะกิจกรรมของ ${bestMonth.name}`))}</section>
       </div>`;
   }
 
@@ -1078,7 +1078,7 @@
       <div class="enterprise-intel-grid">
         <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.coachingInsightPanel")}</div><h2>${local(`${leader.name} leads the team`, `${leader.name} นำทีม`)}</h2><p>${local(`${coach.name} is the coaching focus for margin or conversion. Route best ${source.name} leads through proven playbooks and track follow-up quality weekly.`, `${coach.name} เป็นจุดโฟกัสการโค้ชด้านกำไรหรือ conversion ให้ส่ง lead ${source.name} ที่ดีที่สุดผ่าน playbook ที่พิสูจน์แล้ว และติดตามคุณภาพ follow-up รายสัปดาห์`)}</p></section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.salesmanRanking")}</div>${groups.salesmen.slice(0, 5).map((row, index) => miniRow(`${index + 1}. ${row.name}`, unitText(row.units), `GP ${utils.formatPercent(row.gpPct)}`)).join("")}</section>
-        <section class="intel-panel">${ตัวเตรียมพร้อมCard(t("label.performanceMatrix"), "Volume x GP", local("Matrix is prepared for จตุภาค การให้คะแนน, coaching paths, and achievement targets.", "เมทริกซ์พร้อมสำหรับ การให้คะแนน แบบ จตุภาค เส้นทางโค้ช และเป้าหมาย achievement"))}</section>
+        <section class="intel-panel">${foundationCard(t("label.performanceMatrix"), "Volume x GP", local("Matrix is prepared for quadrant scoring, coaching paths, and achievement targets.", "เมทริกซ์พร้อมสำหรับการให้คะแนนแบบจตุภาค เส้นทางโค้ช และเป้าหมายผลงาน"))}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.productSpecialization")}</div>${groups.types.slice(0, 4).map((row) => miniRow(row.name, unitText(row.units), local(`${utils.formatPercent(row.share)} mix`, `สัดส่วน ${utils.formatPercent(row.share)}`))).join("")}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.leadSourceInsight")}</div>${groups.sources.slice(0, 4).map((row) => miniRow(row.name, local(`${row.units.toLocaleString()} leads`, `${row.units.toLocaleString()} lead`), local(`Share ${utils.formatPercent(row.share)}`, `สัดส่วน ${utils.formatPercent(row.share)}`))).join("")}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.actionRecommendationCards")}</div>${actionCard(local("Coach margin control", "โค้ชการควบคุมกำไร"), local(`Review ${coach.name} discount pattern.`, `ทบทวนรูปแบบส่วนลดของ ${coach.name}`))}${actionCard(local("Scale leader behavior", "ขยายพฤติกรรมผู้นำ"), local(`Turn ${leader.name} routines into a team checklist.`, `แปลง routine ของ ${leader.name} เป็น checklist ทีม`))}${actionCard(local("Specialize by product", "เชี่ยวชาญตามสินค้า"), local(`Assign specialists around ${safeTop(groups.types).name}.`, `มอบหมายผู้เชี่ยวชาญสำหรับ ${safeTop(groups.types).name}`))}</section>
@@ -1094,7 +1094,7 @@
       <div class="enterprise-intel-grid">
         <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.modelRankingHighlight")}</div><h2>${local(`${topModel.name} is the lead demand signal`, `${topModel.name} เป็นสัญญาณความต้องการหลัก`)}</h2><p>${local(`${topModel.units.toLocaleString()} units sold with ${utils.formatPercent(topModel.share)} share. ${highGp.name} has the strongest GP quality at ${utils.formatPercent(highGp.gpPct)}.`, `ขายแล้ว ${unitText(topModel.units)} พร้อมสัดส่วน ${utils.formatPercent(topModel.share)} โดย ${highGp.name} มีคุณภาพ GP แข็งแรงที่สุดที่ ${utils.formatPercent(highGp.gpPct)}`)}</p></section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.productMixInsight")}</div>${groups.types.slice(0, 5).map((row) => miniRow(row.name, local(`${utils.formatPercent(row.share)} mix`, `สัดส่วน ${utils.formatPercent(row.share)}`), unitText(row.units))).join("")}</section>
-        <section class="intel-panel">${ตัวเตรียมพร้อมCard(t("label.slowMovingRisk"), slow.name, local("Prepared for inventory age, slow movement, and dealer stock risk การให้คะแนน.", "เตรียมไว้สำหรับอายุสต็อก การเคลื่อนไหวช้า และ การให้คะแนน ความเสี่ยงสต็อกสาขา"))}</section>
+        <section class="intel-panel">${foundationCard(t("label.slowMovingRisk"), slow.name, local("Prepared for inventory age, slow movement, and dealer stock risk scoring.", "เตรียมไว้สำหรับอายุสต็อก การเคลื่อนไหวช้า และการให้คะแนนความเสี่ยงสต็อกสาขา"))}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${local("Product Recommendation Cards", "การ์ดคำแนะนำสินค้า")}</div>${actionCard(local("Anchor campaigns", "ใช้เป็นแกนแคมเปญ"), local(`Use ${topModel.name} demand in dealer campaigns.`, `ใช้ความต้องการ ${topModel.name} ในแคมเปญสาขา`))}${actionCard(local("Protect GP", "ปกป้อง GP"), local(`Preserve pricing on ${highGp.name}.`, `รักษาราคาของ ${highGp.name}`))}${actionCard(local("Watch slow movement", "ติดตามรุ่นเคลื่อนไหวช้า"), local(`Review stock and offers for ${slow.name}.`, `ทบทวนสต็อกและข้อเสนอของ ${slow.name}`))}</section>
       </div>`;
   }
@@ -1106,7 +1106,7 @@
       ${renderCommonKpiWall(summary, groups)}
       <div class="enterprise-intel-grid">
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.dealerRanking")}</div>${groups.dealers.slice(0, 5).map((row, index) => miniRow(`${index + 1}. ${row.name}`, unitText(row.units), local(`${utils.formatPercent(row.share)} share`, `สัดส่วน ${utils.formatPercent(row.share)}`))).join("")}</section>
-        <section class="intel-panel">${ตัวเตรียมพร้อมCard(t("label.dealerScore"), `${Math.min(99, Math.round((dealer.share || 0) + 62))}/100`, local("Composite score ตัวเตรียมพร้อม for sales, stock, collection, service, and coverage.", "คะแนนรวมแบบ ตัวเตรียมพร้อม สำหรับยอดขาย สต็อก การเก็บเงิน บริการ และพื้นที่"))}</section>
+        <section class="intel-panel">${foundationCard(t("label.dealerScore"), `${Math.min(99, Math.round((dealer.share || 0) + 62))}/100`, local("Composite score foundation for sales, stock, collection, service, and coverage.", "โครงสร้างคะแนนรวมสำหรับยอดขาย สต็อก การเก็บเงิน บริการ และพื้นที่"))}</section>
         <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.dealerHealth")}</div><h2>${local(`${dealer.name} leads network performance`, `${dealer.name} นำผลงานเครือข่าย`)}</h2><p>${local(`${weak.name} needs activity review. Dealer concentration is ${utils.formatPercent(dealer.share)}, so secondary dealer lift remains important for resilience.`, `${weak.name} ต้องทบทวนกิจกรรม การกระจุกตัวสาขา อยู่ที่ ${utils.formatPercent(dealer.share)} ดังนั้นการยกระดับ สาขารองยังสำคัญต่อความยืดหยุ่น`)}</p></section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${local("Dealer Action Cards", "การ์ดการดำเนินการ Dealer")}</div>${actionCard(local("Reduce dependency", "ลดการพึ่งพา"), local(`Lift activity for ${weak.name}.`, `เพิ่มกิจกรรมของ ${weak.name}`))}${actionCard(local("Protect leader", "รักษาผู้นำ"), local(`Keep stock availability visible for ${dealer.name}.`, `ทำให้สต็อกของ ${dealer.name} ชัดเจน`))}${actionCard(local("Weekly scorecard", "Scorecard รายสัปดาห์"), local("Track sales, collection, and stock age together.", "ติดตามยอดขาย การเก็บเงิน และอายุสต็อกร่วมกัน"))}</section>
       </div>`;
@@ -1120,10 +1120,10 @@
     return `
       ${renderCommonKpiWall(summary, groups)}
       <div class="enterprise-intel-grid">
-        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.forecastVsActual")}</div>${miniRow(t("label.actual"), unitText(summary.units), t("label.filteredRecords"))}${miniRow(t("kpi.forecast"), unitText(forecast), local("Rule-based ตัวเตรียมพร้อม", "ตัวเตรียมพร้อมตามกฎ"))}${miniRow(t("kpi.target"), unitText(target), t("label.staticPlanningBaseline"))}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.forecastVsActual")}</div>${miniRow(t("label.actual"), unitText(summary.units), t("label.filteredRecords"))}${miniRow(t("kpi.forecast"), unitText(forecast), local("Rule-based foundation", "พื้นฐานตามกฎ"))}${miniRow(t("kpi.target"), unitText(target), t("label.staticPlanningBaseline"))}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.gapAnalysis")}</div>${miniRow(t("label.gap"), `${gap >= 0 ? "+" : ""}${unitText(gap)}`, gap < 0 ? local("Needs recovery", "ต้องกู้คืน") : local("Above target", "สูงกว่าเป้าหมาย"))}${miniRow(t("label.valueForecast"), utils.formatMoney(summary.sales * 1.08), t("label.estimated"))}</section>
-        <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.riskOpportunityInsight")}</div><h2>${gap < 0 ? local("Target gap requires action", "ส่วนต่างเป้าหมายต้องดำเนินการ") : local("Forecast is on track", "คาดการณ์ตามแผน")}</h2><p>${local(`${safeTop(groups.dealers).name} and ${safeTop(groups.salesmen).name} are the strongest levers in the current filter. Use high-โอกาส deals first, then protect GP margin.`, `${safeTop(groups.dealers).name} และ ${safeTop(groups.salesmen).name} เป็นตัวขับเคลื่อนที่แข็งแรงที่สุดในตัวกรองปัจจุบัน ให้ใช้ดีลโอกาสสูงก่อน แล้วปกป้อง GP margin`)}</p></section>
-        <section class="intel-panel">${ตัวเตรียมพร้อมCard(t("label.forecastConfidence"), `${confidence}%`, local("Prepared for future สถานการณ์ weighting, แผนงานขาย โอกาส, and confidence model controls.", "เตรียมไว้สำหรับการถ่วงน้ำหนัก สถานการณ์, โอกาส ของ แผนงานขาย และโมเดลความเชื่อมั่น"))}</section>
+        <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.riskOpportunityInsight")}</div><h2>${gap < 0 ? local("Target gap requires action", "ส่วนต่างเป้าหมายต้องดำเนินการ") : local("Forecast is on track", "คาดการณ์ตามแผน")}</h2><p>${local(`${safeTop(groups.dealers).name} and ${safeTop(groups.salesmen).name} are the strongest levers in the current filter. Use high-probability deals first, then protect GP margin.`, `${safeTop(groups.dealers).name} และ ${safeTop(groups.salesmen).name} เป็นตัวขับเคลื่อนที่แข็งแรงที่สุดในตัวกรองปัจจุบัน ให้ใช้ดีลโอกาสสูงก่อน แล้วปกป้อง GP margin`)}</p></section>
+        <section class="intel-panel">${foundationCard(t("label.forecastConfidence"), `${confidence}%`, local("Prepared for future scenario weighting, pipeline probability, and confidence model controls.", "เตรียมไว้สำหรับการถ่วงน้ำหนักสถานการณ์ โอกาสของแผนงานขาย และโมเดลความเชื่อมั่น"))}</section>
       </div>`;
   }
 
@@ -1280,7 +1280,7 @@
     if (document.getElementById("enterpriseFooter")) return;
     const footer = el("footer", "enterprise-footer");
     footer.id = "enterpriseFooter";
-    footer.innerHTML = `<strong>KMM Sales Intelligence V10 Production Release</strong><span>${t("message.footer")}</span>`;
+    footer.innerHTML = `<strong>KMM Sales Intelligence V11 Enterprise Edition</strong><span>${t("message.footer")}</span>`;
     document.querySelector(".main-content")?.appendChild(footer);
   }
 
