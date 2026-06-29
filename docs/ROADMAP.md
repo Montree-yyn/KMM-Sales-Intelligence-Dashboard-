@@ -73,18 +73,25 @@ V8 builds on V7.1 Production Ready with a practical executive copilot on `dashbo
 
 ## V8.1 Roadmap
 
-1. Better natural language intent handling with richer synonym coverage and confidence scoring.
-2. Cross-page data search that can answer questions spanning Executive, Sales, Salesman, Product, Dealer, and Forecast views.
-3. Report generation from copilot answers, reusing the V7.1 Production Report Center patterns.
-4. Optional future OpenAI/API integration after an approved static-safe or service-backed architecture decision.
-5. Persisted copilot prompt history, if storage and privacy expectations are approved.
+V8.1-V9 adds an Enterprise Security Platform on top of the V8 Enterprise AI Copilot while preserving the static GitHub Pages deployment model.
+
+1. Login screen with `sessionStorage` session state.
+2. Route guard for Executive, Sales, Salesman, Product, Dealer, Forecast, and Settings pages.
+3. Configurable inactivity timeout, defaulting to 15 minutes.
+4. Top-right session profile control with logout.
+5. Reusable role framework for SuperAdmin, Executive, Manager, Sales, and Viewer.
+6. Company framework for KMM, KM, and TS with company selector, theme placeholder, and dataset loader placeholder.
+7. Settings framework for theme, company, session timeout, language, readonly role, and version.
+8. Better natural language intent handling with richer synonym coverage and confidence scoring.
+9. Cross-page data search that can answer questions spanning Executive, Sales, Salesman, Product, Dealer, and Forecast views.
+10. Optional future OpenAI/API integration after an approved static-safe or service-backed architecture decision.
 
 ## Near-Term Priorities
 
 1. V8.1 Copilot: improve natural language intent, cross-page search, and report generation from copilot answers.
 2. V7.2 Export Center: implement real PDF and PowerPoint exports with reviewed lightweight/static-safe technology.
 3. PWA: explore installable mobile access and offline caching while preserving static hosting.
-4. V8 multi-company engine: evaluate company-level filters, branding, data partitioning, and tenant-safe configuration.
+4. V8.1-V9 security and company engine: mature role policies, company-specific branding, dataset partitioning, and tenant-safe configuration.
 5. Keep dashboard pages aligned with the shared CSS and JS modules.
 6. Maintain clean Excel-to-JSON updates through `tools/update_dashboard.py`.
 7. Keep AI insight and copilot generation rule-based until a backend or approved API integration exists.
@@ -124,6 +131,12 @@ Explore a progressive web app layer for mobile access, offline caching, and inst
 ### Multi-Company
 
 V8 should introduce company-level segmentation only after the dashboard data contract supports safe company identifiers, permissions expectations, branding rules, tenant-safe filters, and export isolation.
+
+V8.1-V9 now includes the browser-side company framework for KMM, KM, and TS. The current selector stores the active company in `sessionStorage` and exposes theme and dataset placeholders. Future work should connect those placeholders to approved company-specific datasets only after the data contract includes tenant identifiers and export isolation rules.
+
+### Future Cloud Authentication
+
+The current security platform is a static front-end framework, not a backend authentication service. Future cloud authentication should add a real identity provider, server-side session validation, token refresh, audit logging, password policy, tenant-aware authorization, and secure secrets handling. Any cloud authentication design must explicitly preserve or replace the current GitHub Pages hosting model.
 
 ## Release Principles
 

@@ -43,6 +43,22 @@ Shared dashboard navigation list. Current primary pages:
 
 `bi-core.js` marks the current page link as active through `initNavigation()`.
 
+### `.security-bar`
+
+Injected by `route-guard.js` into `.page-head` or `.topbar` on protected pages. It contains:
+
+- Company selector for KMM, KM, and TS.
+- Settings link.
+- Profile/logout button showing role and username.
+
+### `.security-company`
+
+Compact selector wrapper for the active company. The selected value is stored in `sessionStorage` through `company.js`.
+
+### `.security-profile`
+
+Top-right profile button. Clicking it clears the session and returns the user to `login.html`.
+
 ### `.nav-icon`
 
 Icon container inside navigation items. Current pages use inline emoji icons. Future icon changes should be applied consistently across all dashboard pages.
@@ -60,6 +76,32 @@ Header pattern used by Product Intelligence, Dealer Intelligence, and Sales Fore
 ### `.top-meta`
 
 Compact KPI metadata blocks in topbar pages. Used for record count, best dealer, forecast confidence, refresh time, and similar page-level metadata.
+
+## Login And Settings
+
+### `.login-body`
+
+Full-screen security entry surface used by `dashboard/login.html`.
+
+### `.login-shell`
+
+Two-column login layout with platform branding on the left and the login panel on the right. It collapses to one column on mobile.
+
+### `.login-panel`
+
+Professional login card with username, password, and login button.
+
+### `.settings-panel`
+
+Protected settings card used by `dashboard/settings.html` for theme, company, session timeout, language, readonly role, and version.
+
+### `.settings-grid`
+
+Responsive two-column settings form layout.
+
+### `.session-dialog`
+
+Dialog style used for the Session Expired message shown after inactivity logout.
 
 ## Filters
 
@@ -218,6 +260,18 @@ V7.1 keeps the class for compatibility and upgrades the behavior:
 - Excel button downloads a CSV executive summary from current filtered rows.
 - PNG button attempts a browser-native dashboard capture.
 - PDF button shows `PDF export is prepared for V7.2.`
+
+## Security Modules
+
+The security components are deliberately plain HTML, CSS, and JavaScript:
+
+- `auth.js` manages session state and timeout metadata.
+- `permission.js` manages role permissions.
+- `company.js` manages company metadata, selected company, and placeholders for theme and dataset loading.
+- `settings.js` binds the protected settings page.
+- `route-guard.js` protects routes and injects shared security controls.
+
+Future cloud authentication should reuse these visible components where useful, but replace local session trust with server-validated identity and tenant-aware permissions.
 - PowerPoint button shows `PowerPoint export is prepared for V7.2.`
 
 ### `.report-center-v71`

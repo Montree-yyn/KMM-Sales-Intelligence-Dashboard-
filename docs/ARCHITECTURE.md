@@ -32,6 +32,11 @@ dashboard/
     bi-charts.js
     bi-core.js
     bi-enterprise.js
+    auth.js
+    permission.js
+    company.js
+    settings.js
+    route-guard.js
     executive.js
     salesman.js
     sales.js
@@ -48,18 +53,56 @@ data/
 
 ## Runtime Flow
 
-1. The browser opens a static dashboard HTML file.
-2. The page loads `css/bi-core.css`.
-3. `bi-core.css` imports the shared design system, layout, components, and modules.
-4. The page loads local `js/chart.umd.min.js`.
-5. The page loads shared BI modules:
+1. The browser opens `dashboard/login.html` or a static dashboard HTML file.
+2. Protected dashboard files load `auth.js`, `permission.js`, `company.js`, `settings.js`, and `route-guard.js`.
+3. `route-guard.js` verifies the `sessionStorage` session, checks role permissions, validates inactivity timeout, applies the selected company theme placeholder, and redirects unauthenticated users to `login.html`.
+4. The page loads `css/bi-core.css`.
+5. `bi-core.css` imports the shared design system, layout, components, modules, enterprise styles, and security styles.
+6. The page loads local `js/chart.umd.min.js`.
+7. The page loads shared BI modules:
    - `js/bi-utils.js`
    - `js/bi-filters.js`
    - `js/bi-charts.js`
    - `js/bi-core.js`
-6. The page loads its page-specific script, such as `js/executive.js`.
-7. On `DOMContentLoaded`, the page fetches `data/dashboard_data.json`.
-8. Shared utilities normalize product types, filter core product rows, calculate KPI values, and render charts/tables.
+8. The page loads its page-specific script, such as `js/executive.js`.
+9. On `DOMContentLoaded`, the page fetches `data/dashboard_data.json`.
+10. Shared utilities normalize product types, filter core product rows, calculate KPI values, and render charts/tables.
+
+## V8.1-V9 Enterprise Security Platform
+
+The security platform is browser-only and GitHub Pages compatible. It does not add a backend, npm package, build step, or external identity provider.
+
+- `dashboard/login.html` creates a professional login surface for KMM Sales Intelligence Platform.
+- `dashboard/js/auth.js` owns session creation, session reads/writes, inactivity timestamps, logout reason, default 15-minute timeout, and version metadata.
+- `dashboard/js/route-guard.js` protects dashboard routes, redirects unauthenticated users to `login.html`, injects the top-right company selector/settings/profile controls, handles logout, and checks timeout every 30 seconds.
+- `dashboard/js/permission.js` maps routes to permission keys and maps roles to permissions without hardcoding checks inside page files.
+- `dashboard/js/company.js` defines KMM, KM, and TS company metadata with theme and dataset placeholders.
+- `dashboard/js/settings.js` reads and writes session-scoped settings for theme, company, timeout, language, readonly role, and version.
+- `dashboard/settings.html` exposes the settings framework as a protected static page.
+
+The current login validates only that username and password fields are present, then stores the session in `sessionStorage`. This is intentional for the static platform phase and should not be treated as production-grade cloud authentication.
+
+## Role Platform
+
+Roles are defined in `permission.js`:
+
+- SuperAdmin.
+- Executive.
+- Manager.
+- Sales.
+- Viewer.
+
+Page authorization uses route permission keys rather than page-local hardcoded checks. Future roles should extend the role-permission matrix in one place and avoid conditional logic inside dashboard page scripts.
+
+## Company Platform
+
+The company framework supports:
+
+- KMM.
+- KM.
+- TS.
+
+The selected company is stored in the active session. The framework currently exposes `themeClass` and `dataset` placeholders so future releases can add company-specific branding or data partitioning without changing page-level chart code.
 
 ## Dashboard Pages
 
@@ -190,12 +233,18 @@ Current V5.2 deck types:
 
 The V8 copilot sits on top of this foundation on `dashboard/executive.html`. It reads the same filtered rows already used by the executive KPIs, charts, briefing, reports, and exports. It does not introduce a new data file, backend endpoint, npm dependency, build process, or storage layer.
 
+V8.1-V9 sits above the V8 copilot as a static security shell. The copilot remains local and rule-based, and the security framework does not change `dashboard/data/dashboard_data.json` or `tools/update_dashboard.py`.
+
 ## V8.1 Architecture Roadmap
 
 - Better natural language intent: add broader keyword dictionaries, phrase normalization, and confidence labels while staying deterministic.
 - Cross-page data search: let copilot answers cite signals from Sales, Salesman, Product, Dealer, and Forecast modules through shared front-end aggregators.
 - Report generation from copilot: convert copilot answers into report modal content and downloadable static-safe summaries.
 - Future OpenAI/API integration option: only after an explicit architecture decision covering service boundaries, secrets, privacy, cost control, offline behavior, and GitHub Pages compatibility.
+
+## Future Cloud Authentication
+
+Future cloud authentication should replace the current static session placeholder with a real identity layer. Required decisions include identity provider, token lifetime, refresh flow, server-side authorization, tenant claims, audit logging, logout propagation, secret handling, and whether GitHub Pages remains the hosting surface or becomes a static client served beside a cloud API.
 
 ## Export Foundation
 
