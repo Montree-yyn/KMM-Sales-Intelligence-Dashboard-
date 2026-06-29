@@ -29,6 +29,18 @@ body {
   overflow-x: hidden;
 }
 
+.app-shell,
+.main-content,
+.enterprise-header,
+.topbar,
+.page-head,
+.panel,
+.kpi-card,
+.security-bar,
+.settings-panel {
+  max-width: 100%;
+}
+
 button,
 .enterprise-action,
 .export-button,
@@ -57,6 +69,18 @@ html[data-language="th"] th {
   word-break: normal;
 }
 
+html[data-language="th"] body {
+  font-size: 15.5px;
+  line-height: 1.68;
+}
+
+html[data-language="th"] .panel p,
+html[data-language="th"] .kpi-card small,
+html[data-language="th"] .enterprise-ai-card p,
+html[data-language="th"] .copilot-card p {
+  line-height: 1.55;
+}
+
 .nav-menu strong,
 .nav-menu small {
   display: block;
@@ -65,6 +89,7 @@ html[data-language="th"] th {
 
 .nav-menu a span:last-child {
   min-width: 0;
+  overflow: hidden;
 }
 
 html[data-language="th"] .nav-menu strong {
@@ -88,6 +113,25 @@ html[data-language="th"] .nav-menu small {
 .report-button-v71,
 .copilot-presets button {
   min-height: 42px;
+}
+
+.filter-bar,
+.kpi-grid,
+.module-grid,
+.cockpit-grid,
+.cockpit-analysis-grid,
+.dashboard-grid-2,
+.enterprise-intel-grid,
+.enterprise-kpi-wall,
+.enterprise-insight-grid {
+  max-width: 100%;
+}
+
+.chart-box,
+.table-wrap,
+.salesman-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .language-switch {
@@ -177,5 +221,26 @@ html[data-language="th"] .nav-menu small {
   .login-button,
   .settings-save {
     width: 100%;
+  }
+
+  .main-content {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .top-meta,
+  .enterprise-kpi-wall,
+  .enterprise-intel-grid,
+  .enterprise-insight-grid,
+  .module-grid,
+  .kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .brand,
+  .nav-menu a,
+  .sidebar-footer {
+    max-width: 100%;
   }
 }

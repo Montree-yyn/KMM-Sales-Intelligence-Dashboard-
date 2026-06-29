@@ -76,10 +76,14 @@
 
     document.getElementById("settingsLanguage").addEventListener("change", event => {
       const selected = window.KMMI18n ? window.KMMI18n.setLanguage(event.target.value) : event.target.value;
+      updateSettings({ language: selected });
+      const refreshed = readSettings() || settings;
       const role = document.getElementById("settingsRole");
-      if (role) role.value = window.KMMI18n ? window.KMMI18n.t(`role.${settings.role}`) : settings.role;
+      if (role) role.value = window.KMMI18n ? window.KMMI18n.t(`role.${refreshed.role}`) : refreshed.role;
       event.target.value = selected;
       updateCompanyLabels();
+      const status = document.getElementById("settingsStatus");
+      if (status) status.textContent = window.KMMI18n ? window.KMMI18n.t("settings.saved") : "Settings saved for this session.";
     });
   }
 

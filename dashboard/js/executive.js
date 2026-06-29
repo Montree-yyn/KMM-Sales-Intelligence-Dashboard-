@@ -292,16 +292,16 @@
     const gpRisk = summary.gpPct < 8;
     const concentrationRisk = topDealer.share > 45;
     const gapRisk = gap < 0;
-    const hasBookingFields = data.some((item) => Object.keys(item).some((key) => /book|pipeline|stock/i.test(key)));
+    const hasBookingFields = data.some((item) => Object.keys(item).some((key) => /book|แผนงานขาย|stock/i.test(key)));
     const stockSignal = hasBookingFields
-      ? (isThai() ? "แหล่งข้อมูลมีฟิลด์ลักษณะ booking, pipeline หรือ stock" : "Source contains booking, pipeline, or stock-like fields.")
+      ? (isThai() ? "แหล่งข้อมูลมีฟิลด์ลักษณะ booking, แผนงานขาย หรือ stock" : "Source contains booking, แผนงานขาย, or stock-like fields.")
       : (isThai() ? "ยังไม่พบฟิลด์ stock หรือ booking โดยตรง จึงใช้ booking proxy" : "No explicit stock or booking fields found; using booking proxy.");
     const marginSignal = summary.gpPct < 8
       ? (isThai() ? "แรงกดดันกำไร" : "margin pressure")
       : summary.gpPct < 11 ? (isThai() ? "ต้องติดตามกำไร" : "margin watch") : (isThai() ? "กำไรมั่นคง" : "stable margin");
     const forecastSignal = gapRisk
-      ? (isThai() ? `ต่ำกว่า baseline ${unitText(Math.abs(gap))}` : `${Math.abs(gap).toLocaleString()} units below baseline`)
-      : (isThai() ? `สูงกว่า baseline ${unitText(gap)}` : `${gap.toLocaleString()} units above baseline`);
+      ? (isThai() ? `ต่ำกว่าฐานเป้าหมาย ${unitText(Math.abs(gap))}` : `${Math.abs(gap).toLocaleString()} units below baseline`)
+      : (isThai() ? `สูงกว่าฐานเป้าหมาย ${unitText(gap)}` : `${gap.toLocaleString()} units above baseline`);
 
     return {
       topDealer,
@@ -319,14 +319,14 @@
       gap,
       stockSignal,
       topSignal: data.length
-        ? (isThai() ? `ส่งมอบแล้ว ${unitText(summary.units)} โดย ${topDealer.name} นำผลงาน Dealer, ${topModel.name} เป็นรุ่นหลัก, GP อยู่ที่ ${U.formatPercent(summary.gpPct)} (${marginSignal}) และคาดการณ์ ${forecastSignal}` : `${summary.units.toLocaleString()} units delivered; ${topDealer.name} leads dealers, ${topModel.name} leads products, GP is ${U.formatPercent(summary.gpPct)} (${marginSignal}), and forecast is ${forecastSignal}.`)
+        ? (isThai() ? `ส่งมอบแล้ว ${unitText(summary.units)} โดย ${topDealer.name} นำผลงานสาขา, ${topModel.name} เป็นรุ่นหลัก, GP อยู่ที่ ${U.formatPercent(summary.gpPct)} (${marginSignal}) และคาดการณ์ ${forecastSignal}` : `${summary.units.toLocaleString()} units delivered; ${topDealer.name} leads dealers, ${topModel.name} leads products, GP is ${U.formatPercent(summary.gpPct)} (${marginSignal}), and forecast is ${forecastSignal}.`)
         : t("message.noRecordsInsight"),
       mainRisk: gpRisk ? (isThai() ? `GP margin อยู่ที่ ${U.formatPercent(summary.gpPct)}` : `GP margin is ${U.formatPercent(summary.gpPct)}`) : concentrationRisk ? (isThai() ? `${topDealer.name} มีสัดส่วน ${U.formatPercent(topDealer.share)}` : `${topDealer.name} holds ${U.formatPercent(topDealer.share)} share`) : gapRisk ? (isThai() ? `ส่วนต่างคาดการณ์ ${unitText(Math.abs(gap))}` : `${Math.abs(gap).toLocaleString()} unit forecast gap`) : t("message.noRedRisk"),
       recommendedAction: data.length ? recommendedAction(gpRisk, concentrationRisk, gapRisk, lowMarginModel, weakDealer, topModel) : (isThai() ? "ขยายตัวกรองเพื่อให้มุมมองผู้บริหารกลับมาครบถ้วน" : "Broaden filters to restore executive coverage."),
       alerts: [
         alert(isThai() ? "ความเสี่ยง GP" : "GP Risk", gpRisk ? "red" : summary.gpPct < 11 ? "yellow" : "green", isThai() ? `GP margin ${U.formatPercent(summary.gpPct)} รุ่นต่ำสุด: ${lowMarginModel.name}` : `${U.formatPercent(summary.gpPct)} GP margin. Lowest model: ${lowMarginModel.name}.`),
-        alert(isThai() ? "การกระจุกตัว Dealer" : "Dealer Concentration", concentrationRisk ? "red" : topDealer.share > 30 ? "yellow" : "green", isThai() ? `${topDealer.name} คิดเป็น ${U.formatPercent(topDealer.share)} ของจำนวนขายตามตัวกรอง` : `${topDealer.name} contributes ${U.formatPercent(topDealer.share)} of filtered units.`),
-        alert(isThai() ? "ส่วนต่างคาดการณ์" : "Forecast Gap", gapRisk ? "yellow" : "green", isThai() ? `${gap >= 0 ? "+" : ""}${unitText(gap)} เทียบ baseline ${target.toLocaleString()} คัน` : `${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units vs ${target.toLocaleString()} static baseline.`),
+        alert(isThai() ? "การกระจุกตัวของสาขา" : "Dealer Concentration", concentrationRisk ? "red" : topDealer.share > 30 ? "yellow" : "green", isThai() ? `${topDealer.name} คิดเป็น ${U.formatPercent(topDealer.share)} ของจำนวนขายตามตัวกรอง` : `${topDealer.name} contributes ${U.formatPercent(topDealer.share)} of filtered units.`),
+        alert(isThai() ? "ส่วนต่างคาดการณ์" : "Forecast Gap", gapRisk ? "yellow" : "green", isThai() ? `${gap >= 0 ? "+" : ""}${unitText(gap)} เทียบฐานเป้าหมาย ${target.toLocaleString()} คัน` : `${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units vs ${target.toLocaleString()} static baseline.`),
         alert(isThai() ? "สต็อก / Booking" : "Stock / Booking", hasBookingFields ? "green" : "yellow", stockSignal)
       ]
     };
@@ -335,8 +335,8 @@
   function recommendedAction(gpRisk, concentrationRisk, gapRisk, lowMarginModel, weakDealer, topModel) {
     if (gpRisk) return isThai() ? `ปกป้องกำไรก่อน: ทบทวนส่วนลดและเศรษฐศาสตร์ดีลของ ${lowMarginModel.name}` : `Protect margin first: review discounting and deal economics on ${lowMarginModel.name}.`;
     if (concentrationRisk) return isThai() ? `ลดการพึ่งพาเครือข่าย: เพิ่มกิจกรรมและติดตามสต็อกของ ${weakDealer.name}` : `Reduce network dependency: lift activity and stock follow-up for ${weakDealer.name}.`;
-    if (gapRisk) return isThai() ? `ปิดส่วนต่างด้วยดีลที่มีโอกาสสูง โดยใช้ ${topModel.name} เป็นตัวนำ` : `Close the gap through high-probability deals led by ${topModel.name}.`;
-    return isThai() ? `รักษาจังหวะการปิดการขายและทำให้ความพร้อมของ ${topModel.name} ชัดเจนใน Dealer สำคัญ` : `Sustain close rhythm and keep ${topModel.name} availability visible across priority dealers.`;
+    if (gapRisk) return isThai() ? `ปิดส่วนต่างด้วยดีลที่มีโอกาสสูง โดยใช้ ${topModel.name} เป็นตัวนำ` : `Close the gap through high-โอกาส deals led by ${topModel.name}.`;
+    return isThai() ? `รักษาจังหวะการปิดการขายและทำให้ความพร้อมของ ${topModel.name} ชัดเจนในสาขาสำคัญ` : `Sustain close rhythm and keep ${topModel.name} availability visible across priority dealers.`;
   }
 
   function renderBriefing(intel) {
@@ -349,7 +349,7 @@
     U.setHtml("briefSignalChips", [
       isThai() ? `คาดการณ์ ${unitText(intel.forecast)}` : `${intel.forecast.toLocaleString()} forecast units`,
       isThai() ? `ส่วนต่างเป้าหมาย ${intel.gap >= 0 ? "+" : ""}${unitText(intel.gap)}` : `${intel.gap >= 0 ? "+" : ""}${intel.gap.toLocaleString()} target gap`,
-      isThai() ? `Dealer หลัก ${U.formatPercent(intel.topDealer.share)}` : `${U.formatPercent(intel.topDealer.share)} top dealer share`
+      isThai() ? `สาขาหลัก ${U.formatPercent(intel.topDealer.share)}` : `${U.formatPercent(intel.topDealer.share)} top dealer share`
     ].map((chip) => `<span class="command-chip">${chip}</span>`).join(""));
   }
 
@@ -383,17 +383,17 @@
         <strong>${intel.forecast.toLocaleString()}</strong>
         <span>${t("label.ruleBasedForecastUnits")}</span>
       </div>
-      ${scoreRow(t("label.targetBaseline"), unitText(intel.target), isThai() ? "Placeholder แบบ Static V6" : "Static V6 placeholder")}
-      ${scoreRow(t("label.gap"), `${intel.gap >= 0 ? "+" : ""}${unitText(intel.gap)}`, intel.gap < 0 ? (isThai() ? "ต้องเร่งปิดการขาย" : "Needs close action") : (isThai() ? "สูงกว่า baseline" : "Above baseline"))}
+      ${scoreRow(t("label.targetBaseline"), unitText(intel.target), isThai() ? "ตัวเตรียมพร้อมแบบคงที่ V6" : "Static V6 ตัวเตรียมพร้อม")}
+      ${scoreRow(t("label.gap"), `${intel.gap >= 0 ? "+" : ""}${unitText(intel.gap)}`, intel.gap < 0 ? (isThai() ? "ต้องเร่งปิดการขาย" : "Needs close action") : (isThai() ? "สูงกว่าฐานเป้าหมาย" : "Above baseline"))}
       ${scoreRow(t("label.bestMonth"), bestMonth.name, unitText(bestMonth.units))}
       ${scoreRow(t("label.primaryLever"), topDealer.name, isThai() ? `สัดส่วน ${U.formatPercent(topDealer.share)}` : `${U.formatPercent(topDealer.share)} share`)}`);
   }
 
   function renderRiskOpportunity(intel) {
     U.setHtml("riskOpportunityPanel", [
-      signal(intel.gap < 0 ? t("label.gap") : t("label.opportunity"), isThai() ? "โฟกัสคาดการณ์" : "Forecast Focus", intel.gap < 0 ? (isThai() ? `กู้คืน ${unitText(Math.abs(intel.gap))} ผ่านการติดตาม Dealer สำคัญ` : `Recover ${Math.abs(intel.gap).toLocaleString()} units through priority dealer follow-up.`) : (isThai() ? "คาดการณ์สูงกว่า baseline แบบ Static ให้ปกป้อง GP ระหว่างปิดการขาย" : "Forecast is above the static baseline; protect GP while closing.")),
+      signal(intel.gap < 0 ? t("label.gap") : t("label.opportunity"), isThai() ? "โฟกัสคาดการณ์" : "Forecast Focus", intel.gap < 0 ? (isThai() ? `กู้คืน ${unitText(Math.abs(intel.gap))} ผ่านการติดตามสาขาสำคัญ` : `Recover ${Math.abs(intel.gap).toLocaleString()} units through priority dealer follow-up.`) : (isThai() ? "คาดการณ์สูงกว่าฐานเป้าหมายแบบคงที่ ให้ปกป้อง GP ระหว่างปิดการขาย" : "Forecast is above the static baseline; protect GP while closing.")),
       signal(isThai() ? "กำไร" : "Margin", t("label.priceDiscipline"), isThai() ? `ทบทวนรุ่น GP ต่ำสุด ${intel.lowMarginModel.name} ที่ ${U.formatPercent(intel.lowMarginModel.gpPct)}` : `Review lowest-margin model ${intel.lowMarginModel.name} at ${U.formatPercent(intel.lowMarginModel.gpPct)} GP.`),
-      signal("Dealer", t("label.networkBalance"), isThai() ? `ติดตาม ${intel.weakDealer.name} และลดการพึ่งพา ${intel.topDealer.name}` : `Watch ${intel.weakDealer.name} and reduce over-reliance on ${intel.topDealer.name}.`),
+      signal(isThai() ? "สาขา" : "Dealer", t("label.networkBalance"), isThai() ? `ติดตาม ${intel.weakDealer.name} และลดการพึ่งพา ${intel.topDealer.name}` : `Watch ${intel.weakDealer.name} and reduce over-reliance on ${intel.topDealer.name}.`),
       signal(isThai() ? "สินค้า" : "Product", t("label.pushCandidate"), isThai() ? `ให้ความสำคัญกับ ${intel.highMarginModel.name} เมื่อสต็อกและคุณภาพ lead พร้อม` : `Prioritize ${intel.highMarginModel.name} where supply and lead quality allow.`)
     ].join(""));
   }

@@ -45,7 +45,7 @@
       module: "dealer",
       eyebrow: "V10 Dealer Network Health",
       title: "Dealer Intelligence",
-      subtitle: "Dealer contribution, health signals, pipeline conversion, stock age, and coverage priorities.",
+      subtitle: "Dealer contribution, health signals, แผนงานขาย conversion, stock age, and coverage priorities.",
       insight: "dealer",
       icon: "◆",
       modules: ["Dealer", "Health", "Collection", "Coverage"]
@@ -54,7 +54,7 @@
       module: "forecast",
       eyebrow: "V10 Forecast Foundation",
       title: "Sales Forecast AI",
-      subtitle: "Rule-based forecast, target gap, pipeline probability, and next-action guidance.",
+      subtitle: "Rule-based forecast, target gap, แผนงานขาย โอกาส, and next-action guidance.",
       insight: "forecast",
       icon: "◎",
       modules: ["Forecast", "Pipeline", "Target", "Scenario"]
@@ -62,11 +62,11 @@
   };
 
   const kpiIcons = ["◒", "◈", "◐", "%", "◇", "↔"];
-  const exportKinds = ["PDF", "PowerPoint", "Excel", "PNG"];
+  const exportKinds = ["PDF", "PowerPoint", "CSV", "PNG"];
   const exportLabels = {
     PDF: "export.pdf",
     PowerPoint: "export.powerpoint",
-    Excel: "export.csv",
+    CSV: "export.csv",
     PNG: "export.png"
   };
   let latestRows = [];
@@ -100,7 +100,7 @@
     salesman: ["V10 Performance Coaching", "V10 โค้ชผลงานพนักงานขาย"],
     sales: ["V10 Commercial Analytics", "V10 วิเคราะห์ยอดขายเชิงพาณิชย์"],
     product: ["V10 Product Intelligence", "V10 วิเคราะห์สินค้า"],
-    dealer: ["V10 Dealer Network Health", "V10 สุขภาพเครือข่าย Dealer"],
+    dealer: ["V10 Dealer Network Health", "V10 สุขภาพเครือข่ายสาขา"],
     forecast: ["V10 Forecast Foundation", "V10 พื้นฐานคาดการณ์"]
   };
 
@@ -128,7 +128,7 @@
   function labelForInsight(title) {
     const labels = {
       "Sales Performance": local("Sales Performance", "ผลงานยอดขาย"),
-      "Dealer Performance": local("Dealer Performance", "ผลงาน Dealer"),
+      "Dealer Performance": local("Dealer Performance", "ผลงานสาขา"),
       "Product Performance": local("Product Performance", "ผลงานสินค้า"),
       "Forecast Risk": local("Forecast Risk", "ความเสี่ยงคาดการณ์"),
       "Low GP Warning": local("Low GP Warning", "แจ้งเตือน GP ต่ำ"),
@@ -237,14 +237,14 @@
         severity: severityLabel(kpi.units >= 400 ? "Strong" : "Review"),
         headline: local(`${kpi.units.toLocaleString()} units sold`, `ขายแล้ว ${unitText(kpi.units)}`),
         detail: local(`${monthly[0]?.name || "-"} is the strongest month with ${utils.formatMoney(kpi.sales)} total sales value.`, `${monthly[0]?.name || "-"} เป็นเดือนที่แข็งแรงที่สุด มูลค่ายอดขายรวม ${utils.formatMoney(kpi.sales)}`),
-        action: kpi.units >= 400 ? local("Maintain close rhythm and protect margin quality.", "รักษาจังหวะปิดการขายและปกป้องคุณภาพกำไร") : local("Use dealer and salesman follow-up to close the volume gap.", "ใช้การติดตาม Dealer และพนักงานขายเพื่อปิดส่วนต่างจำนวนขาย")
+        action: kpi.units >= 400 ? local("Maintain close rhythm and protect margin quality.", "รักษาจังหวะปิดการขายและปกป้องคุณภาพกำไร") : local("Use dealer and salesman follow-up to close the volume gap.", "ใช้การติดตามสาขาและพนักงานขายเพื่อปิดส่วนต่างจำนวนขาย")
       },
       {
         title: labelForInsight("Dealer Performance"),
         severity: severityLabel(dealer.share > 45 ? "Dependency" : "Balanced"),
-        headline: local(`${dealer.name} leads dealer contribution`, `${dealer.name} เป็น Dealer ที่มีสัดส่วนสูงสุด`),
+        headline: local(`${dealer.name} leads dealer contribution`, `${dealer.name} เป็นสาขาที่มีสัดส่วนสูงสุด`),
         detail: local(`${dealer.units.toLocaleString()} units and ${utils.formatPercent(dealer.share)} share. Lowest filtered contribution: ${weakDealer.name}.`, `${unitText(dealer.units)} และสัดส่วน ${utils.formatPercent(dealer.share)} โดยผลงานต่ำสุดในตัวกรองคือ ${weakDealer.name}`),
-        action: dealer.share > 45 ? local("Lift secondary dealer activity to reduce dependency risk.", "เพิ่มกิจกรรม Dealer รองเพื่อลดความเสี่ยงการพึ่งพา") : local("Keep weekly dealer scorecards active.", "ติดตาม scorecard Dealer รายสัปดาห์ต่อเนื่อง")
+        action: dealer.share > 45 ? local("Lift secondary dealer activity to reduce dependency risk.", "เพิ่มกิจกรรมสาขารองเพื่อลดความเสี่ยงการพึ่งพา") : local("Keep weekly dealer scorecards active.", "ติดตาม scorecard สาขา รายสัปดาห์ต่อเนื่อง")
       },
       {
         title: labelForInsight("Product Performance"),
@@ -257,8 +257,8 @@
         title: labelForInsight("Forecast Risk"),
         severity: severityLabel(gap < 0 ? "Gap" : "On Track"),
         headline: local(`${forecast.toLocaleString()} unit rule-based forecast`, `คาดการณ์ตามกฎ ${unitText(forecast)}`),
-        detail: local(`Static target placeholder is ${target.toLocaleString()} units, leaving ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units gap.`, `เป้าหมาย Static คือ ${unitText(target)} เหลือส่วนต่าง ${gap >= 0 ? "+" : ""}${unitText(gap)}`),
-        action: gap < 0 ? local("Prioritize high-probability deals and top dealer follow-up.", "ให้ความสำคัญกับดีลโอกาสสูงและการติดตาม Dealer หลัก") : local("Forecast is above baseline; protect GP while closing.", "คาดการณ์สูงกว่า baseline ให้ปกป้อง GP ระหว่างปิดการขาย")
+        detail: local(`Static target ตัวเตรียมพร้อม is ${target.toLocaleString()} units, leaving ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units gap.`, `เป้าหมายแบบคงที่ คือ ${unitText(target)} เหลือส่วนต่าง ${gap >= 0 ? "+" : ""}${unitText(gap)}`),
+        action: gap < 0 ? local("Prioritize high-โอกาส deals and top dealer follow-up.", "ให้ความสำคัญกับดีลโอกาสสูงและการติดตามสาขาหลัก") : local("Forecast is above baseline; protect GP while closing.", "คาดการณ์สูงกว่าฐานเป้าหมาย ให้ปกป้อง GP ระหว่างปิดการขาย")
       },
       {
         title: labelForInsight("Low GP Warning"),
@@ -302,7 +302,7 @@
     const library = {
       executive: {
         headline: local(`${kpi.units.toLocaleString()} units with ${utils.formatPercent(kpi.gpPct)} GP margin`, `${unitText(kpi.units)} พร้อม GP margin ${utils.formatPercent(kpi.gpPct)}`),
-        detail: local(`${dealer.name} leads dealer contribution at ${utils.formatPercent(dealer.share)} share, while ${product.name} is the strongest model.`, `${dealer.name} นำสัดส่วน Dealer ที่ ${utils.formatPercent(dealer.share)} และ ${product.name} เป็นรุ่นที่แข็งแรงที่สุด`),
+        detail: local(`${dealer.name} leads dealer contribution at ${utils.formatPercent(dealer.share)} share, while ${product.name} is the strongest model.`, `${dealer.name} นำสัดส่วนสาขา ที่ ${utils.formatPercent(dealer.share)} และ ${product.name} เป็นรุ่นที่แข็งแรงที่สุด`),
         action: kpi.gpPct < 8 ? local("Prioritize margin protection before chasing extra volume.", "ให้ความสำคัญกับการปกป้องกำไรก่อนเร่งจำนวนขาย") : local("Maintain executive focus on top model availability and weekly close rhythm.", "ผู้บริหารควรโฟกัสความพร้อมรุ่นหลักและจังหวะปิดรายสัปดาห์"),
         risk: marginSignal
       },
@@ -314,7 +314,7 @@
       },
       sales: {
         headline: local(`${monthly[0]?.name || "-"} is the strongest sales month`, `${monthly[0]?.name || "-"} เป็นเดือนขายที่แข็งแรงที่สุด`),
-        detail: local(`${dealer.name} leads dealer volume and ${typeMix.name} contributes ${utils.formatPercent(typeMix.share)} of units.`, `${dealer.name} นำจำนวนขาย Dealer และ ${typeMix.name} คิดเป็น ${utils.formatPercent(typeMix.share)} ของจำนวนขาย`),
+        detail: local(`${dealer.name} leads dealer volume and ${typeMix.name} contributes ${utils.formatPercent(typeMix.share)} of units.`, `${dealer.name} นำจำนวนขายสาขา และ ${typeMix.name} คิดเป็น ${utils.formatPercent(typeMix.share)} ของจำนวนขาย`),
         action: rows.length < 10 ? local("Filtered sample is small; broaden filters before deciding.", "ตัวอย่างตามตัวกรองยังน้อย ควรขยายตัวกรองก่อนตัดสินใจ") : local("Use channel and payment mix to tune this month's closing plan.", "ใช้สัดส่วนช่องทางและการชำระเงินเพื่อปรับแผนปิดการขายเดือนนี้"),
         risk: marginSignal
       },
@@ -327,13 +327,13 @@
       dealer: {
         headline: local(`${dealer.name} is strongest by current unit volume`, `${dealer.name} แข็งแรงที่สุดตามจำนวนขายปัจจุบัน`),
         detail: local(`${weakestDealer.name} has the lowest filtered contribution and should be reviewed for activity or stock constraints.`, `${weakestDealer.name} มีสัดส่วนต่ำสุดตามตัวกรอง ควรทบทวนกิจกรรมหรือข้อจำกัดด้านสต็อก`),
-        action: dealer.share > 60 ? local("Reduce dependency by lifting secondary dealer activity.", "ลดการพึ่งพาโดยเพิ่มกิจกรรม Dealer รอง") : local("Keep dealer scorecards under weekly review.", "ทบทวน scorecard Dealer ทุกสัปดาห์"),
+        action: dealer.share > 60 ? local("Reduce dependency by lifting secondary dealer activity.", "ลดการพึ่งพาโดยเพิ่มกิจกรรมสาขารอง") : local("Keep dealer scorecards under weekly review.", "ทบทวน scorecard สาขา ทุกสัปดาห์"),
         risk: dealer.share > 60 ? local("Dealer dependency", "พึ่งพา Dealer สูง") : local("Balanced network", "เครือข่ายสมดุล")
       },
       forecast: {
         headline: local(`${forecast.toLocaleString()} unit rule-based forecast`, `คาดการณ์ตามกฎ ${unitText(forecast)}`),
         detail: local(`${monthly[0]?.name || "-"} is the strongest historical month in the current filter set.`, `${monthly[0]?.name || "-"} เป็นเดือนประวัติที่แข็งแรงที่สุดในตัวกรองปัจจุบัน`),
-        action: forecast < 400 ? local("Close the target gap through priority dealer and salesman follow-up.", "ปิดส่วนต่างเป้าหมายผ่านการติดตาม Dealer และพนักงานขายสำคัญ") : local("Forecast is above baseline target; protect margin quality.", "คาดการณ์สูงกว่าเป้าหมาย baseline ให้ปกป้องคุณภาพกำไร"),
+        action: forecast < 400 ? local("Close the target gap through priority dealer and salesman follow-up.", "ปิดส่วนต่างเป้าหมายผ่านการติดตามสาขา และพนักงานขายสำคัญ") : local("Forecast is above baseline target; protect margin quality.", "คาดการณ์สูงกว่าฐานเป้าหมาย ให้ปกป้องคุณภาพกำไร"),
         risk: forecast < 400 ? local("Target gap", "มีส่วนต่างเป้าหมาย") : local("On track", "ตามแผน")
       }
     };
@@ -345,7 +345,7 @@
     if (!rows.length) {
       return {
         overall: t("message.noRecordsInsight"),
-        leadingDealer: local("Dealer leadership cannot be calculated for the current filter.", "ยังคำนวณ Dealer ผู้นำจากตัวกรองปัจจุบันไม่ได้"),
+        leadingDealer: local("Dealer leadership cannot be calculated for the current filter.", "ยังคำนวณ สาขาผู้นำจากตัวกรองปัจจุบันไม่ได้"),
         leadingProduct: local("Product leadership cannot be calculated for the current filter.", "ยังคำนวณสินค้าผู้นำจากตัวกรองปัจจุบันไม่ได้"),
         margin: local("GP margin signal is unavailable because the filtered sales value is zero.", "ยังไม่มีสัญญาณ GP margin เพราะมูลค่ายอดขายตามตัวกรองเป็นศูนย์"),
         forecastRisk: local("Forecast risk is pending until filtered records are available.", "ความเสี่ยงคาดการณ์จะพร้อมเมื่อมีข้อมูลตามตัวกรอง"),
@@ -368,15 +368,15 @@
     const nextAction = kpi.gpPct < 8
       ? local(`Protect margin before adding volume pressure, starting with ${lowMarginProduct.name}.`, `ปกป้องกำไรก่อนเร่งจำนวนขาย โดยเริ่มที่ ${lowMarginProduct.name}`)
       : gap < 0
-        ? local(`Close the ${Math.abs(gap).toLocaleString()} unit forecast gap through high-probability dealer follow-up.`, `ปิดส่วนต่างคาดการณ์ ${unitText(Math.abs(gap))} ผ่านการติดตาม Dealer ที่มีโอกาสสูง`)
+        ? local(`Close the ${Math.abs(gap).toLocaleString()} unit forecast gap through high-โอกาส dealer follow-up.`, `ปิดส่วนต่างคาดการณ์ ${unitText(Math.abs(gap))} ผ่านการติดตามสาขา ที่มีโอกาสสูง`)
         : local(`Maintain weekly close rhythm and secure availability for ${product.name}.`, `รักษาจังหวะปิดรายสัปดาห์และยืนยันความพร้อมของ ${product.name}`);
 
     return {
       overall: local(`${kpi.units.toLocaleString()} units delivered with ${utils.formatMoney(kpi.sales)} sales value in the current filter.`, `ส่งมอบ ${unitText(kpi.units)} พร้อมมูลค่ายอดขาย ${utils.formatMoney(kpi.sales)} ในตัวกรองปัจจุบัน`),
-      leadingDealer: local(`${dealer.name} is the leading dealer with ${dealer.units.toLocaleString()} units and ${utils.formatPercent(dealer.share)} share.`, `${dealer.name} เป็น Dealer ผู้นำด้วย ${unitText(dealer.units)} และสัดส่วน ${utils.formatPercent(dealer.share)}`),
+      leadingDealer: local(`${dealer.name} is the leading dealer with ${dealer.units.toLocaleString()} units and ${utils.formatPercent(dealer.share)} share.`, `${dealer.name} เป็น สาขาผู้นำด้วย ${unitText(dealer.units)} และสัดส่วน ${utils.formatPercent(dealer.share)}`),
       leadingProduct: local(`${product.name} is the leading product with ${product.units.toLocaleString()} units and ${utils.formatPercent(product.share)} share.`, `${product.name} เป็นสินค้าผู้นำด้วย ${unitText(product.units)} และสัดส่วน ${utils.formatPercent(product.share)}`),
       margin: local(`${utils.formatPercent(kpi.gpPct)} GP margin indicates ${marginSignal}. Lowest model pressure: ${lowMarginProduct.name} at ${utils.formatPercent(lowMarginProduct.gpPct)}.`, `GP margin ${utils.formatPercent(kpi.gpPct)} แสดงสัญญาณ ${marginSignal} โดยรุ่นที่กดดันต่ำสุดคือ ${lowMarginProduct.name} ที่ ${utils.formatPercent(lowMarginProduct.gpPct)}`),
-      forecastRisk: local(`${forecast.toLocaleString()} unit rule-based forecast versus ${target.toLocaleString()} baseline target shows ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units: ${riskSignal}.`, `คาดการณ์ตามกฎ ${unitText(forecast)} เทียบเป้าหมาย baseline ${unitText(target)} แสดงส่วนต่าง ${gap >= 0 ? "+" : ""}${unitText(gap)}: ${riskSignal}`),
+      forecastRisk: local(`${forecast.toLocaleString()} unit rule-based forecast versus ${target.toLocaleString()} baseline target shows ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units: ${riskSignal}.`, `คาดการณ์ตามกฎ ${unitText(forecast)} เทียบฐานเป้าหมาย ${unitText(target)} แสดงส่วนต่าง ${gap >= 0 ? "+" : ""}${unitText(gap)}: ${riskSignal}`),
       nextAction,
       forecast,
       target,
@@ -410,8 +410,8 @@
         {
           type: "dealer",
           label: t("ai.dealerInsight"),
-          title: local("Dealer signal unavailable", "ยังไม่มีสัญญาณ Dealer"),
-          text: local("Dealer leadership and attention signals will appear when filtered dealer records are available.", "สัญญาณ Dealer ผู้นำและ Dealer ที่ควรติดตามจะแสดงเมื่อมีข้อมูล Dealer ตามตัวกรอง")
+          title: local("Dealer signal unavailable", "ยังไม่มีสัญญาณสาขา"),
+          text: local("Dealer leadership and attention signals will appear when filtered dealer records are available.", "สัญญาณ สาขาผู้นำและ Dealer ที่ควรติดตามจะแสดงเมื่อมีข้อมูลสาขา ตามตัวกรอง")
         },
         {
           type: "product",
@@ -423,7 +423,7 @@
           type: "forecast",
           label: t("ai.forecastInsight"),
           title: t("ai.forecastRisk"),
-          text: local("The rule-based forecast placeholder will update after sales records are available.", "คาดการณ์ตามกฎจะอัปเดตหลังจากมีข้อมูลยอดขาย")
+          text: local("The rule-based forecast ตัวเตรียมพร้อม will update after sales records are available.", "คาดการณ์ตามกฎจะอัปเดตหลังจากมีข้อมูลยอดขาย")
         },
         {
           type: "action",
@@ -464,7 +464,7 @@
     const nextAction = copilotAction(intent, { gap, kpi, weakDealer, topDealer, topProduct, productPush, lowGpProduct, topSalesman });
     const headlineMap = {
       sales: local(`Sales performance: ${kpi.units.toLocaleString()} units and ${utils.formatMoney(kpi.sales)} sales value`, `ผลงานยอดขาย: ${unitText(kpi.units)} และมูลค่ายอดขาย ${utils.formatMoney(kpi.sales)}`),
-      dealer: local(`Dealer attention: review ${weakDealer.name} while managing ${topDealer.name} concentration`, `Dealer ที่ต้องติดตาม: ทบทวน ${weakDealer.name} พร้อมจัดการการกระจุกตัวของ ${topDealer.name}`),
+      dealer: local(`Dealer attention: review ${weakDealer.name} while managing ${topDealer.name} concentration`, `สาขาที่ต้องติดตาม: ทบทวน ${weakDealer.name} พร้อมจัดการการกระจุกตัวของ ${topDealer.name}`),
       product: local(`Product push: prioritize ${productPush.name} with ${utils.formatPercent(productPush.gpPct)} GP margin`, `สินค้าที่ควรผลักดัน: ให้ความสำคัญกับ ${productPush.name} ที่ GP margin ${utils.formatPercent(productPush.gpPct)}`),
       forecast: local(`Forecast risk: ${forecast.toLocaleString()} units versus ${target.toLocaleString()} target`, `ความเสี่ยงคาดการณ์: ${unitText(forecast)} เทียบเป้าหมาย ${unitText(target)}`),
       action: `${t("ai.nextBestAction")}: ${nextAction}`,
@@ -487,7 +487,7 @@
           type: "dealer",
           label: t("ai.dealerInsight"),
           title: local(`${weakDealer.name} needs attention`, `${weakDealer.name} ต้องติดตาม`),
-          text: local(`${topDealer.name} leads with ${topDealer.units.toLocaleString()} units and ${utils.formatPercent(topDealer.share)} share. ${weakDealer.name} is lowest in the current filter; dealer risk signal is ${dealerRisk}.`, `${topDealer.name} นำด้วย ${unitText(topDealer.units)} และสัดส่วน ${utils.formatPercent(topDealer.share)} โดย ${weakDealer.name} ต่ำสุดในตัวกรองปัจจุบัน สัญญาณความเสี่ยง Dealer คือ ${dealerRisk}`)
+          text: local(`${topDealer.name} leads with ${topDealer.units.toLocaleString()} units and ${utils.formatPercent(topDealer.share)} share. ${weakDealer.name} is lowest in the current filter; dealer risk signal is ${dealerRisk}.`, `${topDealer.name} นำด้วย ${unitText(topDealer.units)} และสัดส่วน ${utils.formatPercent(topDealer.share)} โดย ${weakDealer.name} ต่ำสุดในตัวกรองปัจจุบัน สัญญาณความเสี่ยงสาขา คือ ${dealerRisk}`)
         },
         {
           type: "product",
@@ -499,7 +499,7 @@
           type: "forecast",
           label: t("ai.forecastInsight"),
           title: local(`${gap >= 0 ? "+" : ""}${gap.toLocaleString()} unit forecast gap`, `ส่วนต่างคาดการณ์ ${gap >= 0 ? "+" : ""}${unitText(gap)}`),
-          text: local(`Rule-based forecast is ${forecast.toLocaleString()} units against ${target.toLocaleString()} baseline target, showing ${forecastRisk}.`, `คาดการณ์ตามกฎ ${unitText(forecast)} เทียบเป้าหมาย baseline ${unitText(target)} แสดงสัญญาณ ${forecastRisk}`)
+          text: local(`Rule-based forecast is ${forecast.toLocaleString()} units against ${target.toLocaleString()} baseline target, showing ${forecastRisk}.`, `คาดการณ์ตามกฎ ${unitText(forecast)} เทียบฐานเป้าหมาย ${unitText(target)} แสดงสัญญาณ ${forecastRisk}`)
         },
         {
           type: "action",
@@ -516,13 +516,13 @@
     if (intent === "product") return local(`Push ${context.productPush.name} first, then review margin pressure on ${context.lowGpProduct.name}.`, `ผลักดัน ${context.productPush.name} ก่อน แล้วทบทวนแรงกดดันกำไรของ ${context.lowGpProduct.name}`);
     if (intent === "forecast") {
       return context.gap < 0
-        ? local(`Recover ${Math.abs(context.gap).toLocaleString()} units through high-probability dealer and salesman follow-up.`, `กู้คืน ${unitText(Math.abs(context.gap))} ผ่านการติดตาม Dealer และพนักงานขายที่มีโอกาสสูง`)
+        ? local(`Recover ${Math.abs(context.gap).toLocaleString()} units through high-โอกาส dealer and salesman follow-up.`, `กู้คืน ${unitText(Math.abs(context.gap))} ผ่านการติดตามสาขา และพนักงานขายที่มีโอกาสสูง`)
         : local("Protect GP quality while keeping the close rhythm ahead of the baseline target.", "ปกป้องคุณภาพ GP พร้อมรักษาจังหวะปิดการขายให้เหนือ baseline");
     }
-    if (intent === "sales") return local(`Use ${context.topDealer.name}, ${context.topProduct.name}, and ${context.topSalesman.name} as the performance benchmark for the next review.`, `ใช้ ${context.topDealer.name}, ${context.topProduct.name} และ ${context.topSalesman.name} เป็น benchmark ผลงานในการรีวิวครั้งถัดไป`);
+    if (intent === "sales") return local(`Use ${context.topDealer.name}, ${context.topProduct.name}, and ${context.topSalesman.name} as the performance benchmark for the next review.`, `ใช้ ${context.topDealer.name}, ${context.topProduct.name} และ ${context.topSalesman.name} เป็นเกณฑ์เทียบผลงานในการรีวิวครั้งถัดไป`);
     return context.gap < 0
-      ? local(`Close the forecast gap first, starting with ${context.weakDealer.name} follow-up and ${context.topProduct.name} deal conversion.`, `ปิดส่วนต่างคาดการณ์ก่อน โดยเริ่มจากการติดตาม ${context.weakDealer.name} และ conversion ของ ${context.topProduct.name}`)
-      : local(`Maintain weekly close discipline and keep ${context.productPush.name} available across priority dealers.`, `รักษาวินัยปิดการขายรายสัปดาห์และทำให้ ${context.productPush.name} พร้อมสำหรับ Dealer สำคัญ`);
+      ? local(`Close the forecast gap first, starting with ${context.weakDealer.name} follow-up and ${context.topProduct.name} deal conversion.`, `ปิดส่วนต่างคาดการณ์ก่อน โดยเริ่มจากการติดตาม ${context.weakDealer.name} และ การปิดดีลของ ${context.topProduct.name}`)
+      : local(`Maintain weekly close discipline and keep ${context.productPush.name} available across priority dealers.`, `รักษาวินัยปิดการขายรายสัปดาห์และทำให้ ${context.productPush.name} พร้อมสำหรับ สาขาสำคัญ`);
   }
 
   function reportLines(kind, rows) {
@@ -562,12 +562,12 @@
       weekly: [
         local(`Weekly focus: ${topDealer.name} and ${topProduct.name} should anchor the next close rhythm.`, `โฟกัสรายสัปดาห์: ใช้ ${topDealer.name} และ ${topProduct.name} เป็นแกนหลักของจังหวะปิดการขายถัดไป`),
         local(`Sales execution: ${topSalesman.name} is the leading salesman signal in the active data.`, `การดำเนินงานขาย: ${topSalesman.name} เป็นสัญญาณพนักงานขายหลักในข้อมูลปัจจุบัน`),
-        local(`Risk watch: ${summary.gap < 0 ? "recover forecast gap" : "protect margin while ahead of baseline"}.`, `ติดตามความเสี่ยง: ${summary.gap < 0 ? "กู้คืนส่วนต่างคาดการณ์" : "ปกป้องกำไรขณะอยู่เหนือ baseline"}`)
+        local(`Risk watch: ${summary.gap < 0 ? "recover forecast gap" : "protect margin while ahead of baseline"}.`, `ติดตามความเสี่ยง: ${summary.gap < 0 ? "กู้คืนส่วนต่างคาดการณ์" : "ปกป้องกำไรขณะอยู่เหนือฐานเป้าหมาย"}`)
       ],
       monthly: [
         local(`Monthly result: ${kpi.units.toLocaleString()} filtered units and ${utils.formatMoney(kpi.gp)} GP.`, `ผลรายเดือน: ${unitText(kpi.units)} ตามตัวกรอง และ GP ${utils.formatMoney(kpi.gp)}`),
         local(`Portfolio signal: ${topProduct.name} leads product contribution; review substitute offers where concentration rises.`, `สัญญาณพอร์ตสินค้า: ${topProduct.name} นำสัดส่วนสินค้า ให้ทบทวนข้อเสนอรุ่นทดแทนเมื่อเกิดการกระจุกตัว`),
-        local("Management rhythm: review dealer, salesman, and margin scorecards before month-end close.", "จังหวะบริหาร: ทบทวน scorecard Dealer พนักงานขาย และกำไรก่อนปิดสิ้นเดือน")
+        local("Management rhythm: review dealer, salesman, and margin scorecards before month-end close.", "จังหวะบริหาร: ทบทวน scorecard สาขา พนักงานขาย และกำไรก่อนปิดสิ้นเดือน")
       ],
       executive: [
         summary.overall,
@@ -578,9 +578,9 @@
         `${t("ai.recommendedAction")}: ${summary.nextAction}`
       ],
       dealer: [
-        local(`Dealer leader: ${topDealer.name} with ${topDealer.units.toLocaleString()} units and ${utils.formatPercent(topDealer.gpPct)} GP margin.`, `Dealer ผู้นำ: ${topDealer.name} ด้วย ${unitText(topDealer.units)} และ GP margin ${utils.formatPercent(topDealer.gpPct)}`),
-        local(`Dealer to review: ${weakDealer.name} has the lowest filtered contribution.`, `Dealer ที่ควรทบทวน: ${weakDealer.name} มีสัดส่วนต่ำสุดตามตัวกรอง`),
-        local(`Network balance: top dealer share is ${utils.formatPercent(topDealer.share)}.`, `สมดุลเครือข่าย: Dealer อันดับหนึ่งมีสัดส่วน ${utils.formatPercent(topDealer.share)}`),
+        local(`Dealer leader: ${topDealer.name} with ${topDealer.units.toLocaleString()} units and ${utils.formatPercent(topDealer.gpPct)} GP margin.`, `สาขาผู้นำ: ${topDealer.name} ด้วย ${unitText(topDealer.units)} และ GP margin ${utils.formatPercent(topDealer.gpPct)}`),
+        local(`Dealer to review: ${weakDealer.name} has the lowest filtered contribution.`, `สาขาที่ควรทบทวน: ${weakDealer.name} มีสัดส่วนต่ำสุดตามตัวกรอง`),
+        local(`Network balance: top dealer share is ${utils.formatPercent(topDealer.share)}.`, `สมดุลเครือข่าย: สาขาอันดับหนึ่งมีสัดส่วน ${utils.formatPercent(topDealer.share)}`),
         local(`Recommended next action: lift activity, stock visibility, and weekly follow-up for ${weakDealer.name}.`, `คำแนะนำถัดไป: เพิ่มกิจกรรม ความชัดเจนสต็อก และติดตามรายสัปดาห์สำหรับ ${weakDealer.name}`)
       ]
     };
@@ -612,7 +612,7 @@
         <button type="button" class="enterprise-action" data-enterprise-action="refresh" data-i18n="button.refreshView">Refresh View</button>
         <button type="button" class="enterprise-action" data-enterprise-export="PDF" data-i18n="export.pdf">Export PDF</button>
         <button type="button" class="enterprise-action" data-enterprise-export="PowerPoint" data-i18n="export.powerpoint">Export PowerPoint</button>
-        <button type="button" class="enterprise-action" data-enterprise-export="Excel" data-i18n="export.csv">Export CSV</button>
+        <button type="button" class="enterprise-action" data-enterprise-export="CSV" data-i18n="export.csv">Export CSV</button>
         <button type="button" class="enterprise-action" data-enterprise-export="PNG" data-i18n="export.png">Export PNG</button>
       </div>`;
     if (window.KMMI18n) window.KMMI18n.applyTranslations(header);
@@ -744,7 +744,7 @@
       [t("label.targetBaseline"), summary.target],
       [t("kpi.forecastGap"), summary.gap],
       [local("Overall sales result", "ภาพรวมยอดขาย"), summary.overall],
-      [local("Leading dealer", "Dealer ผู้นำ"), summary.leadingDealer],
+      [local("Leading dealer", "สาขาผู้นำ"), summary.leadingDealer],
       [local("Leading product", "สินค้าผู้นำ"), summary.leadingProduct],
       [local("GP margin signal", "สัญญาณ GP margin"), summary.margin],
       [local("Forecast risk", "ความเสี่ยงคาดการณ์"), summary.forecastRisk],
@@ -815,12 +815,82 @@
     });
   }
 
+  async function exportSummaryPng(rows) {
+    const data = rowsForInsight(rows || latestRows);
+    const kpi = utils.kpi(data);
+    const summary = executiveSummary(data);
+    const canvas = document.createElement("canvas");
+    canvas.width = 1400;
+    canvas.height = 900;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error(t("error.pngFailed"));
+
+    ctx.fillStyle = "#f6f7fb";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(48, 48, canvas.width - 96, canvas.height - 96);
+    ctx.fillStyle = "#ff5a00";
+    ctx.fillRect(48, 48, 10, canvas.height - 96);
+
+    ctx.fillStyle = "#151b2d";
+    ctx.font = "700 44px 'Noto Sans Thai', sans-serif";
+    ctx.fillText(t("report.executive"), 84, 118);
+    ctx.font = "600 24px 'Noto Sans Thai', sans-serif";
+    ctx.fillStyle = "#667085";
+    ctx.fillText(`${t("kpi.lastRefresh")} ${utils.lastRefresh()}`, 84, 160);
+
+    const metrics = [
+      [t("label.filteredUnits"), unitText(kpi.units)],
+      [t("kpi.salesValue"), utils.formatMoney(kpi.sales)],
+      [t("kpi.grossProfit"), utils.formatMoney(kpi.gp)],
+      [t("kpi.gpMargin"), utils.formatPercent(kpi.gpPct)],
+      [t("kpi.forecast"), unitText(summary.forecast)],
+      [t("kpi.forecastGap"), `${summary.gap >= 0 ? "+" : ""}${unitText(summary.gap)}`]
+    ];
+
+    metrics.forEach((item, index) => {
+      const col = index % 3;
+      const row = Math.floor(index / 3);
+      const x = 84 + col * 410;
+      const y = 230 + row * 150;
+      ctx.fillStyle = "#fff8eb";
+      ctx.fillRect(x, y, 360, 108);
+      ctx.fillStyle = "#667085";
+      ctx.font = "700 22px 'Noto Sans Thai', sans-serif";
+      ctx.fillText(item[0], x + 24, y + 38);
+      ctx.fillStyle = "#151b2d";
+      ctx.font = "800 34px 'Noto Sans Thai', sans-serif";
+      ctx.fillText(item[1], x + 24, y + 82);
+    });
+
+    const lines = [summary.overall, summary.leadingDealer, summary.leadingProduct, summary.margin, summary.forecastRisk, summary.nextAction];
+    ctx.fillStyle = "#151b2d";
+    ctx.font = "700 26px 'Noto Sans Thai', sans-serif";
+    ctx.fillText(t("ai.recommendedAction"), 84, 570);
+    ctx.font = "500 22px 'Noto Sans Thai', sans-serif";
+    ctx.fillStyle = "#344054";
+    lines.forEach((line, index) => {
+      ctx.fillText(String(line || "").slice(0, 110), 84, 620 + index * 36);
+    });
+
+    await new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error(t("error.pngFailed")));
+          return;
+        }
+        downloadFile("kmm-v10-dashboard-summary.png", "image/png", blob);
+        resolve();
+      }, "image/png");
+    });
+  }
+
   async function handleExport(kind) {
     let message = t("export.completed");
     const status = document.getElementById("enterpriseExportStatus");
     if (kind === "PDF") message = t("export.pdfPrepared");
     if (kind === "PowerPoint") message = t("export.pptPrepared");
-    if (kind === "Excel") {
+    if (kind === "CSV") {
       exportCsv();
       message = t("export.csvDownloaded");
     }
@@ -829,7 +899,12 @@
         await exportPng();
         message = t("export.pngAttempted");
       } catch (error) {
-        message = t("export.pngFailed");
+        try {
+          await exportSummaryPng();
+          message = t("export.pngAttempted");
+        } catch (fallbackError) {
+          message = t("export.pngFailed");
+        }
       }
     }
     if (status) status.textContent = message;
@@ -928,8 +1003,8 @@
     return `<article class="intel-action-card"><span>${tag}</span><strong>${title}</strong><p>${text}</p></article>`;
   }
 
-  function placeholderCard(title, value, text) {
-    return `<article class="intel-placeholder-card"><span>${local("V10 foundation", "พื้นฐาน V10")}</span><strong>${title}</strong><b>${value}</b><p>${text}</p></article>`;
+  function ตัวเตรียมพร้อมCard(title, value, text) {
+    return `<article class="intel-ตัวเตรียมพร้อม-card"><span>${local("V10 foundation", "พื้นฐาน V10")}</span><strong>${title}</strong><b>${value}</b><p>${text}</p></article>`;
   }
 
   function renderCommonKpiWall(summary, groups) {
@@ -969,13 +1044,13 @@
     return `
       ${renderCommonKpiWall(summary, groups)}
       <div class="enterprise-intel-grid">
-        <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.executiveSummaryPanel")}</div><h2>${local(`${summary.units.toLocaleString()} units with ${utils.formatPercent(summary.gpPct)} GP margin`, `${unitText(summary.units)} พร้อม GP margin ${utils.formatPercent(summary.gpPct)}`)}</h2><p>${local(`${topDealer.name} leads dealer contribution while ${topModel.name} anchors product demand. The rule-based forecast shows ${gap >= 0 ? "an upside" : "a shortfall"} of ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units against placeholder target.`, `${topDealer.name} นำสัดส่วน Dealer ขณะที่ ${topModel.name} เป็นแกนความต้องการสินค้า คาดการณ์ตามกฎแสดง${gap >= 0 ? "ส่วนเพิ่ม" : "ส่วนขาด"} ${gap >= 0 ? "+" : ""}${unitText(gap)} เทียบเป้าหมาย placeholder`)}</p></section>
-        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.alertCenter")}</div>${alertCard(summary.gpPct < 8 ? local("High", "สูง") : local("Watch", "ติดตาม"), local("Margin Quality", "คุณภาพกำไร"), local(`${utils.formatPercent(summary.gpPct)} GP margin in the active filter.`, `GP margin ${utils.formatPercent(summary.gpPct)} ในตัวกรองปัจจุบัน`))}${alertCard(topDealer.share > 45 ? local("High", "สูง") : local("Review", "ทบทวน"), local("Dealer Dependency", "การพึ่งพา Dealer"), local(`${topDealer.name} contributes ${utils.formatPercent(topDealer.share)} of units.`, `${topDealer.name} คิดเป็น ${utils.formatPercent(topDealer.share)} ของจำนวนขาย`))}</section>
+        <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.executiveSummaryPanel")}</div><h2>${local(`${summary.units.toLocaleString()} units with ${utils.formatPercent(summary.gpPct)} GP margin`, `${unitText(summary.units)} พร้อม GP margin ${utils.formatPercent(summary.gpPct)}`)}</h2><p>${local(`${topDealer.name} leads dealer contribution while ${topModel.name} anchors product demand. The rule-based forecast shows ${gap >= 0 ? "an upside" : "a shortfall"} of ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units against ตัวเตรียมพร้อม target.`, `${topDealer.name} นำสัดส่วนสาขา ขณะที่ ${topModel.name} เป็นแกนความต้องการสินค้า คาดการณ์ตามกฎแสดง${gap >= 0 ? "ส่วนเพิ่ม" : "ส่วนขาด"} ${gap >= 0 ? "+" : ""}${unitText(gap)} เทียบเป้าหมาย ตัวเตรียมพร้อม`)}</p></section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.alertCenter")}</div>${alertCard(summary.gpPct < 8 ? local("High", "สูง") : local("Watch", "ติดตาม"), local("Margin Quality", "คุณภาพกำไร"), local(`${utils.formatPercent(summary.gpPct)} GP margin in the active filter.`, `GP margin ${utils.formatPercent(summary.gpPct)} ในตัวกรองปัจจุบัน`))}${alertCard(topDealer.share > 45 ? local("High", "สูง") : local("Review", "ทบทวน"), local("Dealer Dependency", "การพึ่งพาสาขา"), local(`${topDealer.name} contributes ${utils.formatPercent(topDealer.share)} of units.`, `${topDealer.name} คิดเป็น ${utils.formatPercent(topDealer.share)} ของจำนวนขาย`))}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.top5Risks")}</div>${[lowMargin, weakDealer, topDealer, topModel, safeTop(groups.types)].map((row, index) => miniRow(`${index + 1}. ${row.name}`, index === 0 ? local("Margin", "กำไร") : unitText(row.units), local(`Share ${utils.formatPercent(row.share || 0)}`, `สัดส่วน ${utils.formatPercent(row.share || 0)}`))).join("")}</section>
-        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.nextBestActions")}</div>${actionCard(local("Protect margin", "ปกป้องกำไร"), local(`Review discounting on ${lowMargin.name}.`, `ทบทวนส่วนลดของ ${lowMargin.name}`))}${actionCard(local("Lift secondary dealers", "ยกระดับ Dealer รอง"), local(`Follow up with ${weakDealer.name} on activity and stock blockers.`, `ติดตาม ${weakDealer.name} เรื่องกิจกรรมและข้อจำกัดสต็อก`))}${actionCard(local("Secure availability", "ยืนยันความพร้อมสินค้า"), local(`Keep ${topModel.name} supply visible for close planning.`, `ทำให้ supply ของ ${topModel.name} ชัดเจนสำหรับแผนปิดการขาย`))}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.nextBestActions")}</div>${actionCard(local("Protect margin", "ปกป้องกำไร"), local(`Review discounting on ${lowMargin.name}.`, `ทบทวนส่วนลดของ ${lowMargin.name}`))}${actionCard(local("Lift secondary dealers", "ยกระดับ สาขารอง"), local(`Follow up with ${weakDealer.name} on activity and stock blockers.`, `ติดตาม ${weakDealer.name} เรื่องกิจกรรมและข้อจำกัดสต็อก`))}${actionCard(local("Secure availability", "ยืนยันความพร้อมสินค้า"), local(`Keep ${topModel.name} supply visible for close planning.`, `ทำให้ supply ของ ${topModel.name} ชัดเจนสำหรับแผนปิดการขาย`))}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.dealerSnapshot")}</div>${groups.dealers.slice(0, 5).map((row) => miniRow(row.name, unitText(row.units), `GP ${utils.formatPercent(row.gpPct)}`)).join("")}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.productSnapshot")}</div>${groups.types.slice(0, 5).map((row) => miniRow(row.name, local(`${utils.formatPercent(row.share)} mix`, `สัดส่วน ${utils.formatPercent(row.share)}`), unitText(row.units))).join("")}</section>
-        <section class="intel-panel">${placeholderCard(t("label.monthlyGapForecast"), `${gap >= 0 ? "+" : ""}${unitText(gap)}`, local("V10 static forecast center with target, actual, gap, and confidence controls.", "ศูนย์คาดการณ์ Static V10 พร้อมเป้าหมาย ยอดจริง ส่วนต่าง และความเชื่อมั่น"))}</section>
+        <section class="intel-panel">${ตัวเตรียมพร้อมCard(t("label.monthlyGapForecast"), `${gap >= 0 ? "+" : ""}${unitText(gap)}`, local("V10 static forecast center with target, actual, gap, and confidence controls.", "ศูนย์คาดการณ์ แบบคงที่ V10 พร้อมเป้าหมาย ยอดจริง ส่วนต่าง และความเชื่อมั่น"))}</section>
       </div>`;
   }
 
@@ -986,11 +1061,11 @@
     return `
       ${renderCommonKpiWall(summary, groups)}
       <div class="enterprise-intel-grid">
-        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.salesFunnelPlaceholder")}</div>${placeholderCard(local("Lead to Delivery", "Lead ถึงส่งมอบ"), local(`${Math.round(summary.units * 1.6).toLocaleString()} bookings`, `ยอดจองประมาณ ${Math.round(summary.units * 1.6).toLocaleString()}`), local("Booking and landing snapshot is prepared when those fields are available in the source data.", "ภาพรวม booking และ landing พร้อมใช้งานเมื่อข้อมูลต้นทางมีฟิลด์เหล่านี้"))}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.salesFunnelPlaceholder")}</div>${ตัวเตรียมพร้อมCard(local("Lead to Delivery", "Lead ถึงส่งมอบ"), local(`${Math.round(summary.units * 1.6).toLocaleString()} bookings`, `ยอดจองประมาณ ${Math.round(summary.units * 1.6).toLocaleString()}`), local("Booking and landing snapshot is prepared when those fields are available in the source data.", "ภาพรวม ยอดจองและการส่งมอบ พร้อมใช้งานเมื่อข้อมูลต้นทางมีฟิลด์เหล่านี้"))}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.salesTrendComparison")}</div>${groups.months.slice(-5).map((row) => miniRow(row.name, unitText(row.units), local(`Target ${Math.round(row.units * 1.15).toLocaleString()}`, `เป้าหมาย ${Math.round(row.units * 1.15).toLocaleString()}`))).join("")}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.salesSourceAnalysis")}</div>${groups.sources.slice(0, 5).map((row) => miniRow(row.name, unitText(row.units), local(`${utils.formatPercent(row.share)} share`, `สัดส่วน ${utils.formatPercent(row.share)}`))).join("")}</section>
         <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.aiSalesInsightPanel")}</div><h2>${local(`${bestMonth.name} is the strongest sales period`, `${bestMonth.name} เป็นช่วงขายที่แข็งแรงที่สุด`)}</h2><p>${local(`${source.name} is the leading source and ${model.name} should anchor the close plan. Current GP margin is ${utils.formatPercent(summary.gpPct)}.`, `${source.name} เป็นแหล่งลูกค้าหลัก และ ${model.name} ควรเป็นแกนแผนปิดการขาย GP margin ปัจจุบันคือ ${utils.formatPercent(summary.gpPct)}`)}</p></section>
-        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.actionRecommendationCards")}</div>${actionCard(local("Push high-probability leads", "ผลักดัน lead โอกาสสูง"), local(`Prioritize ${source.name} leads with ${model.name} offers.`, `ให้ความสำคัญกับ lead จาก ${source.name} พร้อมข้อเสนอ ${model.name}`))}${actionCard(local("Protect payment quality", "ปกป้องคุณภาพการชำระเงิน"), local("Review payment mix before accelerating volume.", "ทบทวนสัดส่วนการชำระเงินก่อนเร่งจำนวนขาย"))}${actionCard(local("Use monthly rhythm", "ใช้จังหวะรายเดือน"), local(`Replicate ${bestMonth.name} activity cadence.`, `ทำซ้ำจังหวะกิจกรรมของ ${bestMonth.name}`))}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.actionRecommendationCards")}</div>${actionCard(local("Push high-โอกาส leads", "ผลักดัน lead โอกาสสูง"), local(`Prioritize ${source.name} leads with ${model.name} offers.`, `ให้ความสำคัญกับ lead จาก ${source.name} พร้อมข้อเสนอ ${model.name}`))}${actionCard(local("Protect payment quality", "ปกป้องคุณภาพการชำระเงิน"), local("Review payment mix before accelerating volume.", "ทบทวนสัดส่วนการชำระเงินก่อนเร่งจำนวนขาย"))}${actionCard(local("Use monthly rhythm", "ใช้จังหวะรายเดือน"), local(`Replicate ${bestMonth.name} activity cadence.`, `ทำซ้ำจังหวะกิจกรรมของ ${bestMonth.name}`))}</section>
       </div>`;
   }
 
@@ -1003,7 +1078,7 @@
       <div class="enterprise-intel-grid">
         <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.coachingInsightPanel")}</div><h2>${local(`${leader.name} leads the team`, `${leader.name} นำทีม`)}</h2><p>${local(`${coach.name} is the coaching focus for margin or conversion. Route best ${source.name} leads through proven playbooks and track follow-up quality weekly.`, `${coach.name} เป็นจุดโฟกัสการโค้ชด้านกำไรหรือ conversion ให้ส่ง lead ${source.name} ที่ดีที่สุดผ่าน playbook ที่พิสูจน์แล้ว และติดตามคุณภาพ follow-up รายสัปดาห์`)}</p></section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.salesmanRanking")}</div>${groups.salesmen.slice(0, 5).map((row, index) => miniRow(`${index + 1}. ${row.name}`, unitText(row.units), `GP ${utils.formatPercent(row.gpPct)}`)).join("")}</section>
-        <section class="intel-panel">${placeholderCard(t("label.performanceMatrix"), "Volume x GP", local("Matrix is prepared for quadrant scoring, coaching paths, and achievement targets.", "เมทริกซ์พร้อมสำหรับ scoring แบบ quadrant เส้นทางโค้ช และเป้าหมาย achievement"))}</section>
+        <section class="intel-panel">${ตัวเตรียมพร้อมCard(t("label.performanceMatrix"), "Volume x GP", local("Matrix is prepared for จตุภาค การให้คะแนน, coaching paths, and achievement targets.", "เมทริกซ์พร้อมสำหรับ การให้คะแนน แบบ จตุภาค เส้นทางโค้ช และเป้าหมาย achievement"))}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.productSpecialization")}</div>${groups.types.slice(0, 4).map((row) => miniRow(row.name, unitText(row.units), local(`${utils.formatPercent(row.share)} mix`, `สัดส่วน ${utils.formatPercent(row.share)}`))).join("")}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.leadSourceInsight")}</div>${groups.sources.slice(0, 4).map((row) => miniRow(row.name, local(`${row.units.toLocaleString()} leads`, `${row.units.toLocaleString()} lead`), local(`Share ${utils.formatPercent(row.share)}`, `สัดส่วน ${utils.formatPercent(row.share)}`))).join("")}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.actionRecommendationCards")}</div>${actionCard(local("Coach margin control", "โค้ชการควบคุมกำไร"), local(`Review ${coach.name} discount pattern.`, `ทบทวนรูปแบบส่วนลดของ ${coach.name}`))}${actionCard(local("Scale leader behavior", "ขยายพฤติกรรมผู้นำ"), local(`Turn ${leader.name} routines into a team checklist.`, `แปลง routine ของ ${leader.name} เป็น checklist ทีม`))}${actionCard(local("Specialize by product", "เชี่ยวชาญตามสินค้า"), local(`Assign specialists around ${safeTop(groups.types).name}.`, `มอบหมายผู้เชี่ยวชาญสำหรับ ${safeTop(groups.types).name}`))}</section>
@@ -1019,8 +1094,8 @@
       <div class="enterprise-intel-grid">
         <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.modelRankingHighlight")}</div><h2>${local(`${topModel.name} is the lead demand signal`, `${topModel.name} เป็นสัญญาณความต้องการหลัก`)}</h2><p>${local(`${topModel.units.toLocaleString()} units sold with ${utils.formatPercent(topModel.share)} share. ${highGp.name} has the strongest GP quality at ${utils.formatPercent(highGp.gpPct)}.`, `ขายแล้ว ${unitText(topModel.units)} พร้อมสัดส่วน ${utils.formatPercent(topModel.share)} โดย ${highGp.name} มีคุณภาพ GP แข็งแรงที่สุดที่ ${utils.formatPercent(highGp.gpPct)}`)}</p></section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.productMixInsight")}</div>${groups.types.slice(0, 5).map((row) => miniRow(row.name, local(`${utils.formatPercent(row.share)} mix`, `สัดส่วน ${utils.formatPercent(row.share)}`), unitText(row.units))).join("")}</section>
-        <section class="intel-panel">${placeholderCard(t("label.slowMovingRisk"), slow.name, local("Prepared for inventory age, slow movement, and dealer stock risk scoring.", "เตรียมไว้สำหรับอายุสต็อก การเคลื่อนไหวช้า และ scoring ความเสี่ยงสต็อก Dealer"))}</section>
-        <section class="intel-panel"><div class="enterprise-eyebrow">${local("Product Recommendation Cards", "การ์ดคำแนะนำสินค้า")}</div>${actionCard(local("Anchor campaigns", "ใช้เป็นแกนแคมเปญ"), local(`Use ${topModel.name} demand in dealer campaigns.`, `ใช้ความต้องการ ${topModel.name} ในแคมเปญ Dealer`))}${actionCard(local("Protect GP", "ปกป้อง GP"), local(`Preserve pricing on ${highGp.name}.`, `รักษาราคาของ ${highGp.name}`))}${actionCard(local("Watch slow movement", "ติดตามรุ่นเคลื่อนไหวช้า"), local(`Review stock and offers for ${slow.name}.`, `ทบทวนสต็อกและข้อเสนอของ ${slow.name}`))}</section>
+        <section class="intel-panel">${ตัวเตรียมพร้อมCard(t("label.slowMovingRisk"), slow.name, local("Prepared for inventory age, slow movement, and dealer stock risk การให้คะแนน.", "เตรียมไว้สำหรับอายุสต็อก การเคลื่อนไหวช้า และ การให้คะแนน ความเสี่ยงสต็อกสาขา"))}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">${local("Product Recommendation Cards", "การ์ดคำแนะนำสินค้า")}</div>${actionCard(local("Anchor campaigns", "ใช้เป็นแกนแคมเปญ"), local(`Use ${topModel.name} demand in dealer campaigns.`, `ใช้ความต้องการ ${topModel.name} ในแคมเปญสาขา`))}${actionCard(local("Protect GP", "ปกป้อง GP"), local(`Preserve pricing on ${highGp.name}.`, `รักษาราคาของ ${highGp.name}`))}${actionCard(local("Watch slow movement", "ติดตามรุ่นเคลื่อนไหวช้า"), local(`Review stock and offers for ${slow.name}.`, `ทบทวนสต็อกและข้อเสนอของ ${slow.name}`))}</section>
       </div>`;
   }
 
@@ -1031,8 +1106,8 @@
       ${renderCommonKpiWall(summary, groups)}
       <div class="enterprise-intel-grid">
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.dealerRanking")}</div>${groups.dealers.slice(0, 5).map((row, index) => miniRow(`${index + 1}. ${row.name}`, unitText(row.units), local(`${utils.formatPercent(row.share)} share`, `สัดส่วน ${utils.formatPercent(row.share)}`))).join("")}</section>
-        <section class="intel-panel">${placeholderCard(t("label.dealerScore"), `${Math.min(99, Math.round((dealer.share || 0) + 62))}/100`, local("Composite score placeholder for sales, stock, collection, service, and coverage.", "คะแนนรวมแบบ placeholder สำหรับยอดขาย สต็อก การเก็บเงิน บริการ และพื้นที่"))}</section>
-        <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.dealerHealth")}</div><h2>${local(`${dealer.name} leads network performance`, `${dealer.name} นำผลงานเครือข่าย`)}</h2><p>${local(`${weak.name} needs activity review. Dealer concentration is ${utils.formatPercent(dealer.share)}, so secondary dealer lift remains important for resilience.`, `${weak.name} ต้องทบทวนกิจกรรม การกระจุกตัว Dealer อยู่ที่ ${utils.formatPercent(dealer.share)} ดังนั้นการยกระดับ Dealer รองยังสำคัญต่อความยืดหยุ่น`)}</p></section>
+        <section class="intel-panel">${ตัวเตรียมพร้อมCard(t("label.dealerScore"), `${Math.min(99, Math.round((dealer.share || 0) + 62))}/100`, local("Composite score ตัวเตรียมพร้อม for sales, stock, collection, service, and coverage.", "คะแนนรวมแบบ ตัวเตรียมพร้อม สำหรับยอดขาย สต็อก การเก็บเงิน บริการ และพื้นที่"))}</section>
+        <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.dealerHealth")}</div><h2>${local(`${dealer.name} leads network performance`, `${dealer.name} นำผลงานเครือข่าย`)}</h2><p>${local(`${weak.name} needs activity review. Dealer concentration is ${utils.formatPercent(dealer.share)}, so secondary dealer lift remains important for resilience.`, `${weak.name} ต้องทบทวนกิจกรรม การกระจุกตัวสาขา อยู่ที่ ${utils.formatPercent(dealer.share)} ดังนั้นการยกระดับ สาขารองยังสำคัญต่อความยืดหยุ่น`)}</p></section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${local("Dealer Action Cards", "การ์ดการดำเนินการ Dealer")}</div>${actionCard(local("Reduce dependency", "ลดการพึ่งพา"), local(`Lift activity for ${weak.name}.`, `เพิ่มกิจกรรมของ ${weak.name}`))}${actionCard(local("Protect leader", "รักษาผู้นำ"), local(`Keep stock availability visible for ${dealer.name}.`, `ทำให้สต็อกของ ${dealer.name} ชัดเจน`))}${actionCard(local("Weekly scorecard", "Scorecard รายสัปดาห์"), local("Track sales, collection, and stock age together.", "ติดตามยอดขาย การเก็บเงิน และอายุสต็อกร่วมกัน"))}</section>
       </div>`;
   }
@@ -1045,10 +1120,10 @@
     return `
       ${renderCommonKpiWall(summary, groups)}
       <div class="enterprise-intel-grid">
-        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.forecastVsActual")}</div>${miniRow(t("label.actual"), unitText(summary.units), t("label.filteredRecords"))}${miniRow(t("kpi.forecast"), unitText(forecast), local("Rule-based placeholder", "Placeholder ตามกฎ"))}${miniRow(t("kpi.target"), unitText(target), t("label.staticPlanningBaseline"))}</section>
+        <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.forecastVsActual")}</div>${miniRow(t("label.actual"), unitText(summary.units), t("label.filteredRecords"))}${miniRow(t("kpi.forecast"), unitText(forecast), local("Rule-based ตัวเตรียมพร้อม", "ตัวเตรียมพร้อมตามกฎ"))}${miniRow(t("kpi.target"), unitText(target), t("label.staticPlanningBaseline"))}</section>
         <section class="intel-panel"><div class="enterprise-eyebrow">${t("label.gapAnalysis")}</div>${miniRow(t("label.gap"), `${gap >= 0 ? "+" : ""}${unitText(gap)}`, gap < 0 ? local("Needs recovery", "ต้องกู้คืน") : local("Above target", "สูงกว่าเป้าหมาย"))}${miniRow(t("label.valueForecast"), utils.formatMoney(summary.sales * 1.08), t("label.estimated"))}</section>
-        <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.riskOpportunityInsight")}</div><h2>${gap < 0 ? local("Target gap requires action", "ส่วนต่างเป้าหมายต้องดำเนินการ") : local("Forecast is on track", "คาดการณ์ตามแผน")}</h2><p>${local(`${safeTop(groups.dealers).name} and ${safeTop(groups.salesmen).name} are the strongest levers in the current filter. Use high-probability deals first, then protect GP margin.`, `${safeTop(groups.dealers).name} และ ${safeTop(groups.salesmen).name} เป็นตัวขับเคลื่อนที่แข็งแรงที่สุดในตัวกรองปัจจุบัน ให้ใช้ดีลโอกาสสูงก่อน แล้วปกป้อง GP margin`)}</p></section>
-        <section class="intel-panel">${placeholderCard(t("label.forecastConfidence"), `${confidence}%`, local("Prepared for future scenario weighting, pipeline probability, and confidence model controls.", "เตรียมไว้สำหรับการถ่วงน้ำหนัก scenario, probability ของ pipeline และโมเดลความเชื่อมั่น"))}</section>
+        <section class="intel-panel wide"><div class="enterprise-eyebrow">${t("label.riskOpportunityInsight")}</div><h2>${gap < 0 ? local("Target gap requires action", "ส่วนต่างเป้าหมายต้องดำเนินการ") : local("Forecast is on track", "คาดการณ์ตามแผน")}</h2><p>${local(`${safeTop(groups.dealers).name} and ${safeTop(groups.salesmen).name} are the strongest levers in the current filter. Use high-โอกาส deals first, then protect GP margin.`, `${safeTop(groups.dealers).name} และ ${safeTop(groups.salesmen).name} เป็นตัวขับเคลื่อนที่แข็งแรงที่สุดในตัวกรองปัจจุบัน ให้ใช้ดีลโอกาสสูงก่อน แล้วปกป้อง GP margin`)}</p></section>
+        <section class="intel-panel">${ตัวเตรียมพร้อมCard(t("label.forecastConfidence"), `${confidence}%`, local("Prepared for future สถานการณ์ weighting, แผนงานขาย โอกาส, and confidence model controls.", "เตรียมไว้สำหรับการถ่วงน้ำหนัก สถานการณ์, โอกาส ของ แผนงานขาย และโมเดลความเชื่อมั่น"))}</section>
       </div>`;
   }
 

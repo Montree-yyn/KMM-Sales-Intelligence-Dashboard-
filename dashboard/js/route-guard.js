@@ -86,6 +86,7 @@
       window.KMMSecurity.company.setSelectedCompany(event.target.value);
       const currentSession = window.KMMSecurity.auth.readSession();
       if (currentSession) {
+        document.getElementById("securityBar")?.remove();
         renderSecurityBar(currentSession);
       }
     });
@@ -98,6 +99,8 @@
         window.KMMSecurity.auth.writeSession(currentSession);
       }
       event.target.value = selected;
+      document.getElementById("securityBar")?.remove();
+      renderSecurityBar(window.KMMSecurity.auth.readSession());
     });
 
     document.getElementById("logoutButton").addEventListener("click", () => {
@@ -162,6 +165,9 @@
 
     const session = ensureAccess();
     if (!session) return;
+    if (session.language && window.KMMI18n) {
+      window.KMMI18n.setLanguage(session.language);
+    }
     window.KMMSecurity.company.applyCompanyTheme();
     document.documentElement.dataset.theme = session.theme || "default";
     keepSecurityBarMounted(session);
