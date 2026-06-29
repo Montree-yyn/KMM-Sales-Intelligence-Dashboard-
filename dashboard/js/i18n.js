@@ -99,9 +99,8 @@
       "role.Manager": "Manager",
       "role.Sales": "Sales",
       "role.Viewer": "Viewer",
-      "company.KMM": "Kubota Myanmar",
-      "company.KM": "Kubota Mandalay",
-      "company.TS": "Tractor Sales",
+      "company.KMM": "KUBOTA MAESOD MYANMAR",
+      "company.KM": "KUBOTA MAESOD",
 
       "filter.year": "Year",
       "filter.month": "Month",
@@ -528,9 +527,8 @@
       "role.Manager": "ผู้จัดการ",
       "role.Sales": "ฝ่ายขาย",
       "role.Viewer": "ผู้ดูข้อมูล",
-      "company.KMM": "คูโบต้า เมียนมา",
-      "company.KM": "คูโบต้า มัณฑะเลย์",
-      "company.TS": "แทรกเตอร์เซลส์",
+      "company.KMM": "KUBOTA MAESOD MYANMAR",
+      "company.KM": "KUBOTA MAESOD",
 
       "filter.year": "ปี",
       "filter.month": "เดือน",
