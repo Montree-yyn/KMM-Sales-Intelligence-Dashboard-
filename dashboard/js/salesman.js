@@ -6,9 +6,21 @@
   const C = BI.charts;
   const filterIds = ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "salesmanFilter"];
 
+  function t(key) {
+    return window.KMMI18n ? window.KMMI18n.t(key) : key;
+  }
+
+  function isThai() {
+    return window.KMMI18n ? window.KMMI18n.getLanguage() === "th" : true;
+  }
+
+  function unitText(value) {
+    return isThai() ? `${Number(value || 0).toLocaleString()} คัน` : `${Number(value || 0).toLocaleString()} units`;
+  }
+
   window.addEventListener("DOMContentLoaded", async () => {
     await U.loadDashboardData();
-    F.fillFilters(U.getCoreProductData(), { yearLabel: "All years" });
+    F.fillFilters(U.getCoreProductData(), { yearLabel: t("filter.allYears") });
     F.bindFilters(update, filterIds);
     update();
   });
@@ -40,7 +52,7 @@
       type: "scatter",
       data: {
         datasets: [{
-          label: "Salesman",
+          label: t("filter.salesman"),
           data: salesmen.map((item) => ({ x: item.units, y: item.gpPct, name: item.name })),
           backgroundColor: "#f36b21"
         }]
@@ -48,7 +60,7 @@
       options: {
         plugins: {
           legend: { display: false },
-          tooltip: { callbacks: { label: (context) => `${context.raw.name}: ${context.raw.x} units / GP ${context.raw.y.toFixed(1)}%` } }
+          tooltip: { callbacks: { label: (context) => `${context.raw.name}: ${unitText(context.raw.x)} / GP ${context.raw.y.toFixed(1)}%` } }
         }
       }
     });
@@ -92,7 +104,7 @@
     C.renderChart("funnelChart", {
       type: "bar",
       data: {
-        labels: ["Lead", "Quotation", "Booking", "Delivery"],
+        labels: ["Lead", "Quotation", "Booking", isThai() ? "ส่งมอบ" : "Delivery"],
         datasets: [{
           data: [deliveries * 5.4, deliveries * 2.8, deliveries * 1.6, deliveries].map(Math.round),
           backgroundColor: ["#ffc28d", "#ff9a4a", "#f36b21", "#172033"]
@@ -128,20 +140,20 @@
       return `
         <div class="capability-row">
           <strong>${item.name}</strong>
-          <span style="--score:${volume}%">Volume</span>
-          <span style="--score:${margin}%">Margin</span>
-          <span style="--score:${consistency}%">Consistency</span>
+          <span style="--score:${volume}%">${t("label.volume")}</span>
+          <span style="--score:${margin}%">${isThai() ? "กำไร" : "Margin"}</span>
+          <span style="--score:${consistency}%">${t("label.consistency")}</span>
         </div>`;
-    }).join("") || "<p>No data</p>";
+    }).join("") || `<p>${t("message.noDataCurrent")}</p>`;
   }
 
   function renderProductSpecialization(types, models) {
-    renderSpecialList("productSpecialization", types.slice(0, 5), "type share");
-    renderSpecialList("salesmanModelFocus", models.slice(0, 5), "model share");
+    renderSpecialList("productSpecialization", types.slice(0, 5), t("label.typeShare"));
+    renderSpecialList("salesmanModelFocus", models.slice(0, 5), t("label.modelShare"));
   }
 
   function renderLeadSource(sources) {
-    renderSpecialList("leadSourceList", sources.slice(0, 5), "lead share");
+    renderSpecialList("leadSourceList", sources.slice(0, 5), t("label.leadShare"));
   }
 
   function renderSpecialList(id, rows, label) {
@@ -150,9 +162,9 @@
     target.innerHTML = rows.map((item) => `
       <div class="score-row">
         <strong>${item.name}</strong>
-        <span>${item.units.toLocaleString()} units</span>
+        <span>${unitText(item.units)}</span>
         <small>${U.formatPercent(item.share)} ${label}</small>
-      </div>`).join("") || "<p>No data</p>";
+      </div>`).join("") || `<p>${t("message.noDataCurrent")}</p>`;
   }
 
   function renderCoachingInsight(summary, salesmen, sources, models) {
@@ -161,7 +173,7 @@
     U.setText("topSalesmanAi", top?.name || "-");
     U.setText("achieveAi", top ? `${Math.min(128, top.share + 80).toFixed(1)}%` : "-");
     U.setText("coachFocus", coach?.name || "-");
-    U.setText("coachAction", `${models[0]?.name || "Top model"} playbook via ${sources[0]?.name || "best lead source"}`);
+    U.setText("coachAction", `${models[0]?.name || t("label.topModelFallback")} playbook ${isThai() ? "ผ่าน" : "via"} ${sources[0]?.name || t("label.bestLeadSource")}`);
     U.setText("coachMargin", U.formatPercent(summary.gpPct));
   }
 })();

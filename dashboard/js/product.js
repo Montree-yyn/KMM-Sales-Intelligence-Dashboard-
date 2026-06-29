@@ -6,9 +6,21 @@
   const C = BI.charts;
   const ids = ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "salesmanFilter", "typeFilter"];
 
+  function t(key) {
+    return window.KMMI18n ? window.KMMI18n.t(key) : key;
+  }
+
+  function isThai() {
+    return window.KMMI18n ? window.KMMI18n.getLanguage() === "th" : true;
+  }
+
+  function unitText(value) {
+    return isThai() ? `${Number(value || 0).toLocaleString()} คัน` : `${Number(value || 0).toLocaleString()} units`;
+  }
+
   window.addEventListener("DOMContentLoaded", async () => {
     await U.loadDashboardData();
-    F.fillFilters(U.getCoreProductData(), { includeType: true, yearLabel: "All years" });
+    F.fillFilters(U.getCoreProductData(), { includeType: true, yearLabel: t("filter.allYears") });
     F.bindFilters(update, ids);
     update();
   });
@@ -38,7 +50,7 @@
     U.setText("aiTopModel", models[0]?.name || "-");
     U.setText("aiHighGP", models.slice().sort((a, b) => b.gpPct - a.gpPct)[0]?.name || "-");
     U.setText("aiRisk", models.slice().sort((a, b) => a.units - b.units)[0]?.name || "-");
-    U.setText("aiRecommend", (models[0]?.name || "Top model") + " to key dealers");
+    U.setText("aiRecommend", `${models[0]?.name || t("label.topModelFallback")} ${t("label.toKeyDealers")}`);
   }
 
   function renderKpis(summary) {
@@ -57,11 +69,11 @@
         <div class="clean-rank">${index + 1}</div>
         <div>
           <div class="clean-name">${row.name}</div>
-          <div class="clean-meta">${row.units.toLocaleString()} units | GP ${U.formatPercent(row.gpPct)} | Share ${U.formatPercent(row.share)}</div>
+          <div class="clean-meta">${unitText(row.units)} | GP ${U.formatPercent(row.gpPct)} | ${isThai() ? "สัดส่วน" : "Share"} ${U.formatPercent(row.share)}</div>
           <div class="clean-bar"><div class="clean-fill" style="width:${(row.units / max) * 100}%"></div></div>
         </div>
         <div class="clean-value">${row.units}</div>
-      </div>`).join("") || "<p>No data</p>";
+      </div>`).join("") || `<p>${t("message.noDataCurrent")}</p>`;
   }
 
   function renderTrend(rows) {
@@ -71,7 +83,7 @@
       data: {
         labels: monthly.map((item) => item.name),
         datasets: [{
-          label: "Units",
+          label: t("kpi.units"),
           data: monthly.map((item) => item.units),
           borderColor: "#ff5a00",
           backgroundColor: "rgba(255,90,0,.12)",
@@ -97,7 +109,7 @@
     C.renderChart("stockAgeChart", {
       type: "doughnut",
       data: {
-        labels: ["0-30 Days", "31-60 Days", "61-90 Days", "90+ Days"],
+        labels: isThai() ? ["0-30 วัน", "31-60 วัน", "61-90 วัน", "90+ วัน"] : ["0-30 Days", "31-60 Days", "61-90 Days", "90+ Days"],
         datasets: [{ data: [68, 54, 38, 26], backgroundColor: ["#9aa3af", "#ffb000", "#ff7a18", "#ff5a00"] }]
       }
     });
@@ -124,7 +136,7 @@
     if (!target) return;
     const models = U.groupBy(rows, (item) => item.model).slice(0, 4).map((item) => item.name);
     const dealers = U.unique(rows.map((item) => item.dealer)).slice(0, 3);
-    let html = '<div class="heat-row"><div class="heat-cell heat-head">Model</div>' + dealers.map((dealer) => `<div class="heat-cell heat-head">${dealer}</div>`).join("") + '<div class="heat-cell heat-head">Total</div></div>';
+    let html = `<div class="heat-row"><div class="heat-cell heat-head">${isThai() ? "รุ่น" : "Model"}</div>` + dealers.map((dealer) => `<div class="heat-cell heat-head">${dealer}</div>`).join("") + `<div class="heat-cell heat-head">${isThai() ? "รวม" : "Total"}</div></div>`;
     models.forEach((model) => {
       const values = dealers.map((dealer) => rows.filter((item) => item.model === model && item.dealer === dealer).length);
       const total = values.reduce((sum, value) => sum + value, 0);

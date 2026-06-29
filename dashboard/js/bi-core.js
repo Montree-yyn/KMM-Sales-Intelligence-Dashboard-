@@ -6,6 +6,20 @@
   const filters = BI.filters;
   const charts = BI.charts;
 
+  function t(key) {
+    return window.KMMI18n ? window.KMMI18n.t(key) : key;
+  }
+
+  function isThai() {
+    return window.KMMI18n ? window.KMMI18n.getLanguage() === "th" : true;
+  }
+
+  function unitText(value) {
+    return isThai()
+      ? `${Number(value || 0).toLocaleString()} คัน`
+      : `${Number(value || 0).toLocaleString()} units`;
+  }
+
   function renderKpis(summary) {
     utils.setHtml("kpiUnits", summary.units.toLocaleString());
     utils.setHtml("kpiSales", utils.formatMoney(summary.sales));
@@ -30,12 +44,12 @@
           <div class="rank-no">${index + 1}</div>
           <div>
             <div class="rank-name">${row.name}</div>
-            <div class="rank-meta">${row.units.toLocaleString()} units | GP ${utils.formatPercent(row.gpPct)} | Share ${utils.formatPercent(row.share)}</div>
+            <div class="rank-meta">${unitText(row.units)} | GP ${utils.formatPercent(row.gpPct)} | ${isThai() ? "สัดส่วน" : "Share"} ${utils.formatPercent(row.share)}</div>
             <div class="bar"><div class="fill" style="width:${(value / max) * 100}%"></div></div>
           </div>
           <div class="rank-value">${displayValue}</div>
         </div>`;
-    }).join("") || "<p>No data</p>";
+    }).join("") || `<p>${t("message.noDataCurrent")}</p>`;
   }
 
   function initNavigation() {
