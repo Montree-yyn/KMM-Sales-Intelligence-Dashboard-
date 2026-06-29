@@ -106,6 +106,14 @@ The settings language selector supports only Thai and English. Thai is the defau
 
 Responsive two-column settings form layout.
 
+### `.settings-summary-grid`
+
+V11 static enterprise summary grid on `dashboard/settings.html`. It shows current user, role, company, version, and session timeout from the active browser session. It is a display foundation only and does not create backend user management.
+
+### `.settings-placeholder-list`
+
+V11 role/user-management placeholder list. Use it to document prepared roles and future permission concepts without implying real backend authentication.
+
 ### `.session-dialog`
 
 Dialog style used for the Session Expired message shown after inactivity logout.
@@ -163,6 +171,8 @@ Responsive KPI card grid. Current pages commonly use six KPI cards.
 
 Standard KPI card for units, sales value, gross profit, GP margin, commission, forecast, target, and similar metrics.
 
+V11 KPI cards may include `data-i18n-title` and a `title` attribute for concise help text. The tooltip should explain how to read the metric from the current filters, not restate the label.
+
 ### `.kpi-card.teal`
 
 Alternate KPI accent for secondary success or status metrics.
@@ -182,6 +192,14 @@ Panel structure:
   <!-- chart, table, list, or module -->
 </div>
 ```
+
+### `.how-to-read-panel`
+
+V11 executive guidance panel used on `dashboard/executive.html`. It gives three concise Thai-first reading steps: start with KPI cards, use AI Summary for risk/action, then use Report Center for meeting-ready narratives.
+
+### `.intel-foundation-card`
+
+V11 generated enterprise foundation card used by `bi-enterprise.js` for static placeholders such as forecast confidence, score foundations, and future matrix readiness. It replaces older placeholder wording while keeping a clearly static/browser-only meaning.
 
 ## Chart Containers
 
@@ -234,6 +252,17 @@ Visual marker for the strip.
 ### `.ai-item` and `.ai-card`
 
 Reusable summary cells containing a strong value and supporting label.
+
+## Report And Export Center
+
+V11 Report Center buttons remain static and must not throw errors. Weekly Report, Monthly Report, Executive Summary, and Dealer Review open report previews generated from local filtered rows.
+
+Export behavior remains browser-safe:
+
+- CSV downloads a local summary file.
+- PNG attempts a browser-native dashboard capture and falls back to a summary image.
+- PDF and PowerPoint show clear Thai placeholders.
+- No backend file service, npm package, or external API is involved.
 
 ## V6 Executive Intelligence Components
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KMM V10 Production Release Executive Cockpit</title>
+  <title>KMM V11 Enterprise Edition Executive Cockpit</title>
   <link rel="stylesheet" href="css/bi-core.css">
   <script src="js/i18n.js"></script>
   <script src="js/auth.js"></script>
@@ -30,7 +30,7 @@
 
     <main class="main-content executive-v6">
       <header class="page-head">
-        <div class="page-title"><h1>Executive <span class="accent">Intelligence Cockpit</span></h1><p>V6 leadership view for sales momentum, margin quality, dealer risk, product focus, and forecast action.</p></div>
+        <div class="page-title"><h1 data-i18n="page.executive.title">ภาพรวมผู้บริหาร</h1><p data-i18n="page.executive.subtitle">มุมมองผู้บริหารสำหรับยอดขาย กำไร ความเสี่ยงผู้แทนจำหน่าย รายงาน และแผนคาดการณ์ในหน้าจอเดียว</p></div>
         <div class="head-actions"><div class="date-pill">29/06/2026</div><select class="period-select"><option>This Year</option></select></div>
       </header>
 
@@ -44,17 +44,29 @@
       </section>
 
       <section class="kpi-grid" aria-label="KPI Wall">
-        <div class="kpi-card"><span>Total Sales (Units)</span><strong id="kpiUnits">-</strong><small>Current filter</small></div>
-        <div class="kpi-card"><span>Sales Value (MMK)</span><strong id="kpiSales">-</strong><small>Revenue quality</small></div>
-        <div class="kpi-card"><span>Gross Profit (MMK)</span><strong id="kpiGp">-</strong><small>GP1</small></div>
-        <div class="kpi-card"><span>GP Margin</span><strong id="kpiGpPct">-</strong><small>Margin signal</small></div>
-        <div class="kpi-card"><span>Rule Forecast</span><strong id="kpiForecast">-</strong><small>Next-period proxy</small></div>
-        <div class="kpi-card"><span>Forecast Gap</span><strong id="kpiGap">-</strong><small>Against static baseline</small></div>
+        <div class="kpi-card" data-i18n-title="label.kpiHelpUnits" title="Total delivered sales units from the active filter selection."><span>Total Sales (Units)</span><strong id="kpiUnits">-</strong><small>Current filter</small></div>
+        <div class="kpi-card" data-i18n-title="label.kpiHelpSales" title="Sales value in MMK for the same filtered records."><span>Sales Value (MMK)</span><strong id="kpiSales">-</strong><small>Revenue quality</small></div>
+        <div class="kpi-card" data-i18n-title="label.kpiHelpGp" title="Gross profit value before deeper backend accounting adjustments."><span>Gross Profit (MMK)</span><strong id="kpiGp">-</strong><small>GP1</small></div>
+        <div class="kpi-card" data-i18n-title="label.kpiHelpMargin" title="GP margin signal for pricing discipline and discount pressure."><span>GP Margin</span><strong id="kpiGpPct">-</strong><small>Margin signal</small></div>
+        <div class="kpi-card" data-i18n-title="label.kpiHelpForecast" title="Simple rule-based forecast proxy from local static data."><span>Rule Forecast</span><strong id="kpiForecast">-</strong><small>Next-period proxy</small></div>
+        <div class="kpi-card" data-i18n-title="label.kpiHelpGap" title="Difference between the rule-based forecast and static planning baseline."><span>Forecast Gap</span><strong id="kpiGap">-</strong><small>Against static baseline</small></div>
+      </section>
+
+      <section class="how-to-read-panel" aria-label="How to read this dashboard">
+        <div>
+          <div class="enterprise-eyebrow" data-i18n="label.howToRead">วิธีอ่านแดชบอร์ดนี้</div>
+          <h2 data-i18n="page.executive.short">ภาพรวมผู้บริหาร</h2>
+        </div>
+        <ol>
+          <li data-i18n="label.howToReadKpi">เริ่มจาก KPI เพื่อดูจำนวนขาย มูลค่ายอดขาย GP margin และส่วนต่างคาดการณ์ตามตัวกรองปัจจุบัน</li>
+          <li data-i18n="label.howToReadAi">ใช้ AI Summary เพื่อจับความเสี่ยงหลัก สาขาที่ต้องติดตาม รุ่นที่ควรผลักดัน และ action ระดับผู้บริหาร</li>
+          <li data-i18n="label.howToReadReports">ใช้ศูนย์รายงานสำหรับข้อความรายสัปดาห์ รายเดือน สรุปผู้บริหาร และรีวิวสาขาเป็นภาษาไทย</li>
+        </ol>
       </section>
 
       <section class="v6-briefing" aria-label="AI Executive Briefing">
         <div class="briefing-main">
-          <div class="enterprise-eyebrow">AI Executive Briefing</div>
+          <div class="enterprise-eyebrow" data-i18n="ai.executiveBriefing">สรุปผู้บริหารโดย AI</div>
           <h2 id="briefTopSignal">Loading executive signal...</h2>
           <p id="briefRecommendedAction">Rule-based leadership guidance will appear after dashboard data loads.</p>
           <div id="briefSignalChips" class="command-chip-row"></div>
@@ -112,8 +124,8 @@
       <section class="report-center-v71" aria-label="Production Report Center">
         <div class="report-center-copy">
           <div class="enterprise-eyebrow" data-i18n="report.center">Production Report Center</div>
-          <h2 data-i18n="report.ready">V10 executive-ready reports</h2>
-          <p data-i18n="ai.localOnly">Local dashboard_data.json only</p>
+          <h2 data-i18n="report.ready">V11 executive-ready reports</h2>
+          <p data-i18n="report.previewOnly">เป็นตัวอย่างรายงานแบบ static สำหรับใช้ประกอบการประชุม ยังไม่มีบริการสร้างไฟล์จาก backend</p>
         </div>
         <div class="report-actions-v71">
           <button type="button" class="report-button-v71" data-enterprise-report="weekly" data-i18n="report.weekly">Weekly Report</button>
@@ -126,13 +138,13 @@
       <section class="export-center-v6" aria-label="Export Center">
         <div>
           <div class="enterprise-eyebrow" data-i18n="export.center">Export Center</div>
-          <h2 data-i18n="export.ready">V10 Export Center prepared.</h2>
-          <p data-i18n="message.footer">V10 Production Release | Static GitHub Pages dashboard | Local data only | CSV/PNG export foundation | PDF/PPT placeholders</p>
+          <h2 data-i18n="export.ready">V11 Export Center prepared.</h2>
+          <p data-i18n="message.footer">V11 Enterprise Edition | Static GitHub Pages dashboard | Local data only | CSV/PNG export foundation | PDF/PPT placeholders</p>
         </div>
         <div class="export-actions">
           <button type="button" class="export-button" data-enterprise-export="PDF" data-i18n="export.pdf">Export PDF</button>
           <button type="button" class="export-button" data-enterprise-export="PowerPoint" data-i18n="export.powerpoint">Export PowerPoint</button>
-          <button type="button" class="export-button" data-enterprise-export="Excel" data-i18n="export.csv">Export CSV</button>
+          <button type="button" class="export-button" data-enterprise-export="CSV" data-i18n="export.csv">Export CSV</button>
           <button type="button" class="export-button" data-enterprise-export="PNG" data-i18n="export.png">Export PNG</button>
         </div>
       </section>

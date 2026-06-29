@@ -91,6 +91,19 @@ V9 Stabilization keeps the same static runtime but hardens the production UX for
 
 The stabilization pass does not modify `dashboard/data/dashboard_data.json`, `tools/update_dashboard.py`, backend behavior, npm dependencies, or build tooling.
 
+## V11 Enterprise Edition Layer
+
+V11 Enterprise Edition keeps the V10.1 static architecture intact and adds a Thai-first enterprise polish layer across existing files only. It remains static HTML, CSS, and JavaScript with no backend, no npm workflow, no build step, and no data pipeline change.
+
+- `dashboard/js/i18n.js` remains the localization source of truth and now also translates normal `placeholder` attributes and document titles.
+- `dashboard/js/auth.js` stores `V11 Enterprise Edition` in session metadata while continuing to keep passwords out of `sessionStorage`.
+- `dashboard/js/settings.js` renders a static enterprise summary for current user, role, company, version, and timeout.
+- `dashboard/executive.html` adds KPI help text and a "How to read this dashboard" panel without changing the page script architecture.
+- `dashboard/js/bi-enterprise.js` keeps report, export, AI insight, and enterprise deck behavior browser-only while updating generated management text for V11.
+- `dashboard/css/bi-core.css` contains Thai line-height, wrapping, mobile overflow protection, settings summary, and executive help panel styles.
+
+V11 still uses static credentials in browser JavaScript. This is a visible internal-use guard only and must be replaced by real authentication before wider production rollout.
+
 ## V8.1-V9 Enterprise Security Platform
 
 The security platform is browser-only and GitHub Pages compatible. It does not add a backend, npm package, build step, or external identity provider.

@@ -75,7 +75,7 @@
         <strong>${session.username}</strong>
       </button>
       <div class="security-note" title="${t("security.v11Auth")}">
-        <strong>V10</strong>
+        <strong>V11</strong>
         <span>${t("security.internalUse")}</span>
       </div>
     `;

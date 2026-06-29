@@ -9,7 +9,7 @@
     en: {
       "app.name": "KMM Sales Intelligence Platform",
       "app.shortName": "Sales Intelligence",
-      "app.tagline": "Enterprise AI Copilot, role-aware dashboard access, session control, and multi-company readiness for executive sales operations.",
+      "app.tagline": "V11 Enterprise Edition with Thai-first executive sales intelligence, role-aware session controls, report foundation, and export placeholders.",
       "lang.th": "Thai",
       "lang.en": "English",
       "language": "Language",
@@ -55,8 +55,8 @@
       "login.ok": "OK",
 
       "settings.title": "Security Settings",
-      "settings.subtitle": "Session, company, language, and role framework controls.",
-      "settings.section": "Session Settings",
+      "settings.subtitle": "Session, company, language, role framework, and V11 enterprise readiness controls.",
+      "settings.section": "Enterprise Session Settings",
       "settings.note": "Changes are stored in sessionStorage for the current browser session.",
       "settings.theme": "Theme",
       "settings.theme.default": "Default",
@@ -74,9 +74,18 @@
       "settings.save": "Save Settings",
       "settings.saved": "Settings saved for this session.",
       "settings.securityWarningTitle": "Internal-use security note",
-      "settings.securityWarningBody": "Static credentials are temporary protection only. V11 should move to real authentication before broader rollout.",
+      "settings.securityWarningBody": "Static credentials are temporary protection only. Move to real backend authentication before broader rollout.",
       "settings.securityWarningDetail": "Use this release only inside trusted internal workflows. Do not publish credentials outside the approved team.",
       "settings.adminArea": "Admin / Security Area",
+      "settings.systemSnapshot": "System Snapshot",
+      "settings.userFoundation": "User Management Foundation",
+      "settings.userFoundationBody": "Prepared placeholder for user, role, company, and permission management. No backend authentication is included in this static edition.",
+      "settings.aboutTitle": "About V11 Enterprise Edition",
+      "settings.aboutBody": "Thai-first static sales intelligence dashboard for executive review, report center readiness, role foundation, and mobile/tablet usability.",
+      "settings.releaseNotes": "Release Notes",
+      "settings.releaseNotesBody": "V11 focuses on Thai UX polish, executive help text, report outputs, settings clarity, and responsive stability while keeping V10.1 architecture intact.",
+      "settings.helpCenter": "Help Center",
+      "settings.helpCenterBody": "Use filters first, read KPI cards with their help text, review AI Summary for management actions, then open reports for weekly, monthly, executive, or dealer discussion.",
 
       "security.company": "Company",
       "security.companySelector": "Company selector",
@@ -160,7 +169,7 @@
       "page.dealer.title": "Dealer Intelligence",
       "page.dealer.subtitle": "Dealer contribution, health signals, แผนงานขาย conversion, stock age, and coverage priorities.",
       "page.forecast.title": "Sales Forecast AI",
-      "page.forecast.subtitle": "Rule-based forecast, target gap, แผนงานขาย โอกาส, and next-action guidance.",
+      "page.forecast.subtitle": "Rule-based forecast, target gap, pipeline probability, and next-action guidance.",
 
       "export.center": "Export Center",
       "export.foundation": "Export Foundation",
@@ -170,10 +179,10 @@
       "export.excel": "Export Excel",
       "export.csv": "Export CSV",
       "export.png": "Export PNG",
-      "export.ready": "V7.1 Export Center prepared.",
+      "export.ready": "V11 Export Center prepared.",
       "export.completed": "Export action completed.",
-      "export.pdfPrepared": "PDF export is a prepared ตัวเตรียมพร้อม for V11. No file was generated in V10.",
-      "export.pptPrepared": "PowerPoint export is a prepared ตัวเตรียมพร้อม for V11. No file was generated in V10.",
+      "export.pdfPrepared": "PDF export is prepared for V11 Enterprise Edition. No PDF file is generated in this static release.",
+      "export.pptPrepared": "PowerPoint export is prepared for V11 Enterprise Edition. No presentation file is generated in this static release.",
       "export.csvDownloaded": "CSV summary downloaded from the current filtered dashboard data.",
       "export.pngAttempted": "PNG export attempted for the current dashboard area.",
       "export.pngFailed": "PNG export could not be completed safely in this browser.",
@@ -185,14 +194,15 @@
       "report.dealer": "Dealer Review",
       "report.weeklyTitle": "Weekly Sales Intelligence Report",
       "report.monthlyTitle": "Monthly Sales Intelligence Report",
-      "report.production": "V10 Production Report",
-      "report.ready": "V10 executive-ready reports",
+      "report.production": "V11 Enterprise Report",
+      "report.ready": "V11 executive-ready reports",
+      "report.previewOnly": "Static report preview only. Use this text for management discussion; no backend file service is connected.",
 
       "ai.summary": "AI Summary",
       "ai.executiveBriefing": "AI Executive Briefing",
       "ai.executiveInsight": "Executive Summary / AI Insight",
       "ai.engine": "AI Insight Engine",
-      "ai.ruleBased": "V10 Rule-Based Insights",
+      "ai.ruleBased": "V11 Rule-Based Insights",
       "ai.copilot": "ผู้ช่วยวิเคราะห์ AI สำหรับองค์กร",
       "ai.copilotThai": "Enterprise AI Copilot",
       "ai.askTitle": "Ask business questions from current dashboard data",
@@ -266,7 +276,7 @@
       "label.excellentPerformance": "Excellent performance",
       "label.inventoryAction": "Inventory action",
       "label.dashboardModules": "Dashboard Modules",
-      "label.enterpriseCoverage": "V10 Enterprise Coverage",
+      "label.enterpriseCoverage": "V11 Enterprise Coverage",
       "label.executiveSummaryPanel": "Executive Summary Panel",
       "label.top5Risks": "Top 5 Risks",
       "label.nextBestActions": "Next Best Actions",
@@ -289,9 +299,19 @@
       "label.gapAnalysis": "Gap Analysis Panel",
       "label.riskOpportunityInsight": "Risk / Opportunity Insight",
       "label.forecastConfidence": "Forecast Confidence",
+      "label.howToRead": "How to read this dashboard",
+      "label.howToReadKpi": "Start with KPI cards to understand volume, sales value, GP margin, and forecast gap for the current filters.",
+      "label.howToReadAi": "Use AI Summary to identify the main risk, dealer to watch, product to push, and next management action.",
+      "label.howToReadReports": "Use the Report Center for weekly, monthly, executive, and dealer review narratives in Thai.",
+      "label.kpiHelpUnits": "Total delivered sales units from the active filter selection.",
+      "label.kpiHelpSales": "Sales value in MMK for the same filtered records.",
+      "label.kpiHelpGp": "Gross profit value before deeper backend accounting adjustments.",
+      "label.kpiHelpMargin": "GP margin signal for pricing discipline and discount pressure.",
+      "label.kpiHelpForecast": "Simple rule-based forecast proxy from local static data.",
+      "label.kpiHelpGap": "Difference between the rule-based forecast and static planning baseline.",
       "label.filteredUnits": "Filtered Units",
       "label.currentFilter": "Current filter",
-      "label.staticForecastPlaceholder": "Static forecast ตัวเตรียมพร้อม",
+      "label.staticForecastPlaceholder": "Static forecast foundation",
       "label.staticPlanningBaseline": "Static planning baseline",
       "label.ruleBasedForecastUnits": "Rule-based forecast units",
       "label.targetBaseline": "Target Baseline",
@@ -385,7 +405,7 @@
       "message.noDataFilters": "No data for the current filter selection.",
       "message.noDataCurrent": "No data for current filters",
       "message.adjustFilters": "Adjust filters to generate this rule-based insight from dashboard_data.json.",
-      "message.safePlaceholder": "Safe ตัวเตรียมพร้อม. No external AI API is used.",
+      "message.safePlaceholder": "Safe placeholder. No external AI API is used.",
       "message.localDataOnly": "Local data only",
       "message.loading": "Loading...",
       "message.liveKpi": "Live KPI",
@@ -402,8 +422,8 @@
       "message.noRecordsInsight": "No records match the current filters. Executive summary will update when data is available.",
       "message.noExternalApiUsed": "No external AI API is used.",
       "message.broadenFiltersDecision": "Broaden or reset filters before making an executive decision.",
-      "message.footer": "V10 Production Release | Static GitHub Pages dashboard | Local data only | CSV/PNG export foundation | PDF/PPT ตัวเตรียมพร้อมs",
-      "message.v8StaticCredentialNotice": "Static credentials are temporary protection only. V11 should move to real authentication.",
+      "message.footer": "V11 Enterprise Edition | Static GitHub Pages dashboard | Local data only | CSV/PNG export foundation | PDF/PPT placeholders",
+      "message.v8StaticCredentialNotice": "Static credentials are temporary protection only. Move to real backend authentication before broader rollout.",
       "message.loadingExecutiveSignal": "Loading executive signal...",
       "message.ruleLeadershipLoading": "Rule-based leadership guidance will appear after dashboard data loads.",
 
@@ -418,7 +438,7 @@
     th: {
       "app.name": "แพลตฟอร์มวิเคราะห์ยอดขาย KMM",
       "app.shortName": "วิเคราะห์ยอดขาย",
-      "app.tagline": "แดชบอร์ด AI สำหรับผู้บริหาร พร้อมควบคุมสิทธิ์ผู้ใช้ เซสชัน และรองรับหลายบริษัทสำหรับงานบริหารยอดขาย",
+      "app.tagline": "V11 Enterprise Edition สำหรับวิเคราะห์ยอดขายผู้บริหารแบบภาษาไทย พร้อมกรอบสิทธิ์ผู้ใช้ รายงาน และตัวเตรียมส่งออก",
       "lang.th": "ไทย",
       "lang.en": "English",
       "language": "ภาษา",
@@ -464,8 +484,8 @@
       "login.ok": "ตกลง",
 
       "settings.title": "ตั้งค่าความปลอดภัย",
-      "settings.subtitle": "ตั้งค่าเซสชัน บริษัท ภาษา และกรอบสิทธิ์ผู้ใช้",
-      "settings.section": "ตั้งค่าเซสชัน",
+      "settings.subtitle": "ตั้งค่าเซสชัน บริษัท ภาษา กรอบสิทธิ์ผู้ใช้ และความพร้อมระดับองค์กร V11",
+      "settings.section": "ตั้งค่าเซสชันระดับองค์กร",
       "settings.note": "การเปลี่ยนแปลงจะถูกบันทึกในพื้นที่จัดเก็บเซสชันของเบราว์เซอร์ปัจจุบัน",
       "settings.theme": "ธีม",
       "settings.theme.default": "ค่าเริ่มต้น",
@@ -483,9 +503,18 @@
       "settings.save": "บันทึกการตั้งค่า",
       "settings.saved": "บันทึกการตั้งค่าสำหรับเซสชันนี้แล้ว",
       "settings.securityWarningTitle": "หมายเหตุความปลอดภัยสำหรับใช้งานภายใน",
-      "settings.securityWarningBody": "ข้อมูลเข้าสู่ระบบแบบคงที่เป็นการป้องกันชั่วคราวเท่านั้น V11 ควรเปลี่ยนเป็นระบบยืนยันตัวตนจริงก่อนขยายการใช้งาน",
+      "settings.securityWarningBody": "ข้อมูลเข้าสู่ระบบแบบคงที่เป็นการป้องกันชั่วคราวเท่านั้น ต้องเปลี่ยนเป็นระบบยืนยันตัวตนจริงก่อนขยายการใช้งาน",
       "settings.securityWarningDetail": "ใช้เวอร์ชันนี้เฉพาะงานภายในที่เชื่อถือได้ และไม่เผยแพร่รหัสผ่านนอกทีมที่ได้รับอนุมัติ",
       "settings.adminArea": "พื้นที่ผู้ดูแล / ความปลอดภัย",
+      "settings.systemSnapshot": "ข้อมูลระบบปัจจุบัน",
+      "settings.userFoundation": "โครงสร้างจัดการผู้ใช้",
+      "settings.userFoundationBody": "เตรียมพื้นที่สำหรับจัดการผู้ใช้ สิทธิ์ บริษัท และ permission ในอนาคต เวอร์ชัน static นี้ยังไม่มี backend authentication",
+      "settings.aboutTitle": "เกี่ยวกับ V11 Enterprise Edition",
+      "settings.aboutBody": "แดชบอร์ดวิเคราะห์ยอดขายแบบ static ที่เน้นภาษาไทยสำหรับผู้บริหาร พร้อมศูนย์รายงาน โครงสร้างสิทธิ์ผู้ใช้ และการใช้งานบนมือถือ/แท็บเล็ต",
+      "settings.releaseNotes": "Release Notes",
+      "settings.releaseNotesBody": "V11 เน้นปรับ UX ภาษาไทย ข้อความช่วยอ่าน KPI รายงาน การตั้งค่า และ responsive stability โดยคงสถาปัตยกรรม V10.1 เดิม",
+      "settings.helpCenter": "ศูนย์ช่วยเหลือ",
+      "settings.helpCenterBody": "เริ่มจากตัวกรอง อ่าน KPI พร้อมคำอธิบาย ดู AI Summary สำหรับ action ของผู้บริหาร แล้วเปิดรายงานรายสัปดาห์ รายเดือน สรุปผู้บริหาร หรือรีวิวสาขา",
 
       "security.company": "บริษัท",
       "security.companySelector": "เลือกบริษัท",
@@ -579,10 +608,10 @@
       "export.excel": "ส่งออก Excel",
       "export.csv": "ส่งออก CSV",
       "export.png": "ส่งออก PNG",
-      "export.ready": "ศูนย์ส่งออก V10 พร้อมใช้งาน",
+      "export.ready": "ศูนย์ส่งออก V11 พร้อมใช้งาน",
       "export.completed": "ดำเนินการส่งออกเรียบร้อยแล้ว",
-      "export.pdfPrepared": "PDF เป็น ตัวเตรียมพร้อม ที่เตรียมไว้สำหรับ V11 ยังไม่มีการสร้างไฟล์ใน V10",
-      "export.pptPrepared": "PowerPoint เป็น ตัวเตรียมพร้อม ที่เตรียมไว้สำหรับ V11 ยังไม่มีการสร้างไฟล์ใน V10",
+      "export.pdfPrepared": "เตรียมการส่งออก PDF สำหรับ V11 Enterprise Edition แล้ว แต่เวอร์ชัน static นี้ยังไม่สร้างไฟล์ PDF",
+      "export.pptPrepared": "เตรียมการส่งออก PowerPoint สำหรับ V11 Enterprise Edition แล้ว แต่เวอร์ชัน static นี้ยังไม่สร้างไฟล์นำเสนอ",
       "export.csvDownloaded": "ดาวน์โหลดสรุป CSV จากข้อมูลแดชบอร์ดตามตัวกรองปัจจุบันแล้ว",
       "export.pngAttempted": "พยายามส่งออก PNG สำหรับพื้นที่แดชบอร์ดปัจจุบันแล้ว",
       "export.pngFailed": "ไม่สามารถส่งออก PNG ได้อย่างปลอดภัยในเบราว์เซอร์นี้",
@@ -594,14 +623,15 @@
       "report.dealer": "รีวิวสาขา",
       "report.weeklyTitle": "รายงานวิเคราะห์ยอดขายรายสัปดาห์",
       "report.monthlyTitle": "รายงานวิเคราะห์ยอดขายรายเดือน",
-      "report.production": "รายงาน Production V10",
-      "report.ready": "รายงานสำหรับผู้บริหาร V10",
+      "report.production": "รายงาน V11 Enterprise",
+      "report.ready": "รายงานสำหรับผู้บริหาร V11",
+      "report.previewOnly": "เป็นตัวอย่างรายงานแบบ static สำหรับใช้ประกอบการประชุม ยังไม่มีบริการสร้างไฟล์จาก backend",
 
       "ai.summary": "สรุปโดย AI",
       "ai.executiveBriefing": "สรุปผู้บริหารโดย AI",
       "ai.executiveInsight": "สรุปผู้บริหาร / ข้อมูลเชิงลึก AI",
       "ai.engine": "เครื่องมือวิเคราะห์ AI",
-      "ai.ruleBased": "ข้อมูลเชิงลึกตามกฎ V10",
+      "ai.ruleBased": "ข้อมูลเชิงลึกตามกฎ V11",
       "ai.copilot": "Enterprise AI Copilot",
       "ai.copilotThai": "ผู้ช่วยวิเคราะห์ AI",
       "ai.askTitle": "ถามคำถามธุรกิจจากข้อมูลแดชบอร์ดปัจจุบัน",
@@ -675,7 +705,7 @@
       "label.excellentPerformance": "ผลงานยอดเยี่ยม",
       "label.inventoryAction": "การจัดการสต็อก",
       "label.dashboardModules": "โมดูลแดชบอร์ด",
-      "label.enterpriseCoverage": "ความครอบคลุม Enterprise V10",
+      "label.enterpriseCoverage": "ความครอบคลุม Enterprise V11",
       "label.executiveSummaryPanel": "แผงสรุปผู้บริหาร",
       "label.top5Risks": "ความเสี่ยง 5 อันดับ",
       "label.nextBestActions": "การดำเนินการถัดไป",
@@ -698,6 +728,16 @@
       "label.gapAnalysis": "วิเคราะห์ส่วนต่าง",
       "label.riskOpportunityInsight": "ข้อมูลเชิงลึกความเสี่ยง / โอกาส",
       "label.forecastConfidence": "ความเชื่อมั่นคาดการณ์",
+      "label.howToRead": "วิธีอ่านแดชบอร์ดนี้",
+      "label.howToReadKpi": "เริ่มจาก KPI เพื่อดูจำนวนขาย มูลค่ายอดขาย GP margin และส่วนต่างคาดการณ์ตามตัวกรองปัจจุบัน",
+      "label.howToReadAi": "ใช้ AI Summary เพื่อจับความเสี่ยงหลัก สาขาที่ต้องติดตาม รุ่นที่ควรผลักดัน และ action ระดับผู้บริหาร",
+      "label.howToReadReports": "ใช้ศูนย์รายงานสำหรับข้อความรายสัปดาห์ รายเดือน สรุปผู้บริหาร และรีวิวสาขาเป็นภาษาไทย",
+      "label.kpiHelpUnits": "จำนวนส่งมอบรวมจากข้อมูลตามตัวกรองปัจจุบัน",
+      "label.kpiHelpSales": "มูลค่ายอดขาย MMK จากข้อมูลชุดเดียวกับตัวกรองปัจจุบัน",
+      "label.kpiHelpGp": "มูลค่ากำไรขั้นต้นก่อนการปรับบัญชีเชิงลึกจาก backend",
+      "label.kpiHelpMargin": "สัญญาณ GP margin สำหรับดูวินัยราคาและแรงกดดันส่วนลด",
+      "label.kpiHelpForecast": "ค่าคาดการณ์แบบง่ายตามกฎจากข้อมูล static ภายใน",
+      "label.kpiHelpGap": "ส่วนต่างระหว่างคาดการณ์ตามกฎกับฐานเป้าหมายแบบคงที่",
       "label.filteredUnits": "จำนวนขายตามตัวกรอง",
       "label.currentFilter": "ตัวกรองปัจจุบัน",
       "label.staticForecastPlaceholder": "คาดการณ์พื้นฐานแบบคงที่",
@@ -811,8 +851,8 @@
       "message.noRecordsInsight": "ไม่มีรายการตรงกับตัวกรองปัจจุบัน ระบบข้อมูลเชิงลึกจะอัปเดตเมื่อมีข้อมูล",
       "message.noExternalApiUsed": "ไม่มีการใช้ AI API ภายนอก",
       "message.broadenFiltersDecision": "ขยายหรือล้างตัวกรองก่อนตัดสินใจระดับผู้บริหาร",
-      "message.footer": "V10 Production Release | แดชบอร์ดแบบคงที่บน GitHub Pages | ใช้ข้อมูลภายในเท่านั้น | ส่งออก CSV/PNG | PDF/PPT เป็นตัวเตรียมพร้อม",
-      "message.v8StaticCredentialNotice": "ข้อมูลเข้าสู่ระบบแบบคงที่เป็นการป้องกันชั่วคราวเท่านั้น V11 ควรเปลี่ยนเป็นระบบยืนยันตัวตนจริง",
+      "message.footer": "V11 Enterprise Edition | แดชบอร์ดแบบคงที่บน GitHub Pages | ใช้ข้อมูลภายในเท่านั้น | ส่งออก CSV/PNG | PDF/PPT เป็นตัวเตรียมพร้อม",
+      "message.v8StaticCredentialNotice": "ข้อมูลเข้าสู่ระบบแบบคงที่เป็นการป้องกันชั่วคราวเท่านั้น ต้องเปลี่ยนเป็นระบบยืนยันตัวตนจริงก่อนขยายการใช้งาน",
       "message.loadingExecutiveSignal": "กำลังโหลดสัญญาณผู้บริหาร...",
       "message.ruleLeadershipLoading": "คำแนะนำผู้บริหารตามกฎจะแสดงหลังจากโหลดข้อมูลแดชบอร์ด",
 
@@ -1013,6 +1053,8 @@
     "60 minutes": "settings.minutes60",
     "Dashboard Modules": "label.dashboardModules",
     "V5 Enterprise Coverage": "label.enterpriseCoverage",
+    "V10 Enterprise Coverage": "label.enterpriseCoverage",
+    "V11 Enterprise Coverage": "label.enterpriseCoverage",
     "Executive Summary Panel": "label.executiveSummaryPanel",
     "Alert Center": "label.alertCenter",
     "Top 5 Risks": "label.top5Risks",
@@ -1040,6 +1082,7 @@
 
   Object.assign(staticTextKeys, {
     "V10 Export Center prepared.": "export.ready",
+    "V11 Export Center prepared.": "export.ready",
     "Ask the AI Copilot": "ai.askPrompt",
     "Preset copilot questions": "ai.askPrompt",
     "Forecast Gap Panel": "label.gapAnalysis",
@@ -1115,6 +1158,8 @@
     "KMM Sales Forecast AI": "page.forecast.title",
     "KMM V10 Security Settings": "settings.title",
     "KMM V10 Production Release Executive Cockpit": "page.executive.title",
+    "KMM V11 Enterprise Edition Settings": "settings.title",
+    "KMM V11 Enterprise Edition Executive Cockpit": "page.executive.title",
     "KMM Sales Intelligence Platform Login": "login.title",
     "V6 leadership view for sales momentum, margin quality, dealer risk, product focus, and forecast action.": "page.executive.subtitle",
     "Against static baseline": "label.staticPlanningBaseline",
@@ -1122,6 +1167,7 @@
     "Local dashboard_data.json only": "ai.localOnly",
     "V10 executive-ready reports": "report.ready",
     "V10 Production Release | Static GitHub Pages dashboard | Local data only | CSV/PNG export foundation | PDF/PPT ตัวเตรียมพร้อมs": "message.footer",
+    "V11 Enterprise Edition | Static GitHub Pages dashboard | Local data only | CSV/PNG export foundation | PDF/PPT placeholders": "message.footer",
     "Product to Push": "label.productToPush",
     "Forecast risk": "ai.forecastRisk",
     "Next best action": "ai.nextBestAction",
@@ -1203,8 +1249,8 @@
     const htmlKey = node.dataset.i18nHtml;
     if (htmlKey) node.innerHTML = t(htmlKey);
 
-    const ตัวเตรียมพร้อมKey = node.dataset.i18nPlaceholder || staticTextKeys[node.getAttribute("ตัวเตรียมพร้อม") || ""];
-    if (ตัวเตรียมพร้อมKey) node.setAttribute("ตัวเตรียมพร้อม", t(ตัวเตรียมพร้อมKey));
+    const placeholderKey = node.dataset.i18nPlaceholder || staticTextKeys[node.getAttribute("placeholder") || ""];
+    if (placeholderKey) node.setAttribute("placeholder", t(placeholderKey));
 
     const ariaKey = node.dataset.i18nAria || staticTextKeys[node.getAttribute("aria-label") || ""];
     if (ariaKey) node.setAttribute("aria-label", t(ariaKey));
@@ -1216,7 +1262,7 @@
   function applyTranslations(root) {
     const scope = root || document;
     if (scope.nodeType === Node.ELEMENT_NODE) translateNode(scope);
-    scope.querySelectorAll?.("[data-i18n], [data-i18n-html], [data-i18n-ตัวเตรียมพร้อม], [data-i18n-aria], [data-i18n-title], h1, h2, h3, p, span, strong, small, label, button, a, option, th, td, em, div").forEach(translateNode);
+    scope.querySelectorAll?.("[data-i18n], [data-i18n-html], [data-i18n-placeholder], [data-i18n-aria], [data-i18n-title], h1, h2, h3, p, span, strong, small, label, button, a, option, th, td, em, div").forEach(translateNode);
     scope.querySelectorAll?.(".nav-menu a[href]").forEach((link) => {
       const page = link.getAttribute("href") || "";
       const navKeys = {
@@ -1237,6 +1283,10 @@
     });
     document.documentElement.lang = getLanguage();
     document.documentElement.dataset.language = getLanguage();
+    if (document.title) {
+      const titleKey = staticTextKeys[document.title.trim()];
+      if (titleKey) document.title = t(titleKey);
+    }
   }
 
   window.KMMI18n = {

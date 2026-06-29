@@ -71,6 +71,7 @@
         document.getElementById("settingsRole").value = window.KMMI18n ? window.KMMI18n.t(`role.${refreshed.role}`) : refreshed.role;
         document.getElementById("settingsVersion").value = refreshed.version;
         updateCompanyLabels();
+        renderEnterpriseSummary();
       }
     });
 
@@ -82,9 +83,12 @@
       if (role) role.value = window.KMMI18n ? window.KMMI18n.t(`role.${refreshed.role}`) : refreshed.role;
       event.target.value = selected;
       updateCompanyLabels();
+      renderEnterpriseSummary();
       const status = document.getElementById("settingsStatus");
       if (status) status.textContent = window.KMMI18n ? window.KMMI18n.t("settings.saved") : "Settings saved for this session.";
     });
+
+    renderEnterpriseSummary();
   }
 
   function updateCompanyLabels() {
@@ -95,9 +99,30 @@
     });
   }
 
+  function setSummaryText(id, value) {
+    const node = document.getElementById(id);
+    if (node) node.textContent = value;
+  }
+
+  function renderEnterpriseSummary() {
+    const settings = readSettings();
+    if (!settings) return;
+    const t = window.KMMI18n ? window.KMMI18n.t : (key) => key;
+    const companyLabel = window.KMMSecurity.company
+      ? window.KMMSecurity.company.getCompanyLabel(settings.company)
+      : settings.company;
+
+    setSummaryText("summaryUser", settings.username || "-");
+    setSummaryText("summaryRole", t(`role.${settings.role}`));
+    setSummaryText("summaryCompany", companyLabel);
+    setSummaryText("summaryVersion", settings.version);
+    setSummaryText("summaryTimeout", `${settings.timeoutMinutes} ${settings.language === "th" ? "นาที" : "minutes"}`);
+  }
+
   window.KMMSecurity = window.KMMSecurity || {};
   window.KMMSecurity.settings = {
     bindSettingsPage,
+    renderEnterpriseSummary,
     readSettings,
     updateSettings
   };
