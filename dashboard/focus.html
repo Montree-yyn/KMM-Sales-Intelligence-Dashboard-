@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KMM Sales Operating System - Sales</title>
+  <title>KMM Sales Operating System - Focus</title>
   <link rel="stylesheet" href="css/bi-core.css">
   <link rel="stylesheet" href="css/v13-command-center.css">
   <script src="js/i18n.js"></script>
@@ -14,10 +14,13 @@
   <script src="js/route-guard.js"></script>
   <script src="js/chart.umd.min.js"></script>
 </head>
-<body class="v13-shell" data-v13-page="sales">
+<body class="v13-shell" data-v13-page="focus">
   <div class="app-shell">
     <aside class="sidebar v13-sidebar">
-      <div class="brand"><div class="brand-logo">KMM</div><div class="brand-name">Sales Operating System<small>KM / KMM only</small></div></div>
+      <div class="brand">
+        <div class="brand-logo">KMM</div>
+        <div class="brand-name">Sales Operating System<small>KM / KMM only</small></div>
+      </div>
       <nav class="nav-menu">
         <a href="focus.html"><span class="nav-icon">F</span><span><strong>Focus</strong><small>โฟกัสวันนี้</small></span></a>
         <a href="sales.html"><span class="nav-icon">S</span><span><strong>Sales</strong><small>ยอดขาย</small></span></a>
@@ -30,12 +33,32 @@
     </aside>
     <main class="main-content v13-main">
       <section class="v13-page">
-        <header class="page-head"><div class="page-title"><h1><span id="pageThaiTitle">ยอดขาย</span> / <b id="pageTitle">Sales</b></h1><p><span id="pageSubtitle"></span><br><strong id="businessQuestion"></strong></p></div><div class="v13-meta"><span>Company: KM / KMM / All</span><span>Last updated: <b id="lastUpdated">-</b></span></div></header>
-        <section class="v13-toolbar"><label>Company<select><option>All</option><option>KM</option><option>KMM</option></select></label><label>ปี<select id="yearFilter"></select></label><label>เดือน<select id="monthFilter"></select></label><label>สัปดาห์<select id="weekFilter"></select></label><label>Dealer / Branch<select id="dealerFilter"></select></label><label>Salesperson<select id="salesmanFilter"></select></label><button id="resetFilter" class="reset-btn">Reset</button></section>
-        <section id="v13Kpis" class="v13-kpis"></section><div id="mainArea"></div><section id="insightArea" class="v13-insights"></section>
+        <header class="page-head">
+          <div class="page-title">
+            <h1><span id="pageThaiTitle">โฟกัสวันนี้</span> / <b id="pageTitle">Focus</b></h1>
+            <p><span id="pageSubtitle"></span><br><strong id="businessQuestion"></strong></p>
+          </div>
+          <div class="v13-meta"><span>Company: KM / KMM / All</span><span>Last updated: <b id="lastUpdated">-</b></span></div>
+        </header>
+        <section class="v13-toolbar">
+          <label>Company<select><option>All</option><option>KM</option><option>KMM</option></select></label>
+          <label>ปี<select id="yearFilter"></select></label>
+          <label>เดือน<select id="monthFilter"></select></label>
+          <label>สัปดาห์<select id="weekFilter"></select></label>
+          <label>Dealer / Branch<select id="dealerFilter"></select></label>
+          <label>Salesperson<select id="salesmanFilter"></select></label>
+          <button id="resetFilter" class="reset-btn">Reset</button>
+        </section>
+        <section id="v13Kpis" class="v13-kpis"></section>
+        <div id="mainArea"></div>
+        <section id="insightArea" class="v13-insights"></section>
       </section>
     </main>
   </div>
-  <script src="js/bi-utils.js"></script><script src="js/bi-filters.js"></script><script src="js/bi-charts.js"></script><script src="js/bi-core.js"></script><script src="js/v13-command-center.js"></script>
+  <script src="js/bi-utils.js"></script>
+  <script src="js/bi-filters.js"></script>
+  <script src="js/bi-charts.js"></script>
+  <script src="js/bi-core.js"></script>
+  <script src="js/v13-command-center.js"></script>
 </body>
 </html>

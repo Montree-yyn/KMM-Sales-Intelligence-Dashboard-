@@ -53,7 +53,7 @@
   }
 
   function initNavigation() {
-    const current = location.pathname.split("/").pop() || "executive.html";
+    const current = location.pathname.split("/").pop() || "focus.html";
     document.querySelectorAll(".nav-menu a").forEach((link) => {
       const href = link.getAttribute("href");
       link.classList.toggle("active", href === current);

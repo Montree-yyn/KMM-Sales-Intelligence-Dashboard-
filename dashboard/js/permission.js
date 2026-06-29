@@ -2,8 +2,13 @@
   "use strict";
 
   const ROUTES = {
+    "focus.html": "focus",
     "executive.html": "executive",
     "sales.html": "sales",
+    "market.html": "market",
+    "stock.html": "stock",
+    "team.html": "team",
+    "reports.html": "reports",
     "salesman.html": "salesman",
     "salesman_capability.html": "salesman",
     "product.html": "product",
@@ -14,14 +19,14 @@
 
   const ROLE_PERMISSIONS = {
     SuperAdmin: ["*"],
-    Executive: ["executive", "sales", "salesman", "product", "dealer", "forecast", "settings"],
-    Manager: ["executive", "sales", "salesman", "product", "dealer", "forecast", "settings"],
-    Sales: ["sales", "salesman", "product", "dealer", "forecast", "settings"],
-    Viewer: ["executive", "sales", "product", "dealer", "forecast", "settings"]
+    Executive: ["focus", "executive", "sales", "market", "stock", "team", "reports", "salesman", "product", "dealer", "forecast", "settings"],
+    Manager: ["focus", "executive", "sales", "market", "stock", "team", "reports", "salesman", "product", "dealer", "forecast", "settings"],
+    Sales: ["focus", "sales", "market", "stock", "team", "reports", "salesman", "product", "dealer", "forecast", "settings"],
+    Viewer: ["focus", "executive", "sales", "market", "stock", "team", "reports", "product", "dealer", "forecast", "settings"]
   };
 
   function permissionForPath(pathname) {
-    const page = String(pathname || "").split("/").pop() || "executive.html";
+    const page = String(pathname || "").split("/").pop() || "focus.html";
     return ROUTES[page] || null;
   }
 

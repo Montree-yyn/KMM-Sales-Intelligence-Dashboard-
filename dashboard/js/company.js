@@ -4,20 +4,14 @@
   const COMPANIES = {
     KMM: {
       code: "KMM",
-      name: "Kubota Myanmar",
+      name: "KUBOTA MAESOD MYANMAR",
       themeClass: "company-kmm",
       dataset: "data/dashboard_data.json"
     },
     KM: {
       code: "KM",
-      name: "Kubota Mandalay",
+      name: "KUBOTA MAESOD",
       themeClass: "company-km",
-      dataset: "data/dashboard_data.json"
-    },
-    TS: {
-      code: "TS",
-      name: "Tractor Sales",
-      themeClass: "company-ts",
       dataset: "data/dashboard_data.json"
     }
   };
@@ -55,7 +49,7 @@
   function applyCompanyTheme() {
     const selected = getSelectedCompany();
     document.documentElement.dataset.company = selected.code;
-    document.body.classList.remove("company-kmm", "company-km", "company-ts");
+    document.body.classList.remove("company-kmm", "company-km");
     document.body.classList.add(selected.themeClass);
     return selected;
   }

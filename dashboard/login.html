@@ -71,7 +71,7 @@
       function safeReturnTo() {
         const params = new URLSearchParams(window.location.search);
         const requested = params.get("returnTo");
-        if (!requested) return "executive.html";
+        if (!requested) return "focus.html";
 
         try {
           const target = new URL(requested, window.location.href);
@@ -81,9 +81,9 @@
           const isNotLogin = target.pathname !== loginUrl.pathname;
           return isSameOrigin && isDashboardHtml && isNotLogin
             ? target.pathname.split("/").pop() + target.search + target.hash
-            : "executive.html";
+            : "focus.html";
         } catch (error) {
-          return "executive.html";
+          return "focus.html";
         }
       }
 
