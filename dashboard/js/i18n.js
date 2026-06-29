@@ -791,7 +791,7 @@
     "Forecast Confidence": "label.forecastConfidence"
   };
 
-  Object.keys(translations).forEach((lang) => {
+  ["en"].forEach((lang) => {
     Object.keys(translations[lang]).forEach((key) => {
       staticTextKeys[translations[lang][key]] = staticTextKeys[translations[lang][key]] || key;
     });
@@ -853,6 +853,24 @@
     const scope = root || document;
     if (scope.nodeType === Node.ELEMENT_NODE) translateNode(scope);
     scope.querySelectorAll?.("[data-i18n], [data-i18n-html], [data-i18n-placeholder], [data-i18n-aria], [data-i18n-title], h1, h2, h3, p, span, strong, small, label, button, a, option, th, td, em, div").forEach(translateNode);
+    scope.querySelectorAll?.(".nav-menu a[href]").forEach((link) => {
+      const page = link.getAttribute("href") || "";
+      const navKeys = {
+        "executive.html": "nav.executive",
+        "salesman.html": "nav.salesman",
+        "sales.html": "nav.sales",
+        "product.html": "nav.product",
+        "dealer.html": "nav.dealer",
+        "forecast.html": "nav.forecast",
+        "settings.html": "nav.settings"
+      };
+      const key = navKeys[page];
+      if (!key) return;
+      const strong = link.querySelector("strong");
+      const small = link.querySelector("small");
+      if (strong) strong.textContent = t(key);
+      if (small) small.textContent = t(`${key}.small`);
+    });
     document.documentElement.lang = getLanguage();
     document.documentElement.dataset.language = getLanguage();
   }
