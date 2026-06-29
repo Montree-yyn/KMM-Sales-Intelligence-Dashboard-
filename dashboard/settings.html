@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KMM Security Settings</title>
   <link rel="stylesheet" href="css/bi-core.css">
+  <script src="js/i18n.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/permission.js"></script>
   <script src="js/company.js"></script>
@@ -16,37 +17,37 @@
     <aside class="sidebar">
       <div class="brand"><div class="brand-logo">KMM</div><div class="brand-name">Sales Intelligence</div></div>
       <nav class="nav-menu">
-        <a href="executive.html"><span class="nav-icon">E</span><span><strong>Executive Overview</strong><small>Leadership cockpit</small></span></a>
-        <a href="salesman.html"><span class="nav-icon">P</span><span><strong>Sales Performance</strong><small>Salesman analysis</small></span></a>
-        <a href="sales.html"><span class="nav-icon">S</span><span><strong>Sales Analytics</strong><small>Sales trends</small></span></a>
-        <a href="product.html"><span class="nav-icon">M</span><span><strong>Product Intelligence</strong><small>Model and GP</small></span></a>
-        <a href="dealer.html"><span class="nav-icon">D</span><span><strong>Dealer Intelligence</strong><small>Branch performance</small></span></a>
-        <a href="forecast.html"><span class="nav-icon">F</span><span><strong>Sales Forecast AI</strong><small>Forecast signals</small></span></a>
-        <a href="settings.html"><span class="nav-icon">C</span><span><strong>Settings</strong><small>Security session</small></span></a>
+        <a href="executive.html"><span class="nav-icon">E</span><span><strong data-i18n="nav.executive">Executive Overview</strong><small data-i18n="nav.executive.small">Leadership cockpit</small></span></a>
+        <a href="salesman.html"><span class="nav-icon">P</span><span><strong data-i18n="nav.salesman">Sales Performance</strong><small data-i18n="nav.salesman.small">Salesman analysis</small></span></a>
+        <a href="sales.html"><span class="nav-icon">S</span><span><strong data-i18n="nav.sales">Sales Analytics</strong><small data-i18n="nav.sales.small">Sales trends</small></span></a>
+        <a href="product.html"><span class="nav-icon">M</span><span><strong data-i18n="nav.product">Product Intelligence</strong><small data-i18n="nav.product.small">Model and GP</small></span></a>
+        <a href="dealer.html"><span class="nav-icon">D</span><span><strong data-i18n="nav.dealer">Dealer Intelligence</strong><small data-i18n="nav.dealer.small">Branch performance</small></span></a>
+        <a href="forecast.html"><span class="nav-icon">F</span><span><strong data-i18n="nav.forecast">Sales Forecast AI</strong><small data-i18n="nav.forecast.small">Forecast signals</small></span></a>
+        <a href="settings.html"><span class="nav-icon">C</span><span><strong data-i18n="nav.settings">Settings</strong><small data-i18n="nav.settings.small">Security session</small></span></a>
       </nav>
       <div class="sidebar-footer"><strong>KUBOTA</strong><span>For Earth, For Life</span></div>
     </aside>
 
     <main class="main-content settings-main">
       <header class="page-head">
-        <div class="page-title"><h1>Security <span class="accent">Settings</span></h1><p>Session, company, language, and role framework controls.</p></div>
+        <div class="page-title"><h1 data-i18n="settings.title">Security Settings</h1><p data-i18n="settings.subtitle">Session, company, language, and role framework controls.</p></div>
       </header>
 
       <section class="settings-panel">
-        <h2>Session Settings</h2>
-        <p>Changes are stored in sessionStorage for the current browser session.</p>
+        <h2 data-i18n="settings.section">Session Settings</h2>
+        <p data-i18n="settings.note">Changes are stored in sessionStorage for the current browser session.</p>
         <form id="settingsForm" class="settings-form">
           <div class="settings-grid">
             <div class="settings-field">
-              <label for="settingsTheme">Theme</label>
+              <label for="settingsTheme" data-i18n="settings.theme">Theme</label>
               <select id="settingsTheme">
-                <option value="default">Default</option>
-                <option value="kubota">Kubota</option>
-                <option value="compact">Compact</option>
+                <option value="default" data-i18n="settings.theme.default">Default</option>
+                <option value="kubota" data-i18n="settings.theme.kubota">Kubota</option>
+                <option value="compact" data-i18n="settings.theme.compact">Compact</option>
               </select>
             </div>
             <div class="settings-field">
-              <label for="settingsCompany">Company</label>
+              <label for="settingsCompany" data-i18n="settings.company">Company</label>
               <select id="settingsCompany">
                 <option value="KMM">KMM</option>
                 <option value="KM">KM</option>
@@ -54,33 +55,36 @@
               </select>
             </div>
             <div class="settings-field">
-              <label for="settingsTimeout">Session timeout</label>
+              <label for="settingsTimeout" data-i18n="settings.timeout">Session timeout</label>
               <select id="settingsTimeout">
-                <option value="5">5 minutes</option>
-                <option value="15">15 minutes</option>
-                <option value="30">30 minutes</option>
-                <option value="60">60 minutes</option>
+                <option value="5" data-i18n="settings.minutes5">5 minutes</option>
+                <option value="15" data-i18n="settings.minutes15">15 minutes</option>
+                <option value="30" data-i18n="settings.minutes30">30 minutes</option>
+                <option value="60" data-i18n="settings.minutes60">60 minutes</option>
               </select>
             </div>
             <div class="settings-field">
-              <label for="settingsLanguage">Language</label>
+              <label for="settingsLanguage" data-i18n="language">Language</label>
               <select id="settingsLanguage">
-                <option value="en">English</option>
-                <option value="th">Thai</option>
-                <option value="my">Myanmar</option>
+                <option value="th" data-i18n="lang.th">ไทย</option>
+                <option value="en" data-i18n="lang.en">English</option>
               </select>
             </div>
             <div class="settings-field">
-              <label for="settingsRole">Role</label>
+              <label for="settingsUsername" data-i18n="settings.currentUser">Current user</label>
+              <input id="settingsUsername" type="text" readonly>
+            </div>
+            <div class="settings-field">
+              <label for="settingsRole" data-i18n="settings.role">Role</label>
               <input id="settingsRole" type="text" readonly>
             </div>
             <div class="settings-field">
-              <label for="settingsVersion">Version</label>
+              <label for="settingsVersion" data-i18n="settings.version">Version</label>
               <input id="settingsVersion" type="text" readonly>
             </div>
           </div>
           <div class="settings-actions">
-            <button class="settings-save" type="submit">Save Settings</button>
+            <button class="settings-save" type="submit" data-i18n="settings.save">Save Settings</button>
             <span id="settingsStatus" class="settings-status" role="status"></span>
           </div>
         </form>

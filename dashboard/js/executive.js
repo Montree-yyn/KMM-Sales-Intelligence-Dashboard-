@@ -7,9 +7,25 @@
   const filterIds = ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "salesmanFilter"];
   let activeCopilotQuestion = "";
 
+  function t(key) {
+    return window.KMMI18n ? window.KMMI18n.t(key) : key;
+  }
+
+  function isThai() {
+    return window.KMMI18n ? window.KMMI18n.getLanguage() === "th" : true;
+  }
+
+  function unitText(value) {
+    return isThai() ? `${value.toLocaleString()} คัน` : `${value.toLocaleString()} units`;
+  }
+
+  function shareText(value) {
+    return isThai() ? `สัดส่วน ${U.formatPercent(value || 0)}` : `Share ${U.formatPercent(value || 0)}`;
+  }
+
   window.addEventListener("DOMContentLoaded", async () => {
     await U.loadDashboardData();
-    F.fillFilters(U.getCoreProductData(), { yearLabel: "All years" });
+    F.fillFilters(U.getCoreProductData(), { yearLabel: t("message.allYears") });
     F.bindFilters(update, filterIds);
     bindCopilot();
     update();
@@ -75,7 +91,7 @@
 
   function runCopilot(question) {
     const cleanQuestion = String(question || "").trim();
-    activeCopilotQuestion = cleanQuestion || "Current sales performance";
+    activeCopilotQuestion = cleanQuestion || t("ai.currentSales");
     const input = document.getElementById("copilotQuestion");
     if (input && !cleanQuestion) input.value = activeCopilotQuestion;
     renderCopilotAnswer(activeCopilotQuestion, rows());
@@ -92,9 +108,9 @@
     const lead = document.createElement("article");
     lead.className = `copilot-card lead ${answer.intent || "summary"}`;
     lead.append(
-      copilotNode("span", "Copilot answer"),
-      copilotNode("strong", answer.headline || "Rule-based answer unavailable"),
-      copilotNode("p", answer.meta || "Generated from local dashboard data.")
+      copilotNode("span", t("ai.copilotAnswer")),
+      copilotNode("strong", answer.headline || t("ai.ruleUnavailable")),
+      copilotNode("p", answer.meta || t("ai.generatedLocal"))
     );
     target.appendChild(lead);
 
@@ -102,9 +118,9 @@
       const node = document.createElement("article");
       node.className = `copilot-card ${card.type || ""}`;
       node.append(
-        copilotNode("span", card.label || "Insight"),
+        copilotNode("span", card.label || t("ai.insight")),
         copilotNode("strong", card.title || "-"),
-        copilotNode("p", card.text || "This signal is not available for the current filters.")
+        copilotNode("p", card.text || t("ai.signalUnavailable"))
       );
       target.appendChild(node);
     });
@@ -162,7 +178,7 @@
         labels: monthly.map((item) => item.name),
         datasets: [
           {
-            label: "Sales Units",
+            label: isThai() ? "จำนวนขาย" : "Sales Units",
             data: monthly.map((item) => item.units),
             borderColor: "#f36b21",
             backgroundColor: orangeGradient,
@@ -170,7 +186,7 @@
             tension: 0.38
           },
           {
-            label: "Sales Value (100M MMK)",
+            label: isThai() ? "มูลค่ายอดขาย (100 ล้าน MMK)" : "Sales Value (100M MMK)",
             data: monthly.map((item) => Math.round(item.sales / 1e8)),
             borderColor: "#12b89d",
             backgroundColor: "rgba(18, 184, 157, 0.12)",
@@ -194,7 +210,7 @@
       data: {
         labels: top.map((item) => item.name),
         datasets: [{
-          label: "Units",
+          label: isThai() ? "จำนวนขาย" : "Units",
           data: top.map((item) => item.units),
           backgroundColor: top.map((item, index) => index === top.length - 1 ? "#f36b21" : "rgba(23, 32, 51, 0.78)"),
           borderRadius: 12,
@@ -238,7 +254,7 @@
         <td class="text-right">${item.units.toLocaleString()}</td>
         <td class="text-right">${U.formatPercent(item.share)}</td>
         <td class="text-right">${U.formatPercent(item.gpPct)}</td>
-      </tr>`).join("") || `<tr><td colspan="4">No model data</td></tr>`);
+      </tr>`).join("") || `<tr><td colspan="4">${t("message.noModelData")}</td></tr>`);
   }
 
   function renderBooking(monthly) {
@@ -248,8 +264,8 @@
       data: {
         labels: recent.map((item) => item.name),
         datasets: [
-          { label: "Booking Proxy", data: recent.map((item) => Math.round(item.units * 1.18)), backgroundColor: "#f36b21", borderRadius: 10, borderSkipped: false },
-          { label: "Delivery", data: recent.map((item) => item.units), backgroundColor: "#172033", borderRadius: 10, borderSkipped: false }
+          { label: isThai() ? "ยอดจองประมาณการ" : "Booking Proxy", data: recent.map((item) => Math.round(item.units * 1.18)), backgroundColor: "#f36b21", borderRadius: 10, borderSkipped: false },
+          { label: isThai() ? "ส่งมอบ" : "Delivery", data: recent.map((item) => item.units), backgroundColor: "#172033", borderRadius: 10, borderSkipped: false }
         ]
       },
       options: chartBaseOptions({
@@ -277,9 +293,15 @@
     const concentrationRisk = topDealer.share > 45;
     const gapRisk = gap < 0;
     const hasBookingFields = data.some((item) => Object.keys(item).some((key) => /book|pipeline|stock/i.test(key)));
-    const stockSignal = hasBookingFields ? "Source contains booking, pipeline, or stock-like fields." : "No explicit stock or booking fields found; using booking proxy.";
-    const marginSignal = summary.gpPct < 8 ? "margin pressure" : summary.gpPct < 11 ? "margin watch" : "stable margin";
-    const forecastSignal = gapRisk ? `${Math.abs(gap).toLocaleString()} units below baseline` : `${gap.toLocaleString()} units above baseline`;
+    const stockSignal = hasBookingFields
+      ? (isThai() ? "แหล่งข้อมูลมีฟิลด์ลักษณะ booking, pipeline หรือ stock" : "Source contains booking, pipeline, or stock-like fields.")
+      : (isThai() ? "ยังไม่พบฟิลด์ stock หรือ booking โดยตรง จึงใช้ booking proxy" : "No explicit stock or booking fields found; using booking proxy.");
+    const marginSignal = summary.gpPct < 8
+      ? (isThai() ? "แรงกดดันกำไร" : "margin pressure")
+      : summary.gpPct < 11 ? (isThai() ? "ต้องติดตามกำไร" : "margin watch") : (isThai() ? "กำไรมั่นคง" : "stable margin");
+    const forecastSignal = gapRisk
+      ? (isThai() ? `ต่ำกว่า baseline ${unitText(Math.abs(gap))}` : `${Math.abs(gap).toLocaleString()} units below baseline`)
+      : (isThai() ? `สูงกว่า baseline ${unitText(gap)}` : `${gap.toLocaleString()} units above baseline`);
 
     return {
       topDealer,
@@ -296,23 +318,25 @@
       target,
       gap,
       stockSignal,
-      topSignal: data.length ? `${summary.units.toLocaleString()} units delivered; ${topDealer.name} leads dealers, ${topModel.name} leads products, GP is ${U.formatPercent(summary.gpPct)} (${marginSignal}), and forecast is ${forecastSignal}.` : "No records match the current filters. Executive summary will update when data is available.",
-      mainRisk: gpRisk ? `GP margin is ${U.formatPercent(summary.gpPct)}` : concentrationRisk ? `${topDealer.name} holds ${U.formatPercent(topDealer.share)} share` : gapRisk ? `${Math.abs(gap).toLocaleString()} unit forecast gap` : "No red risk in current filter",
-      recommendedAction: data.length ? recommendedAction(gpRisk, concentrationRisk, gapRisk, lowMarginModel, weakDealer, topModel) : "Broaden filters to restore executive coverage.",
+      topSignal: data.length
+        ? (isThai() ? `ส่งมอบแล้ว ${unitText(summary.units)} โดย ${topDealer.name} นำผลงาน Dealer, ${topModel.name} เป็นรุ่นหลัก, GP อยู่ที่ ${U.formatPercent(summary.gpPct)} (${marginSignal}) และคาดการณ์ ${forecastSignal}` : `${summary.units.toLocaleString()} units delivered; ${topDealer.name} leads dealers, ${topModel.name} leads products, GP is ${U.formatPercent(summary.gpPct)} (${marginSignal}), and forecast is ${forecastSignal}.`)
+        : t("message.noRecordsInsight"),
+      mainRisk: gpRisk ? (isThai() ? `GP margin อยู่ที่ ${U.formatPercent(summary.gpPct)}` : `GP margin is ${U.formatPercent(summary.gpPct)}`) : concentrationRisk ? (isThai() ? `${topDealer.name} มีสัดส่วน ${U.formatPercent(topDealer.share)}` : `${topDealer.name} holds ${U.formatPercent(topDealer.share)} share`) : gapRisk ? (isThai() ? `ส่วนต่างคาดการณ์ ${unitText(Math.abs(gap))}` : `${Math.abs(gap).toLocaleString()} unit forecast gap`) : t("message.noRedRisk"),
+      recommendedAction: data.length ? recommendedAction(gpRisk, concentrationRisk, gapRisk, lowMarginModel, weakDealer, topModel) : (isThai() ? "ขยายตัวกรองเพื่อให้มุมมองผู้บริหารกลับมาครบถ้วน" : "Broaden filters to restore executive coverage."),
       alerts: [
-        alert("GP Risk", gpRisk ? "red" : summary.gpPct < 11 ? "yellow" : "green", `${U.formatPercent(summary.gpPct)} GP margin. Lowest model: ${lowMarginModel.name}.`),
-        alert("Dealer Concentration", concentrationRisk ? "red" : topDealer.share > 30 ? "yellow" : "green", `${topDealer.name} contributes ${U.formatPercent(topDealer.share)} of filtered units.`),
-        alert("Forecast Gap", gapRisk ? "yellow" : "green", `${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units vs ${target.toLocaleString()} static baseline.`),
-        alert("Stock / Booking", hasBookingFields ? "green" : "yellow", stockSignal)
+        alert(isThai() ? "ความเสี่ยง GP" : "GP Risk", gpRisk ? "red" : summary.gpPct < 11 ? "yellow" : "green", isThai() ? `GP margin ${U.formatPercent(summary.gpPct)} รุ่นต่ำสุด: ${lowMarginModel.name}` : `${U.formatPercent(summary.gpPct)} GP margin. Lowest model: ${lowMarginModel.name}.`),
+        alert(isThai() ? "การกระจุกตัว Dealer" : "Dealer Concentration", concentrationRisk ? "red" : topDealer.share > 30 ? "yellow" : "green", isThai() ? `${topDealer.name} คิดเป็น ${U.formatPercent(topDealer.share)} ของจำนวนขายตามตัวกรอง` : `${topDealer.name} contributes ${U.formatPercent(topDealer.share)} of filtered units.`),
+        alert(isThai() ? "ส่วนต่างคาดการณ์" : "Forecast Gap", gapRisk ? "yellow" : "green", isThai() ? `${gap >= 0 ? "+" : ""}${unitText(gap)} เทียบ baseline ${target.toLocaleString()} คัน` : `${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units vs ${target.toLocaleString()} static baseline.`),
+        alert(isThai() ? "สต็อก / Booking" : "Stock / Booking", hasBookingFields ? "green" : "yellow", stockSignal)
       ]
     };
   }
 
   function recommendedAction(gpRisk, concentrationRisk, gapRisk, lowMarginModel, weakDealer, topModel) {
-    if (gpRisk) return `Protect margin first: review discounting and deal economics on ${lowMarginModel.name}.`;
-    if (concentrationRisk) return `Reduce network dependency: lift activity and stock follow-up for ${weakDealer.name}.`;
-    if (gapRisk) return `Close the gap through high-probability deals led by ${topModel.name}.`;
-    return `Sustain close rhythm and keep ${topModel.name} availability visible across priority dealers.`;
+    if (gpRisk) return isThai() ? `ปกป้องกำไรก่อน: ทบทวนส่วนลดและเศรษฐศาสตร์ดีลของ ${lowMarginModel.name}` : `Protect margin first: review discounting and deal economics on ${lowMarginModel.name}.`;
+    if (concentrationRisk) return isThai() ? `ลดการพึ่งพาเครือข่าย: เพิ่มกิจกรรมและติดตามสต็อกของ ${weakDealer.name}` : `Reduce network dependency: lift activity and stock follow-up for ${weakDealer.name}.`;
+    if (gapRisk) return isThai() ? `ปิดส่วนต่างด้วยดีลที่มีโอกาสสูง โดยใช้ ${topModel.name} เป็นตัวนำ` : `Close the gap through high-probability deals led by ${topModel.name}.`;
+    return isThai() ? `รักษาจังหวะการปิดการขายและทำให้ความพร้อมของ ${topModel.name} ชัดเจนใน Dealer สำคัญ` : `Sustain close rhythm and keep ${topModel.name} availability visible across priority dealers.`;
   }
 
   function renderBriefing(intel) {
@@ -323,9 +347,9 @@
     U.setText("briefProductPush", intel.highMarginModel.name || intel.topModel.name);
     U.setText("briefSalesmanSignal", intel.topSalesman.name);
     U.setHtml("briefSignalChips", [
-      `${intel.forecast.toLocaleString()} forecast units`,
-      `${intel.gap >= 0 ? "+" : ""}${intel.gap.toLocaleString()} target gap`,
-      `${U.formatPercent(intel.topDealer.share)} top dealer share`
+      isThai() ? `คาดการณ์ ${unitText(intel.forecast)}` : `${intel.forecast.toLocaleString()} forecast units`,
+      isThai() ? `ส่วนต่างเป้าหมาย ${intel.gap >= 0 ? "+" : ""}${unitText(intel.gap)}` : `${intel.gap >= 0 ? "+" : ""}${intel.gap.toLocaleString()} target gap`,
+      isThai() ? `Dealer หลัก ${U.formatPercent(intel.topDealer.share)}` : `${U.formatPercent(intel.topDealer.share)} top dealer share`
     ].map((chip) => `<span class="command-chip">${chip}</span>`).join(""));
   }
 
@@ -334,10 +358,10 @@
     const high = safe(models.slice().sort((a, b) => b.gpPct - a.gpPct)[0]);
     const type = safe(types.slice().sort((a, b) => a.gpPct - b.gpPct)[0]);
     U.setHtml("marginQualityPanel", [
-      quality("GP Margin", U.formatPercent(summary.gpPct), summary.gpPct < 8 ? "red" : summary.gpPct < 11 ? "yellow" : "green", "Filtered gross profit quality"),
-      quality("Lowest Model", low.name, "yellow", `${U.formatPercent(low.gpPct)} GP margin`),
-      quality("Best GP Model", high.name, "green", `${U.formatPercent(high.gpPct)} GP margin`),
-      quality("Mix Watch", type.name, "yellow", `${U.formatPercent(type.share)} mix share`)
+      quality(t("kpi.gpMargin"), U.formatPercent(summary.gpPct), summary.gpPct < 8 ? "red" : summary.gpPct < 11 ? "yellow" : "green", isThai() ? "คุณภาพกำไรขั้นต้นตามตัวกรอง" : "Filtered gross profit quality"),
+      quality(isThai() ? "รุ่น GP ต่ำสุด" : "Lowest Model", low.name, "yellow", `${U.formatPercent(low.gpPct)} ${t("kpi.gpMargin")}`),
+      quality(isThai() ? "รุ่น GP ดีสุด" : "Best GP Model", high.name, "green", `${U.formatPercent(high.gpPct)} ${t("kpi.gpMargin")}`),
+      quality(isThai() ? "ติดตามสัดส่วนสินค้า" : "Mix Watch", type.name, "yellow", isThai() ? `สัดส่วน ${U.formatPercent(type.share)}` : `${U.formatPercent(type.share)} mix share`)
     ].join(""));
   }
 
@@ -346,9 +370,9 @@
     const booking = Math.round(summary.units * 1.18);
     const conversion = booking ? (summary.units / booking) * 100 : 0;
     U.setHtml("bookingPipelinePanel", `
-      ${scoreRow("Booking Proxy", `${booking.toLocaleString()} units`, "Estimated from current deliveries")}
-      ${scoreRow("Delivery Conversion", U.formatPercent(conversion), "Proxy conversion")}
-      ${scoreRow("Latest Month", `${recent.name} / ${recent.units.toLocaleString()} units`, "Current filtered trend")}`);
+      ${scoreRow(isThai() ? "Booking Proxy" : "Booking Proxy", unitText(booking), isThai() ? "ประมาณจากยอดส่งมอบปัจจุบัน" : "Estimated from current deliveries")}
+      ${scoreRow(isThai() ? "Conversion การส่งมอบ" : "Delivery Conversion", U.formatPercent(conversion), isThai() ? "Conversion แบบ Proxy" : "Proxy conversion")}
+      ${scoreRow(isThai() ? "เดือนล่าสุด" : "Latest Month", `${recent.name} / ${unitText(recent.units)}`, isThai() ? "แนวโน้มตามตัวกรองปัจจุบัน" : "Current filtered trend")}`);
   }
 
   function renderForecastGap(summary, monthly, dealers, intel) {
@@ -357,20 +381,20 @@
     U.setHtml("forecastGapPanel", `
       <div class="risk-meter">
         <strong>${intel.forecast.toLocaleString()}</strong>
-        <span>Rule-based forecast units</span>
+        <span>${t("label.ruleBasedForecastUnits")}</span>
       </div>
-      ${scoreRow("Target Baseline", `${intel.target.toLocaleString()} units`, "Static V6 placeholder")}
-      ${scoreRow("Gap", `${intel.gap >= 0 ? "+" : ""}${intel.gap.toLocaleString()} units`, intel.gap < 0 ? "Needs close action" : "Above baseline")}
-      ${scoreRow("Best Month", bestMonth.name, `${bestMonth.units.toLocaleString()} units`)}
-      ${scoreRow("Primary Lever", topDealer.name, `${U.formatPercent(topDealer.share)} share`)}`);
+      ${scoreRow(t("label.targetBaseline"), unitText(intel.target), isThai() ? "Placeholder แบบ Static V6" : "Static V6 placeholder")}
+      ${scoreRow(t("label.gap"), `${intel.gap >= 0 ? "+" : ""}${unitText(intel.gap)}`, intel.gap < 0 ? (isThai() ? "ต้องเร่งปิดการขาย" : "Needs close action") : (isThai() ? "สูงกว่า baseline" : "Above baseline"))}
+      ${scoreRow(t("label.bestMonth"), bestMonth.name, unitText(bestMonth.units))}
+      ${scoreRow(t("label.primaryLever"), topDealer.name, isThai() ? `สัดส่วน ${U.formatPercent(topDealer.share)}` : `${U.formatPercent(topDealer.share)} share`)}`);
   }
 
   function renderRiskOpportunity(intel) {
     U.setHtml("riskOpportunityPanel", [
-      signal(intel.gap < 0 ? "Gap" : "Opportunity", "Forecast Focus", intel.gap < 0 ? `Recover ${Math.abs(intel.gap).toLocaleString()} units through priority dealer follow-up.` : "Forecast is above the static baseline; protect GP while closing."),
-      signal("Margin", "Price Discipline", `Review lowest-margin model ${intel.lowMarginModel.name} at ${U.formatPercent(intel.lowMarginModel.gpPct)} GP.`),
-      signal("Dealer", "Network Balance", `Watch ${intel.weakDealer.name} and reduce over-reliance on ${intel.topDealer.name}.`),
-      signal("Product", "Push Candidate", `Prioritize ${intel.highMarginModel.name} where supply and lead quality allow.`)
+      signal(intel.gap < 0 ? t("label.gap") : t("label.opportunity"), isThai() ? "โฟกัสคาดการณ์" : "Forecast Focus", intel.gap < 0 ? (isThai() ? `กู้คืน ${unitText(Math.abs(intel.gap))} ผ่านการติดตาม Dealer สำคัญ` : `Recover ${Math.abs(intel.gap).toLocaleString()} units through priority dealer follow-up.`) : (isThai() ? "คาดการณ์สูงกว่า baseline แบบ Static ให้ปกป้อง GP ระหว่างปิดการขาย" : "Forecast is above the static baseline; protect GP while closing.")),
+      signal(isThai() ? "กำไร" : "Margin", t("label.priceDiscipline"), isThai() ? `ทบทวนรุ่น GP ต่ำสุด ${intel.lowMarginModel.name} ที่ ${U.formatPercent(intel.lowMarginModel.gpPct)}` : `Review lowest-margin model ${intel.lowMarginModel.name} at ${U.formatPercent(intel.lowMarginModel.gpPct)} GP.`),
+      signal("Dealer", t("label.networkBalance"), isThai() ? `ติดตาม ${intel.weakDealer.name} และลดการพึ่งพา ${intel.topDealer.name}` : `Watch ${intel.weakDealer.name} and reduce over-reliance on ${intel.topDealer.name}.`),
+      signal(isThai() ? "สินค้า" : "Product", t("label.pushCandidate"), isThai() ? `ให้ความสำคัญกับ ${intel.highMarginModel.name} เมื่อสต็อกและคุณภาพ lead พร้อม` : `Prioritize ${intel.highMarginModel.name} where supply and lead quality allow.`)
     ].join(""));
   }
 
@@ -384,12 +408,13 @@
   }
 
   function renderCards(targetId, rows, href, label) {
+    const translatedLabel = label === "Dealer" ? t("filter.dealer") : t("label.productType");
     U.setHtml(targetId, rows.map((row) => `
       <a href="${href}" class="drill-card">
-        <span>${label}</span>
+        <span>${translatedLabel}</span>
         <strong>${row.name}</strong>
-        <small>${row.units.toLocaleString()} units | ${U.formatPercent(row.share)} share | GP ${U.formatPercent(row.gpPct)}</small>
-      </a>`).join("") || `<div class="empty-inline">No ${label.toLowerCase()} data</div>`);
+        <small>${unitText(row.units)} | ${isThai() ? "สัดส่วน" : "share"} ${U.formatPercent(row.share)} | GP ${U.formatPercent(row.gpPct)}</small>
+      </a>`).join("") || `<div class="empty-inline">${label === "Dealer" ? t("message.noDealerData") : t("message.noProductData")}</div>`);
   }
 
   function renderExecutiveStrip(summary, groups, intel) {

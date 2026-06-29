@@ -1,0 +1,1729 @@
+diff --git a/dashboard/css/bi-core.css b/dashboard/css/bi-core.css
+index da9b300..78839b9 100644
+--- a/dashboard/css/bi-core.css
++++ b/dashboard/css/bi-core.css
+@@ -1,7 +1,66 @@
+ /* KMM Sales Intelligence v4 core bundle */
++@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700;800;900&display=swap");
+ @import url("design-system.css");
+ @import url("bi-layout.css");
+ @import url("bi-components.css");
+ @import url("bi-modules.css");
+ @import url("bi-enterprise.css");
+ @import url("security.css");
++
++html,
++body,
++button,
++input,
++select,
++textarea {
++  font-family: "Noto Sans Thai", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++}
++
++html[lang="th"],
++html[data-language="th"] {
++  line-height: 1.55;
++}
++
++button,
++.enterprise-action,
++.export-button,
++.report-button-v71,
++.login-button,
++.settings-save,
++.security-settings,
++.security-profile,
++.nav-menu a {
++  white-space: normal;
++  overflow-wrap: anywhere;
++  line-height: 1.35;
++}
++
++.nav-menu strong,
++.nav-menu small {
++  display: block;
++  line-height: 1.35;
++}
++
++.language-switch {
++  display: flex;
++  align-items: center;
++  justify-content: flex-end;
++  gap: 10px;
++  margin-bottom: 18px;
++}
++
++.language-switch label {
++  color: #344054;
++  font-size: 13px;
++  font-weight: 900;
++}
++
++.language-switch select {
++  min-height: 40px;
++  border: 1px solid #d0d5dd;
++  border-radius: 8px;
++  background: #ffffff;
++  color: #101828;
++  padding: 0 12px;
++  font-weight: 800;
++}
+diff --git a/dashboard/dealer.html b/dashboard/dealer.html
+index 3777098..2249a8f 100644
+--- a/dashboard/dealer.html
++++ b/dashboard/dealer.html
+@@ -1 +1 @@
+-<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KMM Dealer Intelligence</title><link rel="stylesheet" href="css/bi-core.css"><script src="js/auth.js"></script><script src="js/permission.js"></script><script src="js/company.js"></script><script src="js/settings.js"></script><script src="js/route-guard.js"></script><script src="js/chart.umd.min.js"></script></head><body><div class="app-shell"><aside class="sidebar"><div class="brand"><div class="brand-logo">KMM</div><div class="brand-name">Sales Intelligence</div></div><nav class="nav-menu"><a href="executive.html"><span class="nav-icon">🏠</span><span><strong>Executive Overview</strong><small>ภาพรวมผู้บริหาร</small></span></a><a href="salesman.html"><span class="nav-icon">👨‍💼</span><span><strong>Sales Performance</strong><small>วิเคราะห์พนักงานขาย</small></span></a><a href="sales.html"><span class="nav-icon">📈</span><span><strong>Sales Analytics</strong><small>ยอดขายรายงวด</small></span></a><a href="product.html"><span class="nav-icon">🚜</span><span><strong>Product Intelligence</strong><small>รุ่นสินค้าและ GP</small></span></a><a href="dealer.html"><span class="nav-icon">🏪</span><span><strong>Dealer Intelligence</strong><small>ผลงานรายสาขา</small></span></a><a href="forecast.html"><span class="nav-icon">🎯</span><span><strong>Sales Forecast AI</strong><small>คาดการณ์ยอดขาย</small></span></a></nav><div class="sidebar-footer"><strong>KUBOTA</strong><span>For Earth, For Life</span></div></aside><main class="main-content"><header class="topbar"><div><h1>Dealer <span>Intelligence</span> Dashboard</h1><p>วิเคราะห์ศักยภาพ Dealer ยอดขาย Booking สต็อก และการครอบคลุมพื้นที่</p></div><div class="top-meta"><div><span>Total Dealers</span><strong id="dealerCountTop">-</strong></div><div><span>Best Dealer</span><strong id="bestDealerTop">-</strong></div><div><span>Last Refresh</span><strong id="lastRefresh">-</strong></div></div></header><section class="filter-bar"><div class="filter-item"><label>Year</label><select id="yearFilter"></select></div><div class="filter-item"><label>Month</label><select id="monthFilter"></select></div><div class="filter-item"><label>Week</label><select id="weekFilter"></select></div><div class="filter-item"><label>Dealer</label><select id="dealerFilter"></select></div><div class="filter-item"><label>Salesman</label><select id="salesmanFilter"></select></div><div class="filter-item"><label>Type</label><select id="typeFilter"></select></div><button id="resetFilter" class="filter-reset">Reset</button></section><section class="kpi-grid"><div class="kpi-card"><span>Total Dealers</span><strong id="kpiDealers">-</strong><small>Dealers</small></div><div class="kpi-card"><span>Total Sales</span><strong id="kpiSales">-</strong><small>Units</small></div><div class="kpi-card"><span>Total Booking</span><strong id="kpiBooking">1,986</strong><small>Units</small></div><div class="kpi-card"><span>Total Stock</span><strong id="kpiStock">186</strong><small>Units</small></div><div class="kpi-card teal"><span>Gross Profit</span><strong id="kpiGP">-</strong><small>MMK</small></div><div class="kpi-card"><span>Collection Rate</span><strong id="kpiCollection">92.4%</strong><small>%</small></div></section><section class="module-grid"><div class="panel"><h2>Dealer Ranking</h2><p>อันดับ Dealer ตามยอดขาย</p><div id="dealerRankingList" class="clean-list"></div></div><div class="panel"><h2>Dealer Scorecard</h2><p>Sales / Stock / Service / Customer / Training</p><div class="chart-box sm"><canvas id="dealerRadarChart"></canvas></div></div><div class="panel"><h2>Dealer Funnel</h2><p>Lead → Quotation → Booking → Delivery</p><div id="dealerFunnel" class="funnel"></div></div></section><section class="module-grid four"><div class="panel"><h2>Dealer Health</h2><p>สถานะ Dealer</p><div id="dealerHealth" class="score-grid"></div></div><div class="panel"><h2>Stock Age</h2><p>อายุสต็อกสินค้า</p><div class="chart-box sm"><canvas id="dealerStockAgeChart"></canvas></div></div><div class="panel"><h2>Outstanding</h2><p>ลูกหนี้และ Collection</p><div id="collectionList" class="score-grid"></div></div><div class="panel"><h2>Market Coverage</h2><p>การครอบคลุมพื้นที่</p><div id="coverageList" class="score-grid"></div></div></section><section class="ai-strip"><div class="ai-bot">🤖</div><div class="ai-card"><strong id="aiBestDealer">-</strong><span>Excellent performance</span></div><div class="ai-card"><strong id="aiWarningDealer">-</strong><span>ต้องติดตามผลการขาย</span></div><div class="ai-card"><strong id="aiStockAction">-</strong><span>Inventory action</span></div><div class="ai-card"><strong id="aiDealerAction">-</strong><span>Recommendation</span></div></section></main></div><script src="js/bi-utils.js"></script><script src="js/bi-filters.js"></script><script src="js/bi-charts.js"></script><script src="js/bi-core.js"></script><script src="js/bi-enterprise.js"></script><script src="js/dealer.js"></script></body></html>
++<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KMM Dealer Intelligence</title><link rel="stylesheet" href="css/bi-core.css"><script src="js/i18n.js"></script><script src="js/auth.js"></script><script src="js/permission.js"></script><script src="js/company.js"></script><script src="js/settings.js"></script><script src="js/route-guard.js"></script><script src="js/chart.umd.min.js"></script></head><body><div class="app-shell"><aside class="sidebar"><div class="brand"><div class="brand-logo">KMM</div><div class="brand-name">Sales Intelligence</div></div><nav class="nav-menu"><a href="executive.html"><span class="nav-icon">🏠</span><span><strong>Executive Overview</strong><small>ภาพรวมผู้บริหาร</small></span></a><a href="salesman.html"><span class="nav-icon">👨‍💼</span><span><strong>Sales Performance</strong><small>วิเคราะห์พนักงานขาย</small></span></a><a href="sales.html"><span class="nav-icon">📈</span><span><strong>Sales Analytics</strong><small>ยอดขายรายงวด</small></span></a><a href="product.html"><span class="nav-icon">🚜</span><span><strong>Product Intelligence</strong><small>รุ่นสินค้าและ GP</small></span></a><a href="dealer.html"><span class="nav-icon">🏪</span><span><strong>Dealer Intelligence</strong><small>ผลงานรายสาขา</small></span></a><a href="forecast.html"><span class="nav-icon">🎯</span><span><strong>Sales Forecast AI</strong><small>คาดการณ์ยอดขาย</small></span></a></nav><div class="sidebar-footer"><strong>KUBOTA</strong><span>For Earth, For Life</span></div></aside><main class="main-content"><header class="topbar"><div><h1>Dealer <span>Intelligence</span> Dashboard</h1><p>วิเคราะห์ศักยภาพ Dealer ยอดขาย Booking สต็อก และการครอบคลุมพื้นที่</p></div><div class="top-meta"><div><span>Total Dealers</span><strong id="dealerCountTop">-</strong></div><div><span>Best Dealer</span><strong id="bestDealerTop">-</strong></div><div><span>Last Refresh</span><strong id="lastRefresh">-</strong></div></div></header><section class="filter-bar"><div class="filter-item"><label>Year</label><select id="yearFilter"></select></div><div class="filter-item"><label>Month</label><select id="monthFilter"></select></div><div class="filter-item"><label>Week</label><select id="weekFilter"></select></div><div class="filter-item"><label>Dealer</label><select id="dealerFilter"></select></div><div class="filter-item"><label>Salesman</label><select id="salesmanFilter"></select></div><div class="filter-item"><label>Type</label><select id="typeFilter"></select></div><button id="resetFilter" class="filter-reset">Reset</button></section><section class="kpi-grid"><div class="kpi-card"><span>Total Dealers</span><strong id="kpiDealers">-</strong><small>Dealers</small></div><div class="kpi-card"><span>Total Sales</span><strong id="kpiSales">-</strong><small>Units</small></div><div class="kpi-card"><span>Total Booking</span><strong id="kpiBooking">1,986</strong><small>Units</small></div><div class="kpi-card"><span>Total Stock</span><strong id="kpiStock">186</strong><small>Units</small></div><div class="kpi-card teal"><span>Gross Profit</span><strong id="kpiGP">-</strong><small>MMK</small></div><div class="kpi-card"><span>Collection Rate</span><strong id="kpiCollection">92.4%</strong><small>%</small></div></section><section class="module-grid"><div class="panel"><h2>Dealer Ranking</h2><p>อันดับ Dealer ตามยอดขาย</p><div id="dealerRankingList" class="clean-list"></div></div><div class="panel"><h2>Dealer Scorecard</h2><p>Sales / Stock / Service / Customer / Training</p><div class="chart-box sm"><canvas id="dealerRadarChart"></canvas></div></div><div class="panel"><h2>Dealer Funnel</h2><p>Lead → Quotation → Booking → Delivery</p><div id="dealerFunnel" class="funnel"></div></div></section><section class="module-grid four"><div class="panel"><h2>Dealer Health</h2><p>สถานะ Dealer</p><div id="dealerHealth" class="score-grid"></div></div><div class="panel"><h2>Stock Age</h2><p>อายุสต็อกสินค้า</p><div class="chart-box sm"><canvas id="dealerStockAgeChart"></canvas></div></div><div class="panel"><h2>Outstanding</h2><p>ลูกหนี้และ Collection</p><div id="collectionList" class="score-grid"></div></div><div class="panel"><h2>Market Coverage</h2><p>การครอบคลุมพื้นที่</p><div id="coverageList" class="score-grid"></div></div></section><section class="ai-strip"><div class="ai-bot">🤖</div><div class="ai-card"><strong id="aiBestDealer">-</strong><span>Excellent performance</span></div><div class="ai-card"><strong id="aiWarningDealer">-</strong><span>ต้องติดตามผลการขาย</span></div><div class="ai-card"><strong id="aiStockAction">-</strong><span>Inventory action</span></div><div class="ai-card"><strong id="aiDealerAction">-</strong><span>Recommendation</span></div></section></main></div><script src="js/bi-utils.js"></script><script src="js/bi-filters.js"></script><script src="js/bi-charts.js"></script><script src="js/bi-core.js"></script><script src="js/bi-enterprise.js"></script><script src="js/dealer.js"></script></body></html>
+diff --git a/dashboard/executive.html b/dashboard/executive.html
+index 8254a00..a1757d2 100644
+--- a/dashboard/executive.html
++++ b/dashboard/executive.html
+@@ -5,6 +5,7 @@
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>KMM V7.1 Executive Intelligence Cockpit</title>
+   <link rel="stylesheet" href="css/bi-core.css">
++  <script src="js/i18n.js"></script>
+   <script src="js/auth.js"></script>
+   <script src="js/permission.js"></script>
+   <script src="js/company.js"></script>
+diff --git a/dashboard/forecast.html b/dashboard/forecast.html
+index 9e506c4..ccdfc12 100644
+--- a/dashboard/forecast.html
++++ b/dashboard/forecast.html
+@@ -1 +1 @@
+-<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KMM Sales Forecast AI</title><link rel="stylesheet" href="css/bi-core.css"><script src="js/auth.js"></script><script src="js/permission.js"></script><script src="js/company.js"></script><script src="js/settings.js"></script><script src="js/route-guard.js"></script><script src="js/chart.umd.min.js"></script></head><body><div class="app-shell"><aside class="sidebar"><div class="brand"><div class="brand-logo">KMM</div><div class="brand-name">Sales Intelligence</div></div><nav class="nav-menu"><a href="executive.html"><span class="nav-icon">🏠</span><span><strong>Executive Overview</strong><small>ภาพรวมผู้บริหาร</small></span></a><a href="salesman.html"><span class="nav-icon">👨‍💼</span><span><strong>Sales Performance</strong><small>วิเคราะห์พนักงานขาย</small></span></a><a href="sales.html"><span class="nav-icon">📈</span><span><strong>Sales Analytics</strong><small>ยอดขายรายงวด</small></span></a><a href="product.html"><span class="nav-icon">🚜</span><span><strong>Product Intelligence</strong><small>รุ่นสินค้าและ GP</small></span></a><a href="dealer.html"><span class="nav-icon">🏪</span><span><strong>Dealer Intelligence</strong><small>ผลงานรายสาขา</small></span></a><a href="forecast.html"><span class="nav-icon">🎯</span><span><strong>Sales Forecast AI</strong><small>คาดการณ์ยอดขาย</small></span></a></nav><div class="sidebar-footer"><strong>KUBOTA</strong><span>For Earth, For Life</span></div></aside><main class="main-content"><header class="topbar"><div><h1>Sales Forecast <span>AI</span> Dashboard</h1><p>คาดการณ์ยอดขายและประเมินเป้าหมายด้วยข้อมูล Pipeline และแนวโน้มตลาด</p></div><div class="top-meta"><div><span>Full Year Forecast</span><strong id="topForecast">-</strong></div><div><span>Confidence</span><strong id="topConfidence">89%</strong></div><div><span>Last Refresh</span><strong id="lastRefresh">-</strong></div></div></header><section class="filter-bar"><div class="filter-item"><label>Year</label><select id="yearFilter"></select></div><div class="filter-item"><label>Month</label><select id="monthFilter"></select></div><div class="filter-item"><label>Week</label><select id="weekFilter"></select></div><div class="filter-item"><label>Dealer</label><select id="dealerFilter"></select></div><div class="filter-item"><label>Salesman</label><select id="salesmanFilter"></select></div><div class="filter-item"><label>Type</label><select id="typeFilter"></select></div><div class="filter-item"><label>Scenario</label><select id="scenarioFilter"><option>Base Case</option><option>Optimistic</option><option>Conservative</option></select></div><button id="resetFilter" class="filter-reset">Reset</button></section><section class="kpi-grid"><div class="kpi-card"><span>Forecast</span><strong id="kpiForecast">-</strong><small>Units</small></div><div class="kpi-card"><span>Target</span><strong id="kpiTarget">400</strong><small>Units</small></div><div class="kpi-card teal"><span>Achievement</span><strong id="kpiAch">-</strong><small>%</small></div><div class="kpi-card"><span>Gap</span><strong id="kpiGap">-</strong><small>Units</small></div><div class="kpi-card"><span>Forecast Value</span><strong id="kpiValue">-</strong><small>MMK</small></div><div class="kpi-card teal"><span>Confidence</span><strong>89%</strong><small>%</small></div></section><section class="module-grid"><div class="panel"><h2>Sales Forecast Trend</h2><p>Actual / Forecast / Target</p><div class="chart-box lg"><canvas id="forecastTrendChart"></canvas></div></div><div class="panel"><h2>Sales Pipeline</h2><p>Lead → Quotation → Booking → Delivery</p><div id="forecastFunnel" class="funnel"></div></div><div class="panel"><h2>Probability by Deal</h2><p>โอกาสปิดการขายตามมูลค่า</p><div class="chart-box sm"><canvas id="probabilityChart"></canvas></div></div></section><section class="module-grid"><div class="panel"><h2>Forecast by Region</h2><p>เป้าหมายและ Forecast รายพื้นที่</p><div id="regionForecastList" class="clean-list"></div></div><div class="panel"><h2>Forecast by Salesman</h2><p>เป้าหมายและ Forecast รายพนักงาน</p><div id="salesmanForecastList" class="clean-list"></div></div><div class="panel"><h2>Monthly Projection</h2><p>ประมาณการรายเดือน</p><div class="chart-box sm"><canvas id="projectionChart"></canvas></div></div></section><section class="ai-strip"><div class="ai-bot">🤖</div><div class="ai-card"><strong id="aiMonthForecast">-</strong><span>Next month forecast</span></div><div class="ai-card"><strong>89%</strong><span>Confidence level</span></div><div class="ai-card"><strong id="aiRevenue">-</strong><span>Expected revenue</span></div><div class="ai-card"><strong id="aiRiskLevel">Medium</strong><span>Risk level</span></div></section></main></div><script src="js/bi-utils.js"></script><script src="js/bi-filters.js"></script><script src="js/bi-charts.js"></script><script src="js/bi-core.js"></script><script src="js/bi-enterprise.js"></script><script src="js/forecast.js"></script></body></html>
++<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KMM Sales Forecast AI</title><link rel="stylesheet" href="css/bi-core.css"><script src="js/i18n.js"></script><script src="js/auth.js"></script><script src="js/permission.js"></script><script src="js/company.js"></script><script src="js/settings.js"></script><script src="js/route-guard.js"></script><script src="js/chart.umd.min.js"></script></head><body><div class="app-shell"><aside class="sidebar"><div class="brand"><div class="brand-logo">KMM</div><div class="brand-name">Sales Intelligence</div></div><nav class="nav-menu"><a href="executive.html"><span class="nav-icon">🏠</span><span><strong>Executive Overview</strong><small>ภาพรวมผู้บริหาร</small></span></a><a href="salesman.html"><span class="nav-icon">👨‍💼</span><span><strong>Sales Performance</strong><small>วิเคราะห์พนักงานขาย</small></span></a><a href="sales.html"><span class="nav-icon">📈</span><span><strong>Sales Analytics</strong><small>ยอดขายรายงวด</small></span></a><a href="product.html"><span class="nav-icon">🚜</span><span><strong>Product Intelligence</strong><small>รุ่นสินค้าและ GP</small></span></a><a href="dealer.html"><span class="nav-icon">🏪</span><span><strong>Dealer Intelligence</strong><small>ผลงานรายสาขา</small></span></a><a href="forecast.html"><span class="nav-icon">🎯</span><span><strong>Sales Forecast AI</strong><small>คาดการณ์ยอดขาย</small></span></a></nav><div class="sidebar-footer"><strong>KUBOTA</strong><span>For Earth, For Life</span></div></aside><main class="main-content"><header class="topbar"><div><h1>Sales Forecast <span>AI</span> Dashboard</h1><p>คาดการณ์ยอดขายและประเมินเป้าหมายด้วยข้อมูล Pipeline และแนวโน้มตลาด</p></div><div class="top-meta"><div><span>Full Year Forecast</span><strong id="topForecast">-</strong></div><div><span>Confidence</span><strong id="topConfidence">89%</strong></div><div><span>Last Refresh</span><strong id="lastRefresh">-</strong></div></div></header><section class="filter-bar"><div class="filter-item"><label>Year</label><select id="yearFilter"></select></div><div class="filter-item"><label>Month</label><select id="monthFilter"></select></div><div class="filter-item"><label>Week</label><select id="weekFilter"></select></div><div class="filter-item"><label>Dealer</label><select id="dealerFilter"></select></div><div class="filter-item"><label>Salesman</label><select id="salesmanFilter"></select></div><div class="filter-item"><label>Type</label><select id="typeFilter"></select></div><div class="filter-item"><label>Scenario</label><select id="scenarioFilter"><option>Base Case</option><option>Optimistic</option><option>Conservative</option></select></div><button id="resetFilter" class="filter-reset">Reset</button></section><section class="kpi-grid"><div class="kpi-card"><span>Forecast</span><strong id="kpiForecast">-</strong><small>Units</small></div><div class="kpi-card"><span>Target</span><strong id="kpiTarget">400</strong><small>Units</small></div><div class="kpi-card teal"><span>Achievement</span><strong id="kpiAch">-</strong><small>%</small></div><div class="kpi-card"><span>Gap</span><strong id="kpiGap">-</strong><small>Units</small></div><div class="kpi-card"><span>Forecast Value</span><strong id="kpiValue">-</strong><small>MMK</small></div><div class="kpi-card teal"><span>Confidence</span><strong>89%</strong><small>%</small></div></section><section class="module-grid"><div class="panel"><h2>Sales Forecast Trend</h2><p>Actual / Forecast / Target</p><div class="chart-box lg"><canvas id="forecastTrendChart"></canvas></div></div><div class="panel"><h2>Sales Pipeline</h2><p>Lead → Quotation → Booking → Delivery</p><div id="forecastFunnel" class="funnel"></div></div><div class="panel"><h2>Probability by Deal</h2><p>โอกาสปิดการขายตามมูลค่า</p><div class="chart-box sm"><canvas id="probabilityChart"></canvas></div></div></section><section class="module-grid"><div class="panel"><h2>Forecast by Region</h2><p>เป้าหมายและ Forecast รายพื้นที่</p><div id="regionForecastList" class="clean-list"></div></div><div class="panel"><h2>Forecast by Salesman</h2><p>เป้าหมายและ Forecast รายพนักงาน</p><div id="salesmanForecastList" class="clean-list"></div></div><div class="panel"><h2>Monthly Projection</h2><p>ประมาณการรายเดือน</p><div class="chart-box sm"><canvas id="projectionChart"></canvas></div></div></section><section class="ai-strip"><div class="ai-bot">🤖</div><div class="ai-card"><strong id="aiMonthForecast">-</strong><span>Next month forecast</span></div><div class="ai-card"><strong>89%</strong><span>Confidence level</span></div><div class="ai-card"><strong id="aiRevenue">-</strong><span>Expected revenue</span></div><div class="ai-card"><strong id="aiRiskLevel">Medium</strong><span>Risk level</span></div></section></main></div><script src="js/bi-utils.js"></script><script src="js/bi-filters.js"></script><script src="js/bi-charts.js"></script><script src="js/bi-core.js"></script><script src="js/bi-enterprise.js"></script><script src="js/forecast.js"></script></body></html>
+diff --git a/dashboard/js/auth.js b/dashboard/js/auth.js
+index d917d30..a9d57f6 100644
+--- a/dashboard/js/auth.js
++++ b/dashboard/js/auth.js
+@@ -5,18 +5,25 @@
+   const DEFAULT_TIMEOUT_MINUTES = 15;
+   const VERSION = "V8.1-V9 Security Platform";
+ 
+-  const ROLE_BY_USERNAME = {
+-    superadmin: "SuperAdmin",
+-    executive: "Executive",
+-    manager: "Manager",
+-    sales: "Sales",
+-    viewer: "Viewer"
++  // V8.1 temporary protection only: static local credentials protect casual
++  // access in GitHub Pages, but they are visible in browser source and must be
++  // replaced by real identity-provider or server-side authentication in V10.
++  const LOCAL_USERS = {
++    superadmin: { password: "KMM@2026!", role: "SuperAdmin" },
++    executive: { password: "Exec@2026", role: "Executive" },
++    manager: { password: "Manager@2026", role: "Manager" },
++    sales: { password: "Sales@2026", role: "Sales" },
++    viewer: { password: "Viewer@2026", role: "Viewer" }
+   };
+ 
+   function now() {
+     return Date.now();
+   }
+ 
++  function translate(key) {
++    return window.KMMI18n ? window.KMMI18n.t(key) : key;
++  }
++
+   function readSession() {
+     try {
+       const raw = sessionStorage.getItem(SESSION_KEY);
+@@ -46,11 +53,11 @@
+   function createSession(username, options) {
+     const cleanUser = String(username || "").trim();
+     if (!cleanUser) {
+-      throw new Error("Username is required.");
++      throw new Error(translate("error.usernameRequired"));
+     }
+ 
+     const selectedOptions = options || {};
+-    const role = normalizeRole(selectedOptions.role || ROLE_BY_USERNAME[cleanUser.toLowerCase()] || "Viewer");
++    const role = normalizeRole(selectedOptions.role || "Viewer");
+     const timeoutMinutes = Number(selectedOptions.timeoutMinutes) || DEFAULT_TIMEOUT_MINUTES;
+     const timestamp = now();
+ 
+@@ -59,7 +66,7 @@
+       role,
+       company: selectedOptions.company || "KMM",
+       theme: selectedOptions.theme || "default",
+-      language: selectedOptions.language || "en",
++      language: selectedOptions.language || (window.KMMI18n ? window.KMMI18n.getLanguage() : "th"),
+       timeoutMinutes,
+       loginAt: timestamp,
+       lastActivityAt: timestamp,
+@@ -70,6 +77,31 @@
+     return session;
+   }
+ 
++  function authenticate(username, password, options) {
++    const cleanUser = String(username || "").trim();
++    const suppliedPassword = String(password || "");
++
++    if (!cleanUser) {
++      return { ok: false, error: translate("error.usernameRequired") };
++    }
++
++    if (!suppliedPassword) {
++      return { ok: false, error: translate("error.passwordRequired") };
++    }
++
++    const user = LOCAL_USERS[cleanUser.toLowerCase()];
++    if (!user) {
++      return { ok: false, error: translate("error.usernameNotFound") };
++    }
++
++    if (suppliedPassword !== user.password) {
++      return { ok: false, error: translate("error.passwordIncorrect") };
++    }
++
++    const session = createSession(cleanUser, Object.assign({}, options, { role: user.role }));
++    return { ok: true, session };
++  }
++
+   function touchSession() {
+     const session = readSession();
+     if (!session) return null;
+@@ -95,8 +127,8 @@
+     SESSION_KEY,
+     DEFAULT_TIMEOUT_MINUTES,
+     VERSION,
++    authenticate,
+     clearSession,
+-    createSession,
+     getLogoutReason,
+     isExpired,
+     readSession,
+diff --git a/dashboard/js/bi-enterprise.js b/dashboard/js/bi-enterprise.js
+index d53b377..95eb8b5 100644
+--- a/dashboard/js/bi-enterprise.js
++++ b/dashboard/js/bi-enterprise.js
+@@ -64,13 +64,92 @@
+   const kpiIcons = ["◒", "◈", "◐", "%", "◇", "↔"];
+   const exportKinds = ["PDF", "PowerPoint", "Excel", "PNG"];
+   const exportLabels = {
+-    PDF: "Export PDF",
+-    PowerPoint: "Export PowerPoint",
+-    Excel: "Export CSV",
+-    PNG: "Export PNG"
++    PDF: "export.pdf",
++    PowerPoint: "export.powerpoint",
++    Excel: "export.csv",
++    PNG: "export.png"
+   };
+   let latestRows = [];
+ 
++  const moduleLabels = {
++    Executive: ["Executive", "ผู้บริหาร"],
++    Sales: ["Sales", "ยอดขาย"],
++    Product: ["Product", "สินค้า"],
++    Dealer: ["Dealer", "Dealer"],
++    Salesman: ["Salesman", "พนักงานขาย"],
++    Coaching: ["Coaching", "โค้ชทีมขาย"],
++    Achievement: ["Achievement", "ผลงานเทียบเป้า"],
++    Activity: ["Activity", "กิจกรรม"],
++    Channel: ["Channel", "ช่องทาง"],
++    Payment: ["Payment", "การชำระเงิน"],
++    Trend: ["Trend", "แนวโน้ม"],
++    Inventory: ["Inventory", "สต็อก"],
++    Margin: ["Margin", "กำไร"],
++    Heatmap: ["Heatmap", "Heatmap"],
++    Health: ["Health", "สุขภาพ"],
++    Collection: ["Collection", "การเก็บเงิน"],
++    Coverage: ["Coverage", "พื้นที่"],
++    Forecast: ["Forecast", "คาดการณ์"],
++    Pipeline: ["Pipeline", "Pipeline"],
++    Target: ["Target", "เป้าหมาย"],
++    Scenario: ["Scenario", "Scenario"]
++  };
++
++  const pageEyebrows = {
++    executive: ["V7.1 Production Ready Executive Cockpit", "V7.1 ห้องควบคุมผู้บริหารพร้อมใช้งาน"],
++    salesman: ["V5.2 Performance Coaching", "V5.2 โค้ชผลงานพนักงานขาย"],
++    sales: ["V5.2 Commercial Analytics", "V5.2 วิเคราะห์ยอดขายเชิงพาณิชย์"],
++    product: ["V5.2 Product Intelligence", "V5.2 วิเคราะห์สินค้า"],
++    dealer: ["V5.2 Dealer Network Health", "V5.2 สุขภาพเครือข่าย Dealer"],
++    forecast: ["V5.2 Forecast AI Foundation", "V5.2 พื้นฐานคาดการณ์ AI"]
++  };
++
++  function t(key) {
++    return window.KMMI18n ? window.KMMI18n.t(key) : key;
++  }
++
++  function isThai() {
++    return window.KMMI18n ? window.KMMI18n.getLanguage() === "th" : true;
++  }
++
++  function unitText(value) {
++    return isThai() ? `${Number(value || 0).toLocaleString()} คัน` : `${Number(value || 0).toLocaleString()} units`;
++  }
++
++  function local(en, th) {
++    return isThai() ? th : en;
++  }
++
++  function labelForInsight(title) {
++    const labels = {
++      "Sales Performance": local("Sales Performance", "ผลงานยอดขาย"),
++      "Dealer Performance": local("Dealer Performance", "ผลงาน Dealer"),
++      "Product Performance": local("Product Performance", "ผลงานสินค้า"),
++      "Forecast Risk": local("Forecast Risk", "ความเสี่ยงคาดการณ์"),
++      "Low GP Warning": local("Low GP Warning", "แจ้งเตือน GP ต่ำ"),
++      "Top Performer": local("Top Performer", "ผู้ทำผลงานสูงสุด")
++    };
++    return labels[title] || title;
++  }
++
++  function severityLabel(value) {
++    const labels = {
++      Strong: "แข็งแรง",
++      Review: "ต้องทบทวน",
++      Dependency: "พึ่งพาสูง",
++      Balanced: "สมดุล",
++      Concentrated: "กระจุกตัว",
++      Healthy: "สุขภาพดี",
++      Gap: "มีส่วนต่าง",
++      "On Track": "ตามแผน",
++      High: "สูง",
++      Stable: "มั่นคง",
++      Leader: "ผู้นำ",
++      Ready: "พร้อม"
++    };
++    return isThai() ? (labels[value] || value) : value;
++  }
++
+   function el(tag, className, html) {
+     const node = document.createElement(tag);
+     if (className) node.className = className;
+@@ -115,22 +194,22 @@
+   function emptyInsight(title) {
+     return {
+       title,
+-      severity: "Waiting",
+-      headline: "No data for current filters",
+-      detail: "Adjust filters to generate this rule-based insight from dashboard_data.json.",
+-      action: "Safe placeholder. No external AI API is used."
++      severity: t("message.loading"),
++      headline: t("message.noDataCurrent"),
++      detail: t("message.adjustFilters"),
++      action: t("message.safePlaceholder")
+     };
+   }
+ 
+   function insightSet(rows) {
+     if (!rows.length) {
+       return [
+-        emptyInsight("Sales Performance"),
+-        emptyInsight("Dealer Performance"),
+-        emptyInsight("Product Performance"),
+-        emptyInsight("Forecast Risk"),
+-        emptyInsight("Low GP Warning"),
+-        emptyInsight("Top Performer")
++        emptyInsight(labelForInsight("Sales Performance")),
++        emptyInsight(labelForInsight("Dealer Performance")),
++        emptyInsight(labelForInsight("Product Performance")),
++        emptyInsight(labelForInsight("Forecast Risk")),
++        emptyInsight(labelForInsight("Low GP Warning")),
++        emptyInsight(labelForInsight("Top Performer"))
+       ];
+     }
+ 
+@@ -149,46 +228,46 @@
+ 
+     return [
+       {
+-        title: "Sales Performance",
+-        severity: kpi.units >= 400 ? "Strong" : "Review",
+-        headline: `${kpi.units.toLocaleString()} units sold`,
+-        detail: `${monthly[0]?.name || "-"} is the strongest month with ${utils.formatMoney(kpi.sales)} total sales value.`,
+-        action: kpi.units >= 400 ? "Maintain close rhythm and protect margin quality." : "Use dealer and salesman follow-up to close the volume gap."
++        title: labelForInsight("Sales Performance"),
++        severity: severityLabel(kpi.units >= 400 ? "Strong" : "Review"),
++        headline: local(`${kpi.units.toLocaleString()} units sold`, `ขายแล้ว ${unitText(kpi.units)}`),
++        detail: local(`${monthly[0]?.name || "-"} is the strongest month with ${utils.formatMoney(kpi.sales)} total sales value.`, `${monthly[0]?.name || "-"} เป็นเดือนที่แข็งแรงที่สุด มูลค่ายอดขายรวม ${utils.formatMoney(kpi.sales)}`),
++        action: kpi.units >= 400 ? local("Maintain close rhythm and protect margin quality.", "รักษาจังหวะปิดการขายและปกป้องคุณภาพกำไร") : local("Use dealer and salesman follow-up to close the volume gap.", "ใช้การติดตาม Dealer และพนักงานขายเพื่อปิดส่วนต่างจำนวนขาย")
+       },
+       {
+-        title: "Dealer Performance",
+-        severity: dealer.share > 45 ? "Dependency" : "Balanced",
+-        headline: `${dealer.name} leads dealer contribution`,
+-        detail: `${dealer.units.toLocaleString()} units and ${utils.formatPercent(dealer.share)} share. Lowest filtered contribution: ${weakDealer.name}.`,
+-        action: dealer.share > 45 ? "Lift secondary dealer activity to reduce dependency risk." : "Keep weekly dealer scorecards active."
++        title: labelForInsight("Dealer Performance"),
++        severity: severityLabel(dealer.share > 45 ? "Dependency" : "Balanced"),
++        headline: local(`${dealer.name} leads dealer contribution`, `${dealer.name} เป็น Dealer ที่มีสัดส่วนสูงสุด`),
++        detail: local(`${dealer.units.toLocaleString()} units and ${utils.formatPercent(dealer.share)} share. Lowest filtered contribution: ${weakDealer.name}.`, `${unitText(dealer.units)} และสัดส่วน ${utils.formatPercent(dealer.share)} โดยผลงานต่ำสุดในตัวกรองคือ ${weakDealer.name}`),
++        action: dealer.share > 45 ? local("Lift secondary dealer activity to reduce dependency risk.", "เพิ่มกิจกรรม Dealer รองเพื่อลดความเสี่ยงการพึ่งพา") : local("Keep weekly dealer scorecards active.", "ติดตาม scorecard Dealer รายสัปดาห์ต่อเนื่อง")
+       },
+       {
+-        title: "Product Performance",
+-        severity: productType.share > 60 ? "Concentrated" : "Healthy",
+-        headline: `${product.name} is the top model`,
+-        detail: `${productType.name} contributes ${utils.formatPercent(productType.share)} of filtered units.`,
+-        action: productType.share > 60 ? "Prepare substitute model offers and watch concentration risk." : "Use top-model demand to open adjacent product conversations."
++        title: labelForInsight("Product Performance"),
++        severity: severityLabel(productType.share > 60 ? "Concentrated" : "Healthy"),
++        headline: local(`${product.name} is the top model`, `${product.name} เป็นรุ่นขายสูงสุด`),
++        detail: local(`${productType.name} contributes ${utils.formatPercent(productType.share)} of filtered units.`, `${productType.name} คิดเป็น ${utils.formatPercent(productType.share)} ของจำนวนขายตามตัวกรอง`),
++        action: productType.share > 60 ? local("Prepare substitute model offers and watch concentration risk.", "เตรียมข้อเสนอรุ่นทดแทนและติดตามความเสี่ยงการกระจุกตัว") : local("Use top-model demand to open adjacent product conversations.", "ใช้ความต้องการรุ่นหลักเพื่อเปิดการขายสินค้าที่เกี่ยวข้อง")
+       },
+       {
+-        title: "Forecast Risk",
+-        severity: gap < 0 ? "Gap" : "On Track",
+-        headline: `${forecast.toLocaleString()} unit rule-based forecast`,
+-        detail: `Static target placeholder is ${target.toLocaleString()} units, leaving ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units gap.`,
+-        action: gap < 0 ? "Prioritize high-probability deals and top dealer follow-up." : "Forecast is above baseline; protect GP while closing."
++        title: labelForInsight("Forecast Risk"),
++        severity: severityLabel(gap < 0 ? "Gap" : "On Track"),
++        headline: local(`${forecast.toLocaleString()} unit rule-based forecast`, `คาดการณ์ตามกฎ ${unitText(forecast)}`),
++        detail: local(`Static target placeholder is ${target.toLocaleString()} units, leaving ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units gap.`, `เป้าหมาย Static คือ ${unitText(target)} เหลือส่วนต่าง ${gap >= 0 ? "+" : ""}${unitText(gap)}`),
++        action: gap < 0 ? local("Prioritize high-probability deals and top dealer follow-up.", "ให้ความสำคัญกับดีลโอกาสสูงและการติดตาม Dealer หลัก") : local("Forecast is above baseline; protect GP while closing.", "คาดการณ์สูงกว่า baseline ให้ปกป้อง GP ระหว่างปิดการขาย")
+       },
+       {
+-        title: "Low GP Warning",
+-        severity: lowGp ? "High" : "Stable",
+-        headline: `${utils.formatPercent(kpi.gpPct)} GP margin`,
+-        detail: `${lowMarginProduct.name} is the lowest-margin model at ${utils.formatPercent(lowMarginProduct.gpPct)}.`,
+-        action: lowGp ? "Review discounts, campaigns, and cost leakage before adding volume pressure." : "Margin is stable. Keep price discipline visible."
++        title: labelForInsight("Low GP Warning"),
++        severity: severityLabel(lowGp ? "High" : "Stable"),
++        headline: local(`${utils.formatPercent(kpi.gpPct)} GP margin`, `GP margin ${utils.formatPercent(kpi.gpPct)}`),
++        detail: local(`${lowMarginProduct.name} is the lowest-margin model at ${utils.formatPercent(lowMarginProduct.gpPct)}.`, `${lowMarginProduct.name} เป็นรุ่นกำไรต่ำสุดที่ ${utils.formatPercent(lowMarginProduct.gpPct)}`),
++        action: lowGp ? local("Review discounts, campaigns, and cost leakage before adding volume pressure.", "ทบทวนส่วนลด แคมเปญ และต้นทุนรั่วไหลก่อนเร่งจำนวนขาย") : local("Margin is stable. Keep price discipline visible.", "กำไรมั่นคง ให้รักษาวินัยด้านราคา")
+       },
+       {
+-        title: "Top Performer",
+-        severity: "Leader",
+-        headline: `${salesman.name} leads filtered performance`,
+-        detail: `${salesman.units.toLocaleString()} units, ${utils.formatPercent(salesman.share)} share, and ${utils.formatPercent(salesman.gpPct)} GP margin.`,
+-        action: "Turn top performer behavior into a coaching reference for the team."
++        title: labelForInsight("Top Performer"),
++        severity: severityLabel("Leader"),
++        headline: local(`${salesman.name} leads filtered performance`, `${salesman.name} นำผลงานตามตัวกรอง`),
++        detail: local(`${salesman.units.toLocaleString()} units, ${utils.formatPercent(salesman.share)} share, and ${utils.formatPercent(salesman.gpPct)} GP margin.`, `${unitText(salesman.units)}, สัดส่วน ${utils.formatPercent(salesman.share)} และ GP margin ${utils.formatPercent(salesman.gpPct)}`),
++        action: local("Turn top performer behavior into a coaching reference for the team.", "นำพฤติกรรมของผู้ทำผลงานสูงสุดไปใช้เป็นแนวทางโค้ชทีม")
+       }
+     ];
+   }
+@@ -317,31 +396,31 @@
+       cards: [
+         {
+           type: "kpi",
+-          label: "KPI summary",
+-          title: "No sales records available",
++          label: t("ai.kpiSummary"),
++          title: t("message.noDataCurrent"),
+           text: "The copilot cannot calculate sales units, value, or GP margin until the current filters return records."
+         },
+         {
+           type: "dealer",
+-          label: "Dealer insight",
++          label: t("ai.dealerInsight"),
+           title: "Dealer signal unavailable",
+           text: "Dealer leadership and attention signals will appear when filtered dealer records are available."
+         },
+         {
+           type: "product",
+-          label: "Product insight",
++          label: t("ai.productInsight"),
+           title: "Product signal unavailable",
+           text: "Product push guidance needs filtered model and product type records."
+         },
+         {
+           type: "forecast",
+-          label: "Forecast insight",
+-          title: "Forecast risk pending",
++          label: t("ai.forecastInsight"),
++          title: t("ai.forecastRisk"),
+           text: "The rule-based forecast placeholder will update after sales records are available."
+         },
+         {
+           type: "action",
+-          label: "Recommended action",
++          label: t("ai.recommendedAction"),
+           title: "Reset or broaden filters",
+           text: rows && rows.length === 0 ? "Use broader filters before making an executive decision." : "Load dashboard_data.json to activate local copilot answers."
+         }
+@@ -393,32 +472,32 @@
+       cards: [
+         {
+           type: "kpi",
+-          label: "KPI summary",
++          label: t("ai.kpiSummary"),
+           title: `${kpi.units.toLocaleString()} units | ${utils.formatMoney(kpi.sales)} sales`,
+           text: `Gross profit is ${utils.formatMoney(kpi.gp)} and GP margin is ${utils.formatPercent(kpi.gpPct)}, indicating ${marginRisk}.`
+         },
+         {
+           type: "dealer",
+-          label: "Dealer insight",
++          label: t("ai.dealerInsight"),
+           title: `${weakDealer.name} needs attention`,
+           text: `${topDealer.name} leads with ${topDealer.units.toLocaleString()} units and ${utils.formatPercent(topDealer.share)} share. ${weakDealer.name} is lowest in the current filter; dealer risk signal is ${dealerRisk}.`
+         },
+         {
+           type: "product",
+-          label: "Product insight",
++          label: t("ai.productInsight"),
+           title: `${productPush.name} is the push candidate`,
+           text: `${topProduct.name} leads volume with ${topProduct.units.toLocaleString()} units. ${topType.name} leads product type mix, while ${lowGpProduct.name} should be watched for GP quality.`
+         },
+         {
+           type: "forecast",
+-          label: "Forecast insight",
++          label: t("ai.forecastInsight"),
+           title: `${gap >= 0 ? "+" : ""}${gap.toLocaleString()} unit forecast gap`,
+           text: `Rule-based forecast is ${forecast.toLocaleString()} units against ${target.toLocaleString()} baseline target, showing ${forecastRisk}.`
+         },
+         {
+           type: "action",
+-          label: "Recommended action",
+-          title: "Next best action",
++          label: t("ai.recommendedAction"),
++          title: t("ai.nextBestAction"),
+           text: nextAction
+         }
+       ]
+@@ -442,10 +521,10 @@
+   function reportLines(kind, rows) {
+     const summary = executiveSummary(rows);
+     const titleMap = {
+-      weekly: "Weekly Sales Intelligence Report",
+-      monthly: "Monthly Sales Intelligence Report",
+-      executive: "Executive Summary",
+-      dealer: "Dealer Review"
++      weekly: t("report.weeklyTitle"),
++      monthly: t("report.monthlyTitle"),
++      executive: t("report.executive"),
++      dealer: t("report.dealer")
+     };
+     const title = titleMap[kind] || titleMap.executive;
+     const kpi = utils.kpi(rows);
+@@ -460,7 +539,7 @@
+     if (!rows.length) {
+       return {
+         title,
+-        meta: "Current filter has no matching rows.",
++        meta: t("message.noDataFilters"),
+         lines: [
+           summary.overall,
+           summary.leadingDealer,
+@@ -501,7 +580,7 @@
+ 
+     return {
+       title,
+-      meta: `Generated from ${rows.length.toLocaleString()} filtered local records. Last refresh ${utils.lastRefresh()}.`,
++      meta: `Generated from ${rows.length.toLocaleString()} filtered local records. ${t("kpi.lastRefresh")} ${utils.lastRefresh()}.`,
+       lines: reportSpecific[kind] || reportSpecific.executive
+     };
+   }
+@@ -515,20 +594,21 @@
+     header.dataset.enterpriseReady = "true";
+     header.innerHTML = `
+       <div class="enterprise-title-block">
+-        <div class="enterprise-eyebrow">${config.eyebrow}</div>
+-        <h1>${config.title}</h1>
+-        <p>${config.subtitle}</p>
+-        <div class="enterprise-refresh">Last refresh <strong id="enterpriseLastRefresh">Loading...</strong></div>
++        <div class="enterprise-eyebrow">${local(pageEyebrows[config.module]?.[0] || config.eyebrow, pageEyebrows[config.module]?.[1] || config.eyebrow)}</div>
++        <h1 data-i18n="page.${config.module}.title">${t(`page.${config.module}.title`)}</h1>
++        <p data-i18n="page.${config.module}.subtitle">${t(`page.${config.module}.subtitle`)}</p>
++        <div class="enterprise-refresh"><span data-i18n="kpi.lastRefresh">Last Refresh</span> <strong id="enterpriseLastRefresh">${t("message.loading")}</strong></div>
+       </div>
+-      <div class="enterprise-actions" aria-label="Dashboard actions">
+-        <button type="button" class="enterprise-action primary" data-enterprise-action="ai">AI Summary</button>
+-        ${config.module === "executive" ? '<button type="button" class="enterprise-action" data-enterprise-action="presentation">Presentation Mode</button>' : ""}
+-        <button type="button" class="enterprise-action" data-enterprise-action="refresh">Refresh View</button>
+-        <button type="button" class="enterprise-action" data-enterprise-export="PDF">Export PDF</button>
+-        <button type="button" class="enterprise-action" data-enterprise-export="PowerPoint">Export PowerPoint</button>
+-        <button type="button" class="enterprise-action" data-enterprise-export="Excel">Export CSV</button>
+-        <button type="button" class="enterprise-action" data-enterprise-export="PNG">Export PNG</button>
++      <div class="enterprise-actions" aria-label="${local("Dashboard actions", "การดำเนินการแดชบอร์ด")}">
++        <button type="button" class="enterprise-action primary" data-enterprise-action="ai" data-i18n="button.aiSummary">AI Summary</button>
++        ${config.module === "executive" ? '<button type="button" class="enterprise-action" data-enterprise-action="presentation" data-i18n="button.presentationMode">Presentation Mode</button>' : ""}
++        <button type="button" class="enterprise-action" data-enterprise-action="refresh" data-i18n="button.refreshView">Refresh View</button>
++        <button type="button" class="enterprise-action" data-enterprise-export="PDF" data-i18n="export.pdf">Export PDF</button>
++        <button type="button" class="enterprise-action" data-enterprise-export="PowerPoint" data-i18n="export.powerpoint">Export PowerPoint</button>
++        <button type="button" class="enterprise-action" data-enterprise-export="Excel" data-i18n="export.csv">Export CSV</button>
++        <button type="button" class="enterprise-action" data-enterprise-export="PNG" data-i18n="export.png">Export PNG</button>
+       </div>`;
++    if (window.KMMI18n) window.KMMI18n.applyTranslations(header);
+   }
+ 
+   function ensureInsightPanel() {
+@@ -538,17 +618,17 @@
+     const config = pageConfig();
+     panel = el("section", "enterprise-insight-panel");
+     panel.id = "enterpriseInsightPanel";
+-    panel.setAttribute("aria-label", "Executive summary and AI insight");
++    panel.setAttribute("aria-label", t("ai.executiveInsight"));
+     panel.innerHTML = `
+       <div class="insight-orb">${config.icon}</div>
+       <div class="insight-copy">
+-        <div class="enterprise-eyebrow">Executive Summary / AI Insight</div>
+-        <h2 id="enterpriseInsightHeadline">Loading insight...</h2>
+-        <p id="enterpriseInsightDetail">Rule-based analysis will appear after dashboard data loads.</p>
++        <div class="enterprise-eyebrow" data-i18n="ai.executiveInsight">Executive Summary / AI Insight</div>
++        <h2 id="enterpriseInsightHeadline" data-i18n="ai.loadingInsight">Loading insight...</h2>
++        <p id="enterpriseInsightDetail" data-i18n="ai.ruleBasedLoading">Rule-based analysis will appear after dashboard data loads.</p>
+       </div>
+       <div class="insight-action-card">
+-        <span id="enterpriseInsightRisk">Local data only</span>
+-        <strong id="enterpriseInsightAction">No external AI API is connected.</strong>
++        <span id="enterpriseInsightRisk" data-i18n="message.localDataOnly">Local data only</span>
++        <strong id="enterpriseInsightAction" data-i18n="ai.noExternalApi">No external AI API is connected.</strong>
+       </div>`;
+ 
+     const header = document.querySelector(".enterprise-header");
+@@ -564,15 +644,15 @@
+     panel.id = "enterpriseFoundation";
+     panel.innerHTML = `
+       <div class="enterprise-block">
+-        <div class="enterprise-eyebrow">Dashboard Modules</div>
+-        <h2>V5 Enterprise Coverage</h2>
++        <div class="enterprise-eyebrow" data-i18n="label.dashboardModules">${t("label.dashboardModules")}</div>
++        <h2 data-i18n="label.enterpriseCoverage">${t("label.enterpriseCoverage")}</h2>
+         <div id="enterpriseModuleList" class="module-pills"></div>
+       </div>
+       <div class="enterprise-block export-card">
+-        <div class="enterprise-eyebrow">Export Foundation</div>
+-        <h2>Prepared Outputs</h2>
++        <div class="enterprise-eyebrow" data-i18n="export.foundation">Export Foundation</div>
++        <h2 data-i18n="export.preparedOutputs">Prepared Outputs</h2>
+         <div class="export-actions" id="enterpriseExportActions"></div>
+-        <p id="enterpriseExportStatus" class="export-status">V7.1 Export Center prepared.</p>
++        <p id="enterpriseExportStatus" class="export-status" data-i18n="export.ready">V7.1 Export Center prepared.</p>
+       </div>`;
+ 
+     const anchor = document.querySelector(".ai-strip");
+@@ -590,10 +670,10 @@
+     panel.innerHTML = `
+       <div class="enterprise-ai-heading">
+         <div>
+-          <div class="enterprise-eyebrow">AI Insight Engine</div>
+-          <h2>V6 Rule-Based Insights</h2>
++          <div class="enterprise-eyebrow" data-i18n="ai.engine">AI Insight Engine</div>
++          <h2 data-i18n="ai.ruleBased">V6 Rule-Based Insights</h2>
+         </div>
+-        <span>Local dashboard_data.json only</span>
++        <span data-i18n="ai.localOnly">Local dashboard_data.json only</span>
+       </div>
+       <div id="enterpriseInsightGrid" class="enterprise-insight-grid"></div>`;
+ 
+@@ -607,7 +687,10 @@
+     const config = pageConfig();
+     const target = document.getElementById("enterpriseModuleList");
+     if (!target) return;
+-    target.innerHTML = config.modules.map((module) => `<span class="module-pill is-active">${module}<small>ready</small></span>`).join("");
++    target.innerHTML = config.modules.map((module) => {
++      const labels = moduleLabels[module] || [module, module];
++      return `<span class="module-pill is-active">${local(labels[0], labels[1])}<small>${t("message.ready")}</small></span>`;
++    }).join("");
+   }
+ 
+   function toast(message) {
+@@ -665,7 +748,7 @@
+ 
+   async function exportPng() {
+     const target = document.querySelector(".main-content");
+-    if (!target) throw new Error("Dashboard area is not available.");
++    if (!target) throw new Error(t("error.dashboardUnavailable"));
+ 
+     const clone = target.cloneNode(true);
+     clone.querySelectorAll("canvas").forEach((canvasClone, index) => {
+@@ -716,7 +799,7 @@
+     await new Promise((resolve, reject) => {
+       canvas.toBlob((blob) => {
+         if (!blob) {
+-          reject(new Error("PNG export failed."));
++          reject(new Error(t("error.pngFailed")));
+           return;
+         }
+         downloadFile("kmm-v7-1-dashboard.png", "image/png", blob);
+@@ -726,20 +809,20 @@
+   }
+ 
+   async function handleExport(kind) {
+-    let message = "Export action completed.";
++    let message = t("export.completed");
+     const status = document.getElementById("enterpriseExportStatus");
+-    if (kind === "PDF") message = "PDF export is prepared for V7.2.";
+-    if (kind === "PowerPoint") message = "PowerPoint export is prepared for V7.2.";
++    if (kind === "PDF") message = t("export.pdfPrepared");
++    if (kind === "PowerPoint") message = t("export.pptPrepared");
+     if (kind === "Excel") {
+       exportCsv();
+-      message = "CSV summary downloaded from the current filtered dashboard data.";
++      message = t("export.csvDownloaded");
+     }
+     if (kind === "PNG") {
+       try {
+         await exportPng();
+-        message = "PNG export attempted for the current dashboard area.";
++        message = t("export.pngAttempted");
+       } catch (error) {
+-        message = "PNG export could not be completed safely in this browser.";
++        message = t("export.pngFailed");
+       }
+     }
+     if (status) status.textContent = message;
+@@ -756,8 +839,8 @@
+       modal.setAttribute("aria-modal", "true");
+       modal.innerHTML = `
+         <section class="enterprise-modal-panel">
+-          <button type="button" class="enterprise-modal-close" data-enterprise-modal-close aria-label="Close report">Close</button>
+-          <div class="enterprise-eyebrow">V7.1 Production Report</div>
++          <button type="button" class="enterprise-modal-close" data-enterprise-modal-close data-i18n-aria="button.close" aria-label="Close report" data-i18n="button.close">Close</button>
++          <div class="enterprise-eyebrow" data-i18n="report.production">V7.1 Production Report</div>
+           <h2 id="enterpriseReportTitle"></h2>
+           <p id="enterpriseReportMeta"></p>
+           <div id="enterpriseReportBody" class="enterprise-report-body"></div>
+@@ -775,9 +858,9 @@
+     const enabled = !document.body.classList.contains("presentation-mode");
+     document.body.classList.toggle("presentation-mode", enabled);
+     document.querySelectorAll("[data-enterprise-action='presentation']").forEach((button) => {
+-      button.textContent = enabled ? "Exit Presentation" : "Presentation Mode";
++      button.textContent = enabled ? t("button.exitPresentation") : t("button.presentationMode");
+     });
+-    toast(enabled ? "Presentation Mode enabled." : "Presentation Mode disabled.");
++    toast(enabled ? t("message.presentationEnabled") : t("message.presentationDisabled"));
+   }
+ 
+   function renderAiInsight(targetId, insight) {
+@@ -987,7 +1070,7 @@
+     const target = document.getElementById("enterpriseExportActions");
+     if (!target || target.dataset.ready === "true") return;
+     exportKinds.forEach((kind) => {
+-      const button = el("button", "export-button", exportLabels[kind] || `Export ${kind}`);
++      const button = el("button", "export-button", t(exportLabels[kind]) || `Export ${kind}`);
+       button.type = "button";
+       button.dataset.enterpriseExport = kind;
+       target.appendChild(button);
+@@ -1028,11 +1111,11 @@
+       const action = event.target.closest("[data-enterprise-action]")?.dataset.enterpriseAction;
+       if (action === "ai") {
+         const summary = executiveSummary(rowsForInsight(latestRows));
+-        toast(`AI Summary: ${summary.overall} ${summary.nextAction}`);
++        toast(`${t("ai.summary")}: ${summary.overall} ${summary.nextAction}`);
+       }
+       if (action === "refresh") {
+         BI.enterprise.refresh();
+-        toast("Dashboard view refreshed from current filters.");
++        toast(t("message.viewRefreshed"));
+       }
+       if (action === "presentation") {
+         togglePresentationMode();
+@@ -1046,7 +1129,7 @@
+       const label = card.querySelector("span")?.textContent || "KPI";
+       const mini = card.querySelector("small")?.textContent || "Current filter";
+       card.dataset.enterpriseReady = "true";
+-      card.insertAdjacentHTML("afterbegin", `<div class="kpi-icon" aria-hidden="true">${kpiIcons[index % kpiIcons.length]}</div><div class="kpi-mini">Live KPI</div>`);
++      card.insertAdjacentHTML("afterbegin", `<div class="kpi-icon" aria-hidden="true">${kpiIcons[index % kpiIcons.length]}</div><div class="kpi-mini">${t("message.liveKpi")}</div>`);
+       let delta = card.querySelector(".kpi-delta");
+       if (!delta) {
+         delta = el("em", "kpi-delta", mini);
+@@ -1065,7 +1148,7 @@
+         const wrap = el("div", "panel-title-row");
+         heading.parentNode.insertBefore(wrap, heading);
+         wrap.appendChild(heading);
+-        wrap.insertAdjacentHTML("beforeend", '<span class="panel-status">Live</span>');
++        wrap.insertAdjacentHTML("beforeend", `<span class="panel-status">${t("message.ready")}</span>`);
+       }
+       const note = panel.querySelector("p");
+       if (note) note.classList.add("panel-note");
+@@ -1078,7 +1161,7 @@
+       if (!rows.length) {
+         panel.classList.add("is-empty");
+         if (!empty) {
+-          empty = el("div", "enterprise-empty-state", "No data for the current filter selection.");
++          empty = el("div", "enterprise-empty-state", t("message.noDataFilters"));
+           panel.appendChild(empty);
+         }
+       } else {
+@@ -1115,7 +1198,7 @@
+     if (document.getElementById("enterpriseFooter")) return;
+     const footer = el("footer", "enterprise-footer");
+     footer.id = "enterpriseFooter";
+-    footer.innerHTML = "<strong>KMM Sales Intelligence V7.1 Production Ready</strong><span>Static GitHub Pages dashboard | Local data only | CSV/PNG export foundation | V7.2 PDF/PPT roadmap</span>";
++    footer.innerHTML = `<strong>KMM Sales Intelligence V7.1 Production Ready</strong><span>Static GitHub Pages dashboard | ${t("message.localDataOnly")} | CSV/PNG export foundation | V7.2 PDF/PPT roadmap</span>`;
+     document.querySelector(".main-content")?.appendChild(footer);
+   }
+ 
+@@ -1132,6 +1215,7 @@
+     enhancePanels();
+     ensureFooter();
+     refresh();
++    if (window.KMMI18n) window.KMMI18n.applyTranslations(document);
+   }
+ 
+   BI.enterprise = {
+diff --git a/dashboard/js/company.js b/dashboard/js/company.js
+index 0c26943..d4a5680 100644
+--- a/dashboard/js/company.js
++++ b/dashboard/js/company.js
+@@ -30,6 +30,11 @@
+     return COMPANIES[code] || COMPANIES.KMM;
+   }
+ 
++  function getCompanyLabel(code) {
++    const company = getCompany(code);
++    return window.KMMI18n ? window.KMMI18n.t(`company.${company.code}`) : company.name;
++  }
++
+   function getSelectedCompany() {
+     const auth = window.KMMSecurity && window.KMMSecurity.auth;
+     const session = auth ? auth.readSession() : null;
+@@ -66,6 +71,7 @@
+     datasetPath,
+     getCompanies,
+     getCompany,
++    getCompanyLabel,
+     getSelectedCompany,
+     setSelectedCompany
+   };
+diff --git a/dashboard/js/executive.js b/dashboard/js/executive.js
+index 8bf6716..b55679c 100644
+--- a/dashboard/js/executive.js
++++ b/dashboard/js/executive.js
+@@ -7,9 +7,25 @@
+   const filterIds = ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "salesmanFilter"];
+   let activeCopilotQuestion = "";
+ 
++  function t(key) {
++    return window.KMMI18n ? window.KMMI18n.t(key) : key;
++  }
++
++  function isThai() {
++    return window.KMMI18n ? window.KMMI18n.getLanguage() === "th" : true;
++  }
++
++  function unitText(value) {
++    return isThai() ? `${value.toLocaleString()} คัน` : `${value.toLocaleString()} units`;
++  }
++
++  function shareText(value) {
++    return isThai() ? `สัดส่วน ${U.formatPercent(value || 0)}` : `Share ${U.formatPercent(value || 0)}`;
++  }
++
+   window.addEventListener("DOMContentLoaded", async () => {
+     await U.loadDashboardData();
+-    F.fillFilters(U.getCoreProductData(), { yearLabel: "All years" });
++    F.fillFilters(U.getCoreProductData(), { yearLabel: t("message.allYears") });
+     F.bindFilters(update, filterIds);
+     bindCopilot();
+     update();
+@@ -75,7 +91,7 @@
+ 
+   function runCopilot(question) {
+     const cleanQuestion = String(question || "").trim();
+-    activeCopilotQuestion = cleanQuestion || "Current sales performance";
++    activeCopilotQuestion = cleanQuestion || t("ai.currentSales");
+     const input = document.getElementById("copilotQuestion");
+     if (input && !cleanQuestion) input.value = activeCopilotQuestion;
+     renderCopilotAnswer(activeCopilotQuestion, rows());
+@@ -92,9 +108,9 @@
+     const lead = document.createElement("article");
+     lead.className = `copilot-card lead ${answer.intent || "summary"}`;
+     lead.append(
+-      copilotNode("span", "Copilot answer"),
+-      copilotNode("strong", answer.headline || "Rule-based answer unavailable"),
+-      copilotNode("p", answer.meta || "Generated from local dashboard data.")
++      copilotNode("span", t("ai.copilotAnswer")),
++      copilotNode("strong", answer.headline || t("ai.ruleUnavailable")),
++      copilotNode("p", answer.meta || t("ai.generatedLocal"))
+     );
+     target.appendChild(lead);
+ 
+@@ -102,9 +118,9 @@
+       const node = document.createElement("article");
+       node.className = `copilot-card ${card.type || ""}`;
+       node.append(
+-        copilotNode("span", card.label || "Insight"),
++        copilotNode("span", card.label || t("ai.insight")),
+         copilotNode("strong", card.title || "-"),
+-        copilotNode("p", card.text || "This signal is not available for the current filters.")
++        copilotNode("p", card.text || t("ai.signalUnavailable"))
+       );
+       target.appendChild(node);
+     });
+@@ -162,7 +178,7 @@
+         labels: monthly.map((item) => item.name),
+         datasets: [
+           {
+-            label: "Sales Units",
++            label: isThai() ? "จำนวนขาย" : "Sales Units",
+             data: monthly.map((item) => item.units),
+             borderColor: "#f36b21",
+             backgroundColor: orangeGradient,
+@@ -170,7 +186,7 @@
+             tension: 0.38
+           },
+           {
+-            label: "Sales Value (100M MMK)",
++            label: isThai() ? "มูลค่ายอดขาย (100 ล้าน MMK)" : "Sales Value (100M MMK)",
+             data: monthly.map((item) => Math.round(item.sales / 1e8)),
+             borderColor: "#12b89d",
+             backgroundColor: "rgba(18, 184, 157, 0.12)",
+@@ -194,7 +210,7 @@
+       data: {
+         labels: top.map((item) => item.name),
+         datasets: [{
+-          label: "Units",
++          label: isThai() ? "จำนวนขาย" : "Units",
+           data: top.map((item) => item.units),
+           backgroundColor: top.map((item, index) => index === top.length - 1 ? "#f36b21" : "rgba(23, 32, 51, 0.78)"),
+           borderRadius: 12,
+@@ -238,7 +254,7 @@
+         <td class="text-right">${item.units.toLocaleString()}</td>
+         <td class="text-right">${U.formatPercent(item.share)}</td>
+         <td class="text-right">${U.formatPercent(item.gpPct)}</td>
+-      </tr>`).join("") || `<tr><td colspan="4">No model data</td></tr>`);
++      </tr>`).join("") || `<tr><td colspan="4">${t("message.noModelData")}</td></tr>`);
+   }
+ 
+   function renderBooking(monthly) {
+@@ -248,8 +264,8 @@
+       data: {
+         labels: recent.map((item) => item.name),
+         datasets: [
+-          { label: "Booking Proxy", data: recent.map((item) => Math.round(item.units * 1.18)), backgroundColor: "#f36b21", borderRadius: 10, borderSkipped: false },
+-          { label: "Delivery", data: recent.map((item) => item.units), backgroundColor: "#172033", borderRadius: 10, borderSkipped: false }
++          { label: isThai() ? "ยอดจองประมาณการ" : "Booking Proxy", data: recent.map((item) => Math.round(item.units * 1.18)), backgroundColor: "#f36b21", borderRadius: 10, borderSkipped: false },
++          { label: isThai() ? "ส่งมอบ" : "Delivery", data: recent.map((item) => item.units), backgroundColor: "#172033", borderRadius: 10, borderSkipped: false }
+         ]
+       },
+       options: chartBaseOptions({
+@@ -277,9 +293,15 @@
+     const concentrationRisk = topDealer.share > 45;
+     const gapRisk = gap < 0;
+     const hasBookingFields = data.some((item) => Object.keys(item).some((key) => /book|pipeline|stock/i.test(key)));
+-    const stockSignal = hasBookingFields ? "Source contains booking, pipeline, or stock-like fields." : "No explicit stock or booking fields found; using booking proxy.";
+-    const marginSignal = summary.gpPct < 8 ? "margin pressure" : summary.gpPct < 11 ? "margin watch" : "stable margin";
+-    const forecastSignal = gapRisk ? `${Math.abs(gap).toLocaleString()} units below baseline` : `${gap.toLocaleString()} units above baseline`;
++    const stockSignal = hasBookingFields
++      ? (isThai() ? "แหล่งข้อมูลมีฟิลด์ลักษณะ booking, pipeline หรือ stock" : "Source contains booking, pipeline, or stock-like fields.")
++      : (isThai() ? "ยังไม่พบฟิลด์ stock หรือ booking โดยตรง จึงใช้ booking proxy" : "No explicit stock or booking fields found; using booking proxy.");
++    const marginSignal = summary.gpPct < 8
++      ? (isThai() ? "แรงกดดันกำไร" : "margin pressure")
++      : summary.gpPct < 11 ? (isThai() ? "ต้องติดตามกำไร" : "margin watch") : (isThai() ? "กำไรมั่นคง" : "stable margin");
++    const forecastSignal = gapRisk
++      ? (isThai() ? `ต่ำกว่า baseline ${unitText(Math.abs(gap))}` : `${Math.abs(gap).toLocaleString()} units below baseline`)
++      : (isThai() ? `สูงกว่า baseline ${unitText(gap)}` : `${gap.toLocaleString()} units above baseline`);
+ 
+     return {
+       topDealer,
+@@ -296,23 +318,25 @@
+       target,
+       gap,
+       stockSignal,
+-      topSignal: data.length ? `${summary.units.toLocaleString()} units delivered; ${topDealer.name} leads dealers, ${topModel.name} leads products, GP is ${U.formatPercent(summary.gpPct)} (${marginSignal}), and forecast is ${forecastSignal}.` : "No records match the current filters. Executive summary will update when data is available.",
+-      mainRisk: gpRisk ? `GP margin is ${U.formatPercent(summary.gpPct)}` : concentrationRisk ? `${topDealer.name} holds ${U.formatPercent(topDealer.share)} share` : gapRisk ? `${Math.abs(gap).toLocaleString()} unit forecast gap` : "No red risk in current filter",
+-      recommendedAction: data.length ? recommendedAction(gpRisk, concentrationRisk, gapRisk, lowMarginModel, weakDealer, topModel) : "Broaden filters to restore executive coverage.",
++      topSignal: data.length
++        ? (isThai() ? `ส่งมอบแล้ว ${unitText(summary.units)} โดย ${topDealer.name} นำผลงาน Dealer, ${topModel.name} เป็นรุ่นหลัก, GP อยู่ที่ ${U.formatPercent(summary.gpPct)} (${marginSignal}) และคาดการณ์ ${forecastSignal}` : `${summary.units.toLocaleString()} units delivered; ${topDealer.name} leads dealers, ${topModel.name} leads products, GP is ${U.formatPercent(summary.gpPct)} (${marginSignal}), and forecast is ${forecastSignal}.`)
++        : t("message.noRecordsInsight"),
++      mainRisk: gpRisk ? (isThai() ? `GP margin อยู่ที่ ${U.formatPercent(summary.gpPct)}` : `GP margin is ${U.formatPercent(summary.gpPct)}`) : concentrationRisk ? (isThai() ? `${topDealer.name} มีสัดส่วน ${U.formatPercent(topDealer.share)}` : `${topDealer.name} holds ${U.formatPercent(topDealer.share)} share`) : gapRisk ? (isThai() ? `ส่วนต่างคาดการณ์ ${unitText(Math.abs(gap))}` : `${Math.abs(gap).toLocaleString()} unit forecast gap`) : t("message.noRedRisk"),
++      recommendedAction: data.length ? recommendedAction(gpRisk, concentrationRisk, gapRisk, lowMarginModel, weakDealer, topModel) : (isThai() ? "ขยายตัวกรองเพื่อให้มุมมองผู้บริหารกลับมาครบถ้วน" : "Broaden filters to restore executive coverage."),
+       alerts: [
+-        alert("GP Risk", gpRisk ? "red" : summary.gpPct < 11 ? "yellow" : "green", `${U.formatPercent(summary.gpPct)} GP margin. Lowest model: ${lowMarginModel.name}.`),
+-        alert("Dealer Concentration", concentrationRisk ? "red" : topDealer.share > 30 ? "yellow" : "green", `${topDealer.name} contributes ${U.formatPercent(topDealer.share)} of filtered units.`),
+-        alert("Forecast Gap", gapRisk ? "yellow" : "green", `${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units vs ${target.toLocaleString()} static baseline.`),
+-        alert("Stock / Booking", hasBookingFields ? "green" : "yellow", stockSignal)
++        alert(isThai() ? "ความเสี่ยง GP" : "GP Risk", gpRisk ? "red" : summary.gpPct < 11 ? "yellow" : "green", isThai() ? `GP margin ${U.formatPercent(summary.gpPct)} รุ่นต่ำสุด: ${lowMarginModel.name}` : `${U.formatPercent(summary.gpPct)} GP margin. Lowest model: ${lowMarginModel.name}.`),
++        alert(isThai() ? "การกระจุกตัว Dealer" : "Dealer Concentration", concentrationRisk ? "red" : topDealer.share > 30 ? "yellow" : "green", isThai() ? `${topDealer.name} คิดเป็น ${U.formatPercent(topDealer.share)} ของจำนวนขายตามตัวกรอง` : `${topDealer.name} contributes ${U.formatPercent(topDealer.share)} of filtered units.`),
++        alert(isThai() ? "ส่วนต่างคาดการณ์" : "Forecast Gap", gapRisk ? "yellow" : "green", isThai() ? `${gap >= 0 ? "+" : ""}${unitText(gap)} เทียบ baseline ${target.toLocaleString()} คัน` : `${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units vs ${target.toLocaleString()} static baseline.`),
++        alert(isThai() ? "สต็อก / Booking" : "Stock / Booking", hasBookingFields ? "green" : "yellow", stockSignal)
+       ]
+     };
+   }
+ 
+   function recommendedAction(gpRisk, concentrationRisk, gapRisk, lowMarginModel, weakDealer, topModel) {
+-    if (gpRisk) return `Protect margin first: review discounting and deal economics on ${lowMarginModel.name}.`;
+-    if (concentrationRisk) return `Reduce network dependency: lift activity and stock follow-up for ${weakDealer.name}.`;
+-    if (gapRisk) return `Close the gap through high-probability deals led by ${topModel.name}.`;
+-    return `Sustain close rhythm and keep ${topModel.name} availability visible across priority dealers.`;
++    if (gpRisk) return isThai() ? `ปกป้องกำไรก่อน: ทบทวนส่วนลดและเศรษฐศาสตร์ดีลของ ${lowMarginModel.name}` : `Protect margin first: review discounting and deal economics on ${lowMarginModel.name}.`;
++    if (concentrationRisk) return isThai() ? `ลดการพึ่งพาเครือข่าย: เพิ่มกิจกรรมและติดตามสต็อกของ ${weakDealer.name}` : `Reduce network dependency: lift activity and stock follow-up for ${weakDealer.name}.`;
++    if (gapRisk) return isThai() ? `ปิดส่วนต่างด้วยดีลที่มีโอกาสสูง โดยใช้ ${topModel.name} เป็นตัวนำ` : `Close the gap through high-probability deals led by ${topModel.name}.`;
++    return isThai() ? `รักษาจังหวะการปิดการขายและทำให้ความพร้อมของ ${topModel.name} ชัดเจนใน Dealer สำคัญ` : `Sustain close rhythm and keep ${topModel.name} availability visible across priority dealers.`;
+   }
+ 
+   function renderBriefing(intel) {
+@@ -323,9 +347,9 @@
+     U.setText("briefProductPush", intel.highMarginModel.name || intel.topModel.name);
+     U.setText("briefSalesmanSignal", intel.topSalesman.name);
+     U.setHtml("briefSignalChips", [
+-      `${intel.forecast.toLocaleString()} forecast units`,
+-      `${intel.gap >= 0 ? "+" : ""}${intel.gap.toLocaleString()} target gap`,
+-      `${U.formatPercent(intel.topDealer.share)} top dealer share`
++      isThai() ? `คาดการณ์ ${unitText(intel.forecast)}` : `${intel.forecast.toLocaleString()} forecast units`,
++      isThai() ? `ส่วนต่างเป้าหมาย ${intel.gap >= 0 ? "+" : ""}${unitText(intel.gap)}` : `${intel.gap >= 0 ? "+" : ""}${intel.gap.toLocaleString()} target gap`,
++      isThai() ? `Dealer หลัก ${U.formatPercent(intel.topDealer.share)}` : `${U.formatPercent(intel.topDealer.share)} top dealer share`
+     ].map((chip) => `<span class="command-chip">${chip}</span>`).join(""));
+   }
+ 
+@@ -334,10 +358,10 @@
+     const high = safe(models.slice().sort((a, b) => b.gpPct - a.gpPct)[0]);
+     const type = safe(types.slice().sort((a, b) => a.gpPct - b.gpPct)[0]);
+     U.setHtml("marginQualityPanel", [
+-      quality("GP Margin", U.formatPercent(summary.gpPct), summary.gpPct < 8 ? "red" : summary.gpPct < 11 ? "yellow" : "green", "Filtered gross profit quality"),
+-      quality("Lowest Model", low.name, "yellow", `${U.formatPercent(low.gpPct)} GP margin`),
+-      quality("Best GP Model", high.name, "green", `${U.formatPercent(high.gpPct)} GP margin`),
+-      quality("Mix Watch", type.name, "yellow", `${U.formatPercent(type.share)} mix share`)
++      quality(t("kpi.gpMargin"), U.formatPercent(summary.gpPct), summary.gpPct < 8 ? "red" : summary.gpPct < 11 ? "yellow" : "green", isThai() ? "คุณภาพกำไรขั้นต้นตามตัวกรอง" : "Filtered gross profit quality"),
++      quality(isThai() ? "รุ่น GP ต่ำสุด" : "Lowest Model", low.name, "yellow", `${U.formatPercent(low.gpPct)} ${t("kpi.gpMargin")}`),
++      quality(isThai() ? "รุ่น GP ดีสุด" : "Best GP Model", high.name, "green", `${U.formatPercent(high.gpPct)} ${t("kpi.gpMargin")}`),
++      quality(isThai() ? "ติดตามสัดส่วนสินค้า" : "Mix Watch", type.name, "yellow", isThai() ? `สัดส่วน ${U.formatPercent(type.share)}` : `${U.formatPercent(type.share)} mix share`)
+     ].join(""));
+   }
+ 
+@@ -346,9 +370,9 @@
+     const booking = Math.round(summary.units * 1.18);
+     const conversion = booking ? (summary.units / booking) * 100 : 0;
+     U.setHtml("bookingPipelinePanel", `
+-      ${scoreRow("Booking Proxy", `${booking.toLocaleString()} units`, "Estimated from current deliveries")}
+-      ${scoreRow("Delivery Conversion", U.formatPercent(conversion), "Proxy conversion")}
+-      ${scoreRow("Latest Month", `${recent.name} / ${recent.units.toLocaleString()} units`, "Current filtered trend")}`);
++      ${scoreRow(isThai() ? "Booking Proxy" : "Booking Proxy", unitText(booking), isThai() ? "ประมาณจากยอดส่งมอบปัจจุบัน" : "Estimated from current deliveries")}
++      ${scoreRow(isThai() ? "Conversion การส่งมอบ" : "Delivery Conversion", U.formatPercent(conversion), isThai() ? "Conversion แบบ Proxy" : "Proxy conversion")}
++      ${scoreRow(isThai() ? "เดือนล่าสุด" : "Latest Month", `${recent.name} / ${unitText(recent.units)}`, isThai() ? "แนวโน้มตามตัวกรองปัจจุบัน" : "Current filtered trend")}`);
+   }
+ 
+   function renderForecastGap(summary, monthly, dealers, intel) {
+@@ -357,20 +381,20 @@
+     U.setHtml("forecastGapPanel", `
+       <div class="risk-meter">
+         <strong>${intel.forecast.toLocaleString()}</strong>
+-        <span>Rule-based forecast units</span>
++        <span>${t("label.ruleBasedForecastUnits")}</span>
+       </div>
+-      ${scoreRow("Target Baseline", `${intel.target.toLocaleString()} units`, "Static V6 placeholder")}
+-      ${scoreRow("Gap", `${intel.gap >= 0 ? "+" : ""}${intel.gap.toLocaleString()} units`, intel.gap < 0 ? "Needs close action" : "Above baseline")}
+-      ${scoreRow("Best Month", bestMonth.name, `${bestMonth.units.toLocaleString()} units`)}
+-      ${scoreRow("Primary Lever", topDealer.name, `${U.formatPercent(topDealer.share)} share`)}`);
++      ${scoreRow(t("label.targetBaseline"), unitText(intel.target), isThai() ? "Placeholder แบบ Static V6" : "Static V6 placeholder")}
++      ${scoreRow(t("label.gap"), `${intel.gap >= 0 ? "+" : ""}${unitText(intel.gap)}`, intel.gap < 0 ? (isThai() ? "ต้องเร่งปิดการขาย" : "Needs close action") : (isThai() ? "สูงกว่า baseline" : "Above baseline"))}
++      ${scoreRow(t("label.bestMonth"), bestMonth.name, unitText(bestMonth.units))}
++      ${scoreRow(t("label.primaryLever"), topDealer.name, isThai() ? `สัดส่วน ${U.formatPercent(topDealer.share)}` : `${U.formatPercent(topDealer.share)} share`)}`);
+   }
+ 
+   function renderRiskOpportunity(intel) {
+     U.setHtml("riskOpportunityPanel", [
+-      signal(intel.gap < 0 ? "Gap" : "Opportunity", "Forecast Focus", intel.gap < 0 ? `Recover ${Math.abs(intel.gap).toLocaleString()} units through priority dealer follow-up.` : "Forecast is above the static baseline; protect GP while closing."),
+-      signal("Margin", "Price Discipline", `Review lowest-margin model ${intel.lowMarginModel.name} at ${U.formatPercent(intel.lowMarginModel.gpPct)} GP.`),
+-      signal("Dealer", "Network Balance", `Watch ${intel.weakDealer.name} and reduce over-reliance on ${intel.topDealer.name}.`),
+-      signal("Product", "Push Candidate", `Prioritize ${intel.highMarginModel.name} where supply and lead quality allow.`)
++      signal(intel.gap < 0 ? t("label.gap") : t("label.opportunity"), isThai() ? "โฟกัสคาดการณ์" : "Forecast Focus", intel.gap < 0 ? (isThai() ? `กู้คืน ${unitText(Math.abs(intel.gap))} ผ่านการติดตาม Dealer สำคัญ` : `Recover ${Math.abs(intel.gap).toLocaleString()} units through priority dealer follow-up.`) : (isThai() ? "คาดการณ์สูงกว่า baseline แบบ Static ให้ปกป้อง GP ระหว่างปิดการขาย" : "Forecast is above the static baseline; protect GP while closing.")),
++      signal(isThai() ? "กำไร" : "Margin", t("label.priceDiscipline"), isThai() ? `ทบทวนรุ่น GP ต่ำสุด ${intel.lowMarginModel.name} ที่ ${U.formatPercent(intel.lowMarginModel.gpPct)}` : `Review lowest-margin model ${intel.lowMarginModel.name} at ${U.formatPercent(intel.lowMarginModel.gpPct)} GP.`),
++      signal("Dealer", t("label.networkBalance"), isThai() ? `ติดตาม ${intel.weakDealer.name} และลดการพึ่งพา ${intel.topDealer.name}` : `Watch ${intel.weakDealer.name} and reduce over-reliance on ${intel.topDealer.name}.`),
++      signal(isThai() ? "สินค้า" : "Product", t("label.pushCandidate"), isThai() ? `ให้ความสำคัญกับ ${intel.highMarginModel.name} เมื่อสต็อกและคุณภาพ lead พร้อม` : `Prioritize ${intel.highMarginModel.name} where supply and lead quality allow.`)
+     ].join(""));
+   }
+ 
+@@ -384,12 +408,13 @@
+   }
+ 
+   function renderCards(targetId, rows, href, label) {
++    const translatedLabel = label === "Dealer" ? t("filter.dealer") : t("label.productType");
+     U.setHtml(targetId, rows.map((row) => `
+       <a href="${href}" class="drill-card">
+-        <span>${label}</span>
++        <span>${translatedLabel}</span>
+         <strong>${row.name}</strong>
+-        <small>${row.units.toLocaleString()} units | ${U.formatPercent(row.share)} share | GP ${U.formatPercent(row.gpPct)}</small>
+-      </a>`).join("") || `<div class="empty-inline">No ${label.toLowerCase()} data</div>`);
++        <small>${unitText(row.units)} | ${isThai() ? "สัดส่วน" : "share"} ${U.formatPercent(row.share)} | GP ${U.formatPercent(row.gpPct)}</small>
++      </a>`).join("") || `<div class="empty-inline">${label === "Dealer" ? t("message.noDealerData") : t("message.noProductData")}</div>`);
+   }
+ 
+   function renderExecutiveStrip(summary, groups, intel) {
+diff --git a/dashboard/js/permission.js b/dashboard/js/permission.js
+index 51eb1ba..1ee262b 100644
+--- a/dashboard/js/permission.js
++++ b/dashboard/js/permission.js
+@@ -28,6 +28,11 @@
+     return ROLE_PERMISSIONS[role] || ROLE_PERMISSIONS.Viewer;
+   }
+ 
++  function roleLabel(role) {
++    const selectedRole = ROLE_PERMISSIONS[role] ? role : "Viewer";
++    return window.KMMI18n ? window.KMMI18n.t(`role.${selectedRole}`) : selectedRole;
++  }
++
+   function canAccess(role, permission) {
+     if (!permission) return true;
+     const permissions = permissionsForRole(role);
+@@ -45,6 +50,7 @@
+     canAccess,
+     canAccessPath,
+     permissionForPath,
+-    permissionsForRole
++    permissionsForRole,
++    roleLabel
+   };
+ })(window);
+diff --git a/dashboard/js/route-guard.js b/dashboard/js/route-guard.js
+index 83e7125..dda5f66 100644
+--- a/dashboard/js/route-guard.js
++++ b/dashboard/js/route-guard.js
+@@ -4,11 +4,16 @@
+   const LOGIN_PAGE = "login.html";
+   const ACTIVITY_EVENTS = ["click", "keydown", "mousemove", "scroll", "touchstart"];
+ 
++  function t(key) {
++    return window.KMMI18n ? window.KMMI18n.t(key) : key;
++  }
++
+   function redirectToLogin(reason) {
+     window.KMMSecurity.auth.clearSession(reason);
+     const currentPage = window.location.pathname.split("/").pop();
+     if (currentPage !== LOGIN_PAGE) {
+-      window.location.href = LOGIN_PAGE;
++      const requestedPath = currentPage + window.location.search + window.location.hash;
++      window.location.href = `${LOGIN_PAGE}?returnTo=${encodeURIComponent(requestedPath)}`;
+     }
+   }
+ 
+@@ -41,30 +46,54 @@
+   }
+ 
+   function renderSecurityBar(session) {
++    if (!session) return;
+     const header = document.querySelector(".page-head, .topbar");
+     if (!header || document.getElementById("securityBar")) return;
+ 
+     const company = window.KMMSecurity.company.getSelectedCompany();
++    const language = window.KMMI18n ? window.KMMI18n.getLanguage() : (session.language || "th");
+     const bar = document.createElement("div");
+     bar.id = "securityBar";
+     bar.className = "security-bar";
+     bar.innerHTML = `
+       <label class="security-company">
+-        <span>Company</span>
+-        <select id="companySelector" aria-label="Company selector">
+-          ${window.KMMSecurity.company.getCompanies().map(item => option(item.code, item.code, company.code)).join("")}
++        <span data-i18n="security.company">Company</span>
++        <select id="companySelector" data-i18n-aria="security.companySelector" aria-label="Company selector">
++          ${window.KMMSecurity.company.getCompanies().map(item => option(item.code, window.KMMSecurity.company.getCompanyLabel(item.code), company.code)).join("")}
++        </select>
++      </label>
++      <label class="security-company">
++        <span data-i18n="language">Language</span>
++        <select id="languageSelector" data-i18n-aria="language" aria-label="Language">
++          ${option("th", t("lang.th"), language)}
++          ${option("en", t("lang.en"), language)}
+         </select>
+       </label>
+-      <a class="security-settings" href="settings.html">Settings</a>
+-      <button type="button" id="logoutButton" class="security-profile" aria-label="Logout">
+-        <span>${session.role}</span>
++      <a class="security-settings" href="settings.html" data-i18n="security.settings">Settings</a>
++      <button type="button" id="logoutButton" class="security-profile" data-i18n-aria="security.logout" aria-label="Logout">
++        <span>${t(`role.${session.role}`)}</span>
+         <strong>${session.username}</strong>
+       </button>
+     `;
+     header.appendChild(bar);
++    if (window.KMMI18n) window.KMMI18n.applyTranslations(bar);
+ 
+     document.getElementById("companySelector").addEventListener("change", event => {
+       window.KMMSecurity.company.setSelectedCompany(event.target.value);
++      const currentSession = window.KMMSecurity.auth.readSession();
++      if (currentSession) {
++        renderSecurityBar(currentSession);
++      }
++    });
++
++    document.getElementById("languageSelector").addEventListener("change", event => {
++      const selected = window.KMMI18n ? window.KMMI18n.setLanguage(event.target.value) : event.target.value;
++      const currentSession = window.KMMSecurity.auth.readSession();
++      if (currentSession) {
++        currentSession.language = selected;
++        window.KMMSecurity.auth.writeSession(currentSession);
++      }
++      event.target.value = selected;
+     });
+ 
+     document.getElementById("logoutButton").addEventListener("click", () => {
+@@ -72,6 +101,19 @@
+     });
+   }
+ 
++  function keepSecurityBarMounted(session) {
++    renderSecurityBar(session);
++    window.setTimeout(() => renderSecurityBar(window.KMMSecurity.auth.readSession()), 0);
++    window.addEventListener("load", () => renderSecurityBar(window.KMMSecurity.auth.readSession()));
++
++    const observer = new MutationObserver(() => {
++      const currentSession = window.KMMSecurity.auth.readSession();
++      if (!currentSession || document.getElementById("securityBar")) return;
++      renderSecurityBar(currentSession);
++    });
++    observer.observe(document.body, { childList: true, subtree: true });
++  }
++
+   function showSessionExpiredDialogIfNeeded() {
+     if (window.KMMSecurity.auth.getLogoutReason() !== "expired") return;
+     const dialog = document.getElementById("sessionExpiredDialog");
+@@ -79,7 +121,7 @@
+       dialog.showModal();
+       return;
+     }
+-    window.alert("Session expired. Please log in again.");
++    window.alert(t("error.sessionExpired"));
+   }
+ 
+   function bindActivityTracking() {
+@@ -118,7 +160,7 @@
+     if (!session) return;
+     window.KMMSecurity.company.applyCompanyTheme();
+     document.documentElement.dataset.theme = session.theme || "default";
+-    renderSecurityBar(session);
++    keepSecurityBarMounted(session);
+     bindActivityTracking();
+   }
+ 
+diff --git a/dashboard/js/settings.js b/dashboard/js/settings.js
+index ed7e7c4..ba94124 100644
+--- a/dashboard/js/settings.js
++++ b/dashboard/js/settings.js
+@@ -7,7 +7,7 @@
+     if (!session) return null;
+     return {
+       company: session.company || "KMM",
+-      language: session.language || "en",
++      language: window.KMMI18n ? window.KMMI18n.getLanguage() : (session.language || "th"),
+       role: session.role || "Viewer",
+       theme: session.theme || "default",
+       timeoutMinutes: Number(session.timeoutMinutes) || auth.DEFAULT_TIMEOUT_MINUTES,
+@@ -22,13 +22,16 @@
+     if (!session) return null;
+ 
+     if (values.company) session.company = window.KMMSecurity.company.getCompany(values.company).code;
+-    if (values.language) session.language = values.language;
++    if (values.language) {
++      session.language = window.KMMI18n ? window.KMMI18n.setLanguage(values.language) : values.language;
++    }
+     if (values.theme) session.theme = values.theme;
+     if (values.timeoutMinutes) session.timeoutMinutes = Number(values.timeoutMinutes);
+ 
+     auth.writeSession(session);
+     window.KMMSecurity.company.applyCompanyTheme();
+     document.documentElement.dataset.theme = session.theme;
++    if (window.KMMI18n) window.KMMI18n.applyTranslations(document);
+     return readSettings();
+   }
+ 
+@@ -43,7 +46,8 @@
+     document.getElementById("settingsCompany").value = settings.company;
+     document.getElementById("settingsTimeout").value = String(settings.timeoutMinutes);
+     document.getElementById("settingsLanguage").value = settings.language;
+-    document.getElementById("settingsRole").value = settings.role;
++    document.getElementById("settingsUsername").value = settings.username;
++    document.getElementById("settingsRole").value = window.KMMI18n ? window.KMMI18n.t(`role.${settings.role}`) : settings.role;
+     document.getElementById("settingsVersion").value = settings.version;
+ 
+     form.addEventListener("submit", event => {
+@@ -57,9 +61,16 @@
+ 
+       const status = document.getElementById("settingsStatus");
+       if (status) {
+-        status.textContent = "Settings saved for this session.";
++        status.textContent = window.KMMI18n ? window.KMMI18n.t("settings.saved") : "Settings saved for this session.";
+       }
+     });
++
++    document.getElementById("settingsLanguage").addEventListener("change", event => {
++      const selected = window.KMMI18n ? window.KMMI18n.setLanguage(event.target.value) : event.target.value;
++      const role = document.getElementById("settingsRole");
++      if (role) role.value = window.KMMI18n ? window.KMMI18n.t(`role.${settings.role}`) : settings.role;
++      event.target.value = selected;
++    });
+   }
+ 
+   window.KMMSecurity = window.KMMSecurity || {};
+diff --git a/dashboard/login.html b/dashboard/login.html
+index eba29d8..ebe28f4 100644
+--- a/dashboard/login.html
++++ b/dashboard/login.html
+@@ -1,10 +1,11 @@
+ <!DOCTYPE html>
+-<html lang="en">
++<html lang="th">
+ <head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>KMM Sales Intelligence Platform Login</title>
+   <link rel="stylesheet" href="css/bi-core.css">
++  <script src="js/i18n.js"></script>
+   <script src="js/auth.js"></script>
+   <script src="js/permission.js"></script>
+   <script src="js/company.js"></script>
+@@ -13,35 +14,42 @@
+ </head>
+ <body class="login-body">
+   <main class="login-shell">
+-    <section class="login-brand" aria-label="KMM Sales Intelligence Platform">
++    <section class="login-brand" data-i18n-aria="app.name" aria-label="KMM Sales Intelligence Platform">
+       <div class="login-brand-mark">KMM</div>
+-      <h1>KMM Sales Intelligence Platform</h1>
+-      <p>Enterprise AI Copilot, role-aware dashboard access, session control, and multi-company readiness for executive sales operations.</p>
++      <h1 data-i18n="app.name">KMM Sales Intelligence Platform</h1>
++      <p data-i18n="app.tagline">Enterprise AI Copilot, role-aware dashboard access, session control, and multi-company readiness for executive sales operations.</p>
+     </section>
+ 
+-    <section class="login-panel" aria-label="Login form">
+-      <h2>Secure Login</h2>
+-      <p>Use your dashboard username and password to continue.</p>
+-      <form id="loginForm" class="login-form">
++    <section class="login-panel" data-i18n-aria="login.formLabel" aria-label="Login form">
++      <div class="language-switch">
++        <label for="loginLanguage" data-i18n="language">Language</label>
++        <select id="loginLanguage" data-language-selector>
++          <option value="th" data-i18n="lang.th">ไทย</option>
++          <option value="en" data-i18n="lang.en">English</option>
++        </select>
++      </div>
++      <h2 data-i18n="login.title">Secure Login</h2>
++      <p data-i18n="login.subtitle">Use your dashboard username and password to continue.</p>
++      <form id="loginForm" class="login-form" novalidate>
+         <div class="login-field">
+-          <label for="username">Username</label>
++          <label for="username" data-i18n="login.username">Username</label>
+           <input id="username" name="username" type="text" autocomplete="username" required>
+         </div>
+         <div class="login-field">
+-          <label for="password">Password</label>
++          <label for="password" data-i18n="login.password">Password</label>
+           <input id="password" name="password" type="password" autocomplete="current-password" required>
+         </div>
+-        <button class="login-button" type="submit">Login</button>
++        <button class="login-button" type="submit" data-i18n="login.button">Login</button>
+         <div id="loginHint" class="login-hint" role="status"></div>
+       </form>
+     </section>
+   </main>
+ 
+   <dialog id="sessionExpiredDialog" class="session-dialog">
+-    <h2>Session Expired</h2>
+-    <p>Your session timed out because of inactivity. Please log in again.</p>
++    <h2 data-i18n="login.sessionExpired">Session Expired</h2>
++    <p data-i18n="login.sessionExpiredBody">Your session timed out because of inactivity. Please log in again.</p>
+     <form method="dialog">
+-      <button class="login-button" type="submit">OK</button>
++      <button class="login-button" type="submit" data-i18n="login.ok">OK</button>
+     </form>
+   </dialog>
+ 
+@@ -49,19 +57,49 @@
+     document.addEventListener("DOMContentLoaded", () => {
+       const form = document.getElementById("loginForm");
+       const hint = document.getElementById("loginHint");
++      const languageSelector = document.getElementById("loginLanguage");
++
++      if (languageSelector && window.KMMI18n) {
++        languageSelector.value = window.KMMI18n.getLanguage();
++        languageSelector.addEventListener("change", event => {
++          window.KMMI18n.setLanguage(event.target.value);
++          event.target.value = window.KMMI18n.getLanguage();
++          hint.textContent = "";
++        });
++      }
++
++      function safeReturnTo() {
++        const params = new URLSearchParams(window.location.search);
++        const requested = params.get("returnTo");
++        if (!requested) return "executive.html";
++
++        try {
++          const target = new URL(requested, window.location.href);
++          const loginUrl = new URL("login.html", window.location.href);
++          const isSameOrigin = target.origin === window.location.origin;
++          const isDashboardHtml = /^[a-z0-9_-]+\.html$/i.test(target.pathname.split("/").pop() || "");
++          const isNotLogin = target.pathname !== loginUrl.pathname;
++          return isSameOrigin && isDashboardHtml && isNotLogin
++            ? target.pathname.split("/").pop() + target.search + target.hash
++            : "executive.html";
++        } catch (error) {
++          return "executive.html";
++        }
++      }
+ 
+       form.addEventListener("submit", event => {
+         event.preventDefault();
+         const username = document.getElementById("username").value.trim();
+         const password = document.getElementById("password").value;
++        const result = window.KMMSecurity.auth.authenticate(username, password);
+ 
+-        if (!username || !password) {
+-          hint.textContent = "Username and password are required.";
++        if (!result.ok) {
++          hint.textContent = result.error;
+           return;
+         }
+ 
+-        window.KMMSecurity.auth.createSession(username);
+-        window.location.href = "executive.html";
++        hint.textContent = "";
++        window.location.href = safeReturnTo();
+       });
+     });
+   </script>
+diff --git a/dashboard/product.html b/dashboard/product.html
+index 23533c6..ed4456a 100644
+--- a/dashboard/product.html
++++ b/dashboard/product.html
+@@ -1 +1 @@
+-<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KMM Product Intelligence</title><link rel="stylesheet" href="css/bi-core.css"><script src="js/auth.js"></script><script src="js/permission.js"></script><script src="js/company.js"></script><script src="js/settings.js"></script><script src="js/route-guard.js"></script><script src="js/chart.umd.min.js"></script></head><body><div class="app-shell"><aside class="sidebar"><div class="brand"><div class="brand-logo">KMM</div><div class="brand-name">Sales Intelligence</div></div><nav class="nav-menu"><a href="executive.html"><span class="nav-icon">🏠</span><span><strong>Executive Overview</strong><small>ภาพรวมผู้บริหาร</small></span></a><a href="salesman.html"><span class="nav-icon">👨‍💼</span><span><strong>Sales Performance</strong><small>วิเคราะห์พนักงานขาย</small></span></a><a href="sales.html"><span class="nav-icon">📈</span><span><strong>Sales Analytics</strong><small>ยอดขายรายงวด</small></span></a><a href="product.html"><span class="nav-icon">🚜</span><span><strong>Product Intelligence</strong><small>รุ่นสินค้าและ GP</small></span></a><a href="dealer.html"><span class="nav-icon">🏪</span><span><strong>Dealer Intelligence</strong><small>ผลงานรายสาขา</small></span></a><a href="forecast.html"><span class="nav-icon">🎯</span><span><strong>Sales Forecast AI</strong><small>คาดการณ์ยอดขาย</small></span></a></nav><div class="sidebar-footer"><strong>KUBOTA</strong><span>For Earth, For Life</span></div></aside><main class="main-content"><header class="topbar"><div><h1>Product <span>Intelligence</span> Dashboard</h1><p>วิเคราะห์ยอดขายสินค้า รุ่นขายดี GP สต็อก และศักยภาพสินค้า</p></div><div class="top-meta"><div><span>Records</span><strong id="recordCount">-</strong></div><div><span>Top Model</span><strong id="topModelTop">-</strong></div><div><span>Last Refresh</span><strong id="lastRefresh">-</strong></div></div></header><section class="filter-bar"><div class="filter-item"><label>Year</label><select id="yearFilter"></select></div><div class="filter-item"><label>Month</label><select id="monthFilter"></select></div><div class="filter-item"><label>Week</label><select id="weekFilter"></select></div><div class="filter-item"><label>Dealer</label><select id="dealerFilter"></select></div><div class="filter-item"><label>Salesman</label><select id="salesmanFilter"></select></div><div class="filter-item"><label>Product Type</label><select id="typeFilter"></select></div><button id="resetFilter" class="filter-reset">Reset</button></section><section class="kpi-grid"><div class="kpi-card"><span>Total Sales Units</span><strong id="kpiUnits">-</strong><small>Units</small></div><div class="kpi-card"><span>Sales Value</span><strong id="kpiValue">-</strong><small>MMK</small></div><div class="kpi-card"><span>Gross Profit</span><strong id="kpiGP">-</strong><small>GP1</small></div><div class="kpi-card"><span>GP Margin</span><strong id="kpiGPMargin">-</strong><small>%</small></div><div class="kpi-card teal"><span>Current Stock</span><strong id="kpiStock">186</strong><small>Units</small></div><div class="kpi-card"><span>Inventory Turnover</span><strong id="kpiTurnover">2.3x</strong><small>Times</small></div></section><section class="module-grid"><div class="panel"><h2>Sales Trend</h2><p>แนวโน้มยอดขายรายเดือน</p><div class="chart-box sm"><canvas id="productTrendChart"></canvas></div></div><div class="panel"><h2>Top 5 Models</h2><p>รุ่นสินค้าขายดีตามจำนวนขาย</p><div id="topModelList" class="clean-list"></div></div><div class="panel"><h2>Sales by Type</h2><p>สัดส่วนยอดขายตามประเภทสินค้า</p><div class="chart-box sm"><canvas id="typeMixChart"></canvas></div></div></section><section class="module-grid"><div class="panel"><h2>Product Matrix</h2><p>Sales Units vs GP Margin</p><div id="productMatrix" class="matrix"><span class="matrix-label m1">High GP<br>Low Sales</span><span class="matrix-label m2">High GP<br>High Sales</span><span class="matrix-label m3">Low GP<br>Low Sales</span><span class="matrix-label m4">Low GP<br>High Sales</span></div></div><div class="panel"><h2>Regional Heatmap</h2><p>รุ่นสินค้าขายดีตาม Dealer</p><div id="regionalHeatmap" class="heatmap"></div></div><div class="panel"><h2>Inventory Age</h2><p>อายุสต็อกสินค้า</p><div class="chart-box sm"><canvas id="stockAgeChart"></canvas></div></div></section><section class="ai-strip"><div class="ai-bot">🤖</div><div class="ai-card"><strong id="aiTopModel">-</strong><span>Market leader / ส่วนแบ่งสูงสุด</span></div><div class="ai-card"><strong id="aiHighGP">-</strong><span>High GP model</span></div><div class="ai-card"><strong id="aiRisk">-</strong><span>Slow moving risk</span></div><div class="ai-card"><strong id="aiRecommend">-</strong><span>Recommendation</span></div></section></main></div><script src="js/bi-utils.js"></script><script src="js/bi-filters.js"></script><script src="js/bi-charts.js"></script><script src="js/bi-core.js"></script><script src="js/bi-enterprise.js"></script><script src="js/product.js"></script></body></html>
++<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KMM Product Intelligence</title><link rel="stylesheet" href="css/bi-core.css"><script src="js/i18n.js"></script><script src="js/auth.js"></script><script src="js/permission.js"></script><script src="js/company.js"></script><script src="js/settings.js"></script><script src="js/route-guard.js"></script><script src="js/chart.umd.min.js"></script></head><body><div class="app-shell"><aside class="sidebar"><div class="brand"><div class="brand-logo">KMM</div><div class="brand-name">Sales Intelligence</div></div><nav class="nav-menu"><a href="executive.html"><span class="nav-icon">🏠</span><span><strong>Executive Overview</strong><small>ภาพรวมผู้บริหาร</small></span></a><a href="salesman.html"><span class="nav-icon">👨‍💼</span><span><strong>Sales Performance</strong><small>วิเคราะห์พนักงานขาย</small></span></a><a href="sales.html"><span class="nav-icon">📈</span><span><strong>Sales Analytics</strong><small>ยอดขายรายงวด</small></span></a><a href="product.html"><span class="nav-icon">🚜</span><span><strong>Product Intelligence</strong><small>รุ่นสินค้าและ GP</small></span></a><a href="dealer.html"><span class="nav-icon">🏪</span><span><strong>Dealer Intelligence</strong><small>ผลงานรายสาขา</small></span></a><a href="forecast.html"><span class="nav-icon">🎯</span><span><strong>Sales Forecast AI</strong><small>คาดการณ์ยอดขาย</small></span></a></nav><div class="sidebar-footer"><strong>KUBOTA</strong><span>For Earth, For Life</span></div></aside><main class="main-content"><header class="topbar"><div><h1>Product <span>Intelligence</span> Dashboard</h1><p>วิเคราะห์ยอดขายสินค้า รุ่นขายดี GP สต็อก และศักยภาพสินค้า</p></div><div class="top-meta"><div><span>Records</span><strong id="recordCount">-</strong></div><div><span>Top Model</span><strong id="topModelTop">-</strong></div><div><span>Last Refresh</span><strong id="lastRefresh">-</strong></div></div></header><section class="filter-bar"><div class="filter-item"><label>Year</label><select id="yearFilter"></select></div><div class="filter-item"><label>Month</label><select id="monthFilter"></select></div><div class="filter-item"><label>Week</label><select id="weekFilter"></select></div><div class="filter-item"><label>Dealer</label><select id="dealerFilter"></select></div><div class="filter-item"><label>Salesman</label><select id="salesmanFilter"></select></div><div class="filter-item"><label>Product Type</label><select id="typeFilter"></select></div><button id="resetFilter" class="filter-reset">Reset</button></section><section class="kpi-grid"><div class="kpi-card"><span>Total Sales Units</span><strong id="kpiUnits">-</strong><small>Units</small></div><div class="kpi-card"><span>Sales Value</span><strong id="kpiValue">-</strong><small>MMK</small></div><div class="kpi-card"><span>Gross Profit</span><strong id="kpiGP">-</strong><small>GP1</small></div><div class="kpi-card"><span>GP Margin</span><strong id="kpiGPMargin">-</strong><small>%</small></div><div class="kpi-card teal"><span>Current Stock</span><strong id="kpiStock">186</strong><small>Units</small></div><div class="kpi-card"><span>Inventory Turnover</span><strong id="kpiTurnover">2.3x</strong><small>Times</small></div></section><section class="module-grid"><div class="panel"><h2>Sales Trend</h2><p>แนวโน้มยอดขายรายเดือน</p><div class="chart-box sm"><canvas id="productTrendChart"></canvas></div></div><div class="panel"><h2>Top 5 Models</h2><p>รุ่นสินค้าขายดีตามจำนวนขาย</p><div id="topModelList" class="clean-list"></div></div><div class="panel"><h2>Sales by Type</h2><p>สัดส่วนยอดขายตามประเภทสินค้า</p><div class="chart-box sm"><canvas id="typeMixChart"></canvas></div></div></section><section class="module-grid"><div class="panel"><h2>Product Matrix</h2><p>Sales Units vs GP Margin</p><div id="productMatrix" class="matrix"><span class="matrix-label m1">High GP<br>Low Sales</span><span class="matrix-label m2">High GP<br>High Sales</span><span class="matrix-label m3">Low GP<br>Low Sales</span><span class="matrix-label m4">Low GP<br>High Sales</span></div></div><div class="panel"><h2>Regional Heatmap</h2><p>รุ่นสินค้าขายดีตาม Dealer</p><div id="regionalHeatmap" class="heatmap"></div></div><div class="panel"><h2>Inventory Age</h2><p>อายุสต็อกสินค้า</p><div class="chart-box sm"><canvas id="stockAgeChart"></canvas></div></div></section><section class="ai-strip"><div class="ai-bot">🤖</div><div class="ai-card"><strong id="aiTopModel">-</strong><span>Market leader / ส่วนแบ่งสูงสุด</span></div><div class="ai-card"><strong id="aiHighGP">-</strong><span>High GP model</span></div><div class="ai-card"><strong id="aiRisk">-</strong><span>Slow moving risk</span></div><div class="ai-card"><strong id="aiRecommend">-</strong><span>Recommendation</span></div></section></main></div><script src="js/bi-utils.js"></script><script src="js/bi-filters.js"></script><script src="js/bi-charts.js"></script><script src="js/bi-core.js"></script><script src="js/bi-enterprise.js"></script><script src="js/product.js"></script></body></html>
+diff --git a/dashboard/sales.html b/dashboard/sales.html
+index 9cc2039..054368b 100644
+--- a/dashboard/sales.html
++++ b/dashboard/sales.html
+@@ -5,6 +5,7 @@
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>KMM Sales Analytics</title>
+   <link rel="stylesheet" href="css/bi-core.css">
++  <script src="js/i18n.js"></script>
+   <script src="js/auth.js"></script>
+   <script src="js/permission.js"></script>
+   <script src="js/company.js"></script>
+diff --git a/dashboard/salesman.html b/dashboard/salesman.html
+index 5a44df3..6b23f29 100644
+--- a/dashboard/salesman.html
++++ b/dashboard/salesman.html
+@@ -5,6 +5,7 @@
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>KMM Sales Performance</title>
+   <link rel="stylesheet" href="css/bi-core.css">
++  <script src="js/i18n.js"></script>
+   <script src="js/auth.js"></script>
+   <script src="js/permission.js"></script>
+   <script src="js/company.js"></script>
+diff --git a/dashboard/settings.html b/dashboard/settings.html
+index 481270f..380bd88 100644
+--- a/dashboard/settings.html
++++ b/dashboard/settings.html
+@@ -1,10 +1,11 @@
+ <!DOCTYPE html>
+-<html lang="en">
++<html lang="th">
+ <head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>KMM Security Settings</title>
+   <link rel="stylesheet" href="css/bi-core.css">
++  <script src="js/i18n.js"></script>
+   <script src="js/auth.js"></script>
+   <script src="js/permission.js"></script>
+   <script src="js/company.js"></script>
+@@ -16,37 +17,37 @@
+     <aside class="sidebar">
+       <div class="brand"><div class="brand-logo">KMM</div><div class="brand-name">Sales Intelligence</div></div>
+       <nav class="nav-menu">
+-        <a href="executive.html"><span class="nav-icon">E</span><span><strong>Executive Overview</strong><small>Leadership cockpit</small></span></a>
+-        <a href="salesman.html"><span class="nav-icon">P</span><span><strong>Sales Performance</strong><small>Salesman analysis</small></span></a>
+-        <a href="sales.html"><span class="nav-icon">S</span><span><strong>Sales Analytics</strong><small>Sales trends</small></span></a>
+-        <a href="product.html"><span class="nav-icon">M</span><span><strong>Product Intelligence</strong><small>Model and GP</small></span></a>
+-        <a href="dealer.html"><span class="nav-icon">D</span><span><strong>Dealer Intelligence</strong><small>Branch performance</small></span></a>
+-        <a href="forecast.html"><span class="nav-icon">F</span><span><strong>Sales Forecast AI</strong><small>Forecast signals</small></span></a>
+-        <a href="settings.html"><span class="nav-icon">C</span><span><strong>Settings</strong><small>Security session</small></span></a>
++        <a href="executive.html"><span class="nav-icon">E</span><span><strong data-i18n="nav.executive">Executive Overview</strong><small data-i18n="nav.executive.small">Leadership cockpit</small></span></a>
++        <a href="salesman.html"><span class="nav-icon">P</span><span><strong data-i18n="nav.salesman">Sales Performance</strong><small data-i18n="nav.salesman.small">Salesman analysis</small></span></a>
++        <a href="sales.html"><span class="nav-icon">S</span><span><strong data-i18n="nav.sales">Sales Analytics</strong><small data-i18n="nav.sales.small">Sales trends</small></span></a>
++        <a href="product.html"><span class="nav-icon">M</span><span><strong data-i18n="nav.product">Product Intelligence</strong><small data-i18n="nav.product.small">Model and GP</small></span></a>
++        <a href="dealer.html"><span class="nav-icon">D</span><span><strong data-i18n="nav.dealer">Dealer Intelligence</strong><small data-i18n="nav.dealer.small">Branch performance</small></span></a>
++        <a href="forecast.html"><span class="nav-icon">F</span><span><strong data-i18n="nav.forecast">Sales Forecast AI</strong><small data-i18n="nav.forecast.small">Forecast signals</small></span></a>
++        <a href="settings.html"><span class="nav-icon">C</span><span><strong data-i18n="nav.settings">Settings</strong><small data-i18n="nav.settings.small">Security session</small></span></a>
+       </nav>
+       <div class="sidebar-footer"><strong>KUBOTA</strong><span>For Earth, For Life</span></div>
+     </aside>
+ 
+     <main class="main-content settings-main">
+       <header class="page-head">
+-        <div class="page-title"><h1>Security <span class="accent">Settings</span></h1><p>Session, company, language, and role framework controls.</p></div>
++        <div class="page-title"><h1 data-i18n="settings.title">Security Settings</h1><p data-i18n="settings.subtitle">Session, company, language, and role framework controls.</p></div>
+       </header>
+ 
+       <section class="settings-panel">
+-        <h2>Session Settings</h2>
+-        <p>Changes are stored in sessionStorage for the current browser session.</p>
++        <h2 data-i18n="settings.section">Session Settings</h2>
++        <p data-i18n="settings.note">Changes are stored in sessionStorage for the current browser session.</p>
+         <form id="settingsForm" class="settings-form">
+           <div class="settings-grid">
+             <div class="settings-field">
+-              <label for="settingsTheme">Theme</label>
++              <label for="settingsTheme" data-i18n="settings.theme">Theme</label>
+               <select id="settingsTheme">
+-                <option value="default">Default</option>
+-                <option value="kubota">Kubota</option>
+-                <option value="compact">Compact</option>
++                <option value="default" data-i18n="settings.theme.default">Default</option>
++                <option value="kubota" data-i18n="settings.theme.kubota">Kubota</option>
++                <option value="compact" data-i18n="settings.theme.compact">Compact</option>
+               </select>
+             </div>
+             <div class="settings-field">
+-              <label for="settingsCompany">Company</label>
++              <label for="settingsCompany" data-i18n="settings.company">Company</label>
+               <select id="settingsCompany">
+                 <option value="KMM">KMM</option>
+                 <option value="KM">KM</option>
+@@ -54,33 +55,36 @@
+               </select>
+             </div>
+             <div class="settings-field">
+-              <label for="settingsTimeout">Session timeout</label>
++              <label for="settingsTimeout" data-i18n="settings.timeout">Session timeout</label>
+               <select id="settingsTimeout">
+-                <option value="5">5 minutes</option>
+-                <option value="15">15 minutes</option>
+-                <option value="30">30 minutes</option>
+-                <option value="60">60 minutes</option>
++                <option value="5" data-i18n="settings.minutes5">5 minutes</option>
++                <option value="15" data-i18n="settings.minutes15">15 minutes</option>
++                <option value="30" data-i18n="settings.minutes30">30 minutes</option>
++                <option value="60" data-i18n="settings.minutes60">60 minutes</option>
+               </select>
+             </div>
+             <div class="settings-field">
+-              <label for="settingsLanguage">Language</label>
++              <label for="settingsLanguage" data-i18n="language">Language</label>
+               <select id="settingsLanguage">
+-                <option value="en">English</option>
+-                <option value="th">Thai</option>
+-                <option value="my">Myanmar</option>
++                <option value="th" data-i18n="lang.th">ไทย</option>
++                <option value="en" data-i18n="lang.en">English</option>
+               </select>
+             </div>
+             <div class="settings-field">
+-              <label for="settingsRole">Role</label>
++              <label for="settingsUsername" data-i18n="settings.currentUser">Current user</label>
++              <input id="settingsUsername" type="text" readonly>
++            </div>
++            <div class="settings-field">
++              <label for="settingsRole" data-i18n="settings.role">Role</label>
+               <input id="settingsRole" type="text" readonly>
+             </div>
+             <div class="settings-field">
+-              <label for="settingsVersion">Version</label>
++              <label for="settingsVersion" data-i18n="settings.version">Version</label>
+               <input id="settingsVersion" type="text" readonly>
+             </div>
+           </div>
+           <div class="settings-actions">
+-            <button class="settings-save" type="submit">Save Settings</button>
++            <button class="settings-save" type="submit" data-i18n="settings.save">Save Settings</button>
+             <span id="settingsStatus" class="settings-status" role="status"></span>
+           </div>
+         </form>
+diff --git a/docs/ARCHITECTURE.md b/docs/ARCHITECTURE.md
+index cbe5166..2e7e8b0 100644
+--- a/docs/ARCHITECTURE.md
++++ b/docs/ARCHITECTURE.md
+@@ -27,6 +27,7 @@ dashboard/
+     bi-modules.css
+   js/
+     chart.umd.min.js
++    i18n.js
+     bi-utils.js
+     bi-filters.js
+     bi-charts.js
+@@ -54,19 +55,28 @@ data/
+ ## Runtime Flow
+ 
+ 1. The browser opens `dashboard/login.html` or a static dashboard HTML file.
+-2. Protected dashboard files load `auth.js`, `permission.js`, `company.js`, `settings.js`, and `route-guard.js`.
+-3. `route-guard.js` verifies the `sessionStorage` session, checks role permissions, validates inactivity timeout, applies the selected company theme placeholder, and redirects unauthenticated users to `login.html`.
+-4. The page loads `css/bi-core.css`.
+-5. `bi-core.css` imports the shared design system, layout, components, modules, enterprise styles, and security styles.
+-6. The page loads local `js/chart.umd.min.js`.
+-7. The page loads shared BI modules:
++2. Protected dashboard files load `i18n.js` before security scripts so Thai labels, English fallback text, and language selectors are available during login, route guard, settings, and dashboard rendering.
++3. Protected dashboard files load `auth.js`, `permission.js`, `company.js`, `settings.js`, and `route-guard.js`.
++4. `route-guard.js` verifies the `sessionStorage` session, checks role permissions, validates inactivity timeout, applies the selected company theme placeholder, injects company/language/settings/profile controls, and redirects unauthenticated users to `login.html`.
++5. The page loads `css/bi-core.css`.
++6. `bi-core.css` imports Noto Sans Thai plus the shared design system, layout, components, modules, enterprise styles, and security styles.
++7. The page loads local `js/chart.umd.min.js`.
++8. The page loads shared BI modules:
+    - `js/bi-utils.js`
+    - `js/bi-filters.js`
+    - `js/bi-charts.js`
+    - `js/bi-core.js`
+-8. The page loads its page-specific script, such as `js/executive.js`.
+-9. On `DOMContentLoaded`, the page fetches `data/dashboard_data.json`.
+-10. Shared utilities normalize product types, filter core product rows, calculate KPI values, and render charts/tables.
++9. The page loads its page-specific script, such as `js/executive.js`.
++10. On `DOMContentLoaded`, the page fetches `data/dashboard_data.json`.
++11. Shared utilities normalize product types, filter core product rows, calculate KPI values, and render charts/tables.
++
++## Thai-First I18n Framework
++
++`dashboard/js/i18n.js` provides the browser-only localization layer. It supports `th` and `en`, defaults to Thai, stores the selected language in `sessionStorage` under `kmm.i18n.language`, and exposes `window.KMMI18n.t(key)`, `setLanguage(lang)`, `getLanguage()`, and `applyTranslations(root)`.
++
++The framework translates explicit `data-i18n`, `data-i18n-placeholder`, and `data-i18n-aria` attributes and also maps known static dashboard text to dictionary keys. This keeps generated one-line dashboard pages usable without changing the data contract or adding a build step. English remains the fallback for missing keys.
++
++Thai-first UX is applied to navigation, login, settings, filters, KPI labels, export/report controls, security bar labels, role labels, company labels, and safe AI/report status text. Longer calculated insight sentences can still include English business terms when they combine live dealer/product names and computed values.
+ 
+ ## V8.1-V9 Enterprise Security Platform
+ 
+@@ -74,13 +84,22 @@ The security platform is browser-only and GitHub Pages compatible. It does not a
+ 
+ - `dashboard/login.html` creates a professional login surface for KMM Sales Intelligence Platform.
+ - `dashboard/js/auth.js` owns session creation, session reads/writes, inactivity timestamps, logout reason, default 15-minute timeout, and version metadata.
++- `dashboard/js/auth.js` also owns the V8.1 static local credential store and validates username plus password before any session is created.
+ - `dashboard/js/route-guard.js` protects dashboard routes, redirects unauthenticated users to `login.html`, injects the top-right company selector/settings/profile controls, handles logout, and checks timeout every 30 seconds.
+ - `dashboard/js/permission.js` maps routes to permission keys and maps roles to permissions without hardcoding checks inside page files.
+ - `dashboard/js/company.js` defines KMM, KM, and TS company metadata with theme and dataset placeholders.
+ - `dashboard/js/settings.js` reads and writes session-scoped settings for theme, company, timeout, language, readonly role, and version.
+ - `dashboard/settings.html` exposes the settings framework as a protected static page.
+ 
+-The current login validates only that username and password fields are present, then stores the session in `sessionStorage`. This is intentional for the static platform phase and should not be treated as production-grade cloud authentication.
++The current login validates username and password against static local credentials, then stores only non-password session metadata in `sessionStorage`. This is V8.1 temporary protection only: it protects casual access, but credentials are visible in delivered JavaScript and must not be treated as production-grade cloud authentication. V10 should replace this with Firebase Auth, Microsoft Entra ID, Google Workspace, or server-side authentication with secure token/session validation.
++
++Default V8.1 static users:
++
++- `superadmin` / `KMM@2026!` maps to SuperAdmin.
++- `executive` / `Exec@2026` maps to Executive.
++- `manager` / `Manager@2026` maps to Manager.
++- `sales` / `Sales@2026` maps to Sales.
++- `viewer` / `Viewer@2026` maps to Viewer.
+ 
+ ## Role Platform
+ 
+diff --git a/docs/COMPONENT_LIBRARY.md b/docs/COMPONENT_LIBRARY.md
+index 7f6560e..ca7a0e4 100644
+--- a/docs/COMPONENT_LIBRARY.md
++++ b/docs/COMPONENT_LIBRARY.md
+@@ -34,20 +34,23 @@ Primary page content area. It offsets itself from the fixed sidebar on desktop a
+ 
+ Shared dashboard navigation list. Current primary pages:
+ 
+-- Executive Overview
+-- Sales Performance
+-- Sales Analytics
+-- Product Intelligence
+-- Dealer Intelligence
+-- Sales Forecast AI
++- Executive Overview / ภาพรวมผู้บริหาร
++- Sales Performance / วิเคราะห์พนักงานขาย
++- Sales Analytics / ยอดขายรายงวด
++- Product Intelligence / รุ่นสินค้าและ GP
++- Dealer Intelligence / ผลงานรายสาขา
++- Sales Forecast AI / คาดการณ์ยอดขาย
+ 
+ `bi-core.js` marks the current page link as active through `initNavigation()`.
+ 
++Navigation labels should use `data-i18n` where practical. `dashboard/js/i18n.js` also translates known static navigation text on generated pages, with Thai as the default and English as fallback.
++
+ ### `.security-bar`
+ 
+ Injected by `route-guard.js` into `.page-head` or `.topbar` on protected pages. It contains:
+ 
+ - Company selector for KMM, KM, and TS.
++- Language selector for Thai and English.
+ - Settings link.
+ - Profile/logout button showing role and username.
+ 
+@@ -89,11 +92,15 @@ Two-column login layout with platform branding on the left and the login panel o
+ 
+ ### `.login-panel`
+ 
+-Professional login card with username, password, and login button.
++Professional login card with username, password, and login button. The form calls `KMMSecurity.auth.authenticate(username, password)` and shows clean validation errors for missing username, missing password, unknown user, or incorrect password.
++
++The login panel includes a Thai/English language selector. Changing language calls `KMMI18n.setLanguage()` and updates visible labels without a page reload.
+ 
+ ### `.settings-panel`
+ 
+-Protected settings card used by `dashboard/settings.html` for theme, company, session timeout, language, readonly role, and version.
++Protected settings card used by `dashboard/settings.html` for current user, role, company, session timeout, language, theme, and version. It never displays or stores the user's password.
++
++The settings language selector supports only Thai and English. Thai is the default dashboard UX, and the selected language is stored for the current browser session.
+ 
+ ### `.settings-grid`
+ 
+@@ -103,6 +110,23 @@ Responsive two-column settings form layout.
+ 
+ Dialog style used for the Session Expired message shown after inactivity logout.
+ 
++V8.1 security note: the dashboard uses static local credentials in JavaScript as temporary access control for GitHub Pages. This protects casual access only. V10 should replace it with Firebase Auth, Microsoft Entra ID, Google Workspace, or server-side authentication.
++
++## Internationalization
++
++### `window.KMMI18n`
++
++Browser-only i18n framework loaded from `dashboard/js/i18n.js`. Public functions:
++
++- `t(key)` returns the selected language value with English fallback.
++- `setLanguage(lang)` stores `th` or `en` in `sessionStorage` and reapplies labels.
++- `getLanguage()` returns the active language, defaulting to `th`.
++- `applyTranslations(root)` updates keyed and known static text inside a DOM root.
++
++### Thai UI Rules
++
++The core CSS imports Noto Sans Thai and applies Thai-friendly line height. Buttons, sidebar labels, security controls, and export/report actions allow wrapping so Thai business labels remain readable on mobile and desktop.
++
+ ## Filters
+ 
+ ### `.filter-bar`
+diff --git a/docs/ROADMAP.md b/docs/ROADMAP.md
+index 946ace8..90bb9aa 100644
+--- a/docs/ROADMAP.md
++++ b/docs/ROADMAP.md
+@@ -75,7 +75,7 @@ V8 builds on V7.1 Production Ready with a practical executive copilot on `dashbo
+ 
+ V8.1-V9 adds an Enterprise Security Platform on top of the V8 Enterprise AI Copilot while preserving the static GitHub Pages deployment model.
+ 
+-1. Login screen with `sessionStorage` session state.
++1. Login screen with username and password validation before `sessionStorage` session state is created.
+ 2. Route guard for Executive, Sales, Salesman, Product, Dealer, Forecast, and Settings pages.
+ 3. Configurable inactivity timeout, defaulting to 15 minutes.
+ 4. Top-right session profile control with logout.
+@@ -86,6 +86,18 @@ V8.1-V9 adds an Enterprise Security Platform on top of the V8 Enterprise AI Copi
+ 9. Cross-page data search that can answer questions spanning Executive, Sales, Salesman, Product, Dealer, and Forecast views.
+ 10. Optional future OpenAI/API integration after an approved static-safe or service-backed architecture decision.
+ 
++V8.1 security limitation: credentials are stored in static JavaScript as temporary local access control for GitHub Pages. This protects casual access only because delivered browser code can be inspected. V10 should replace this with Firebase Auth, Microsoft Entra ID, Google Workspace, or server-side authentication with secure token/session validation, audit logging, and tenant-aware authorization.
++
++## V8.1 Thai-First Dashboard UX
++
++V8.1-V9 adds full Thai language support while preserving English as fallback and keeping the platform static and GitHub Pages compatible.
++
++- `dashboard/js/i18n.js` provides the shared Thai/English dictionary, `sessionStorage` language persistence, and `window.KMMI18n` helpers.
++- Thai is the default language for login, settings, navigation, dashboard headers, filters, KPI labels, export/report controls, security messages, role/company labels, and safe AI/report labels.
++- Login, settings, and the enterprise dashboard header expose Thai/English selectors where the user naturally expects them.
++- Noto Sans Thai, Thai-friendly line height, wrapping buttons, and readable sidebar labels are part of the shared CSS baseline.
++- The implementation does not change `dashboard/data/dashboard_data.json`, `tools/update_dashboard.py`, backend behavior, npm dependencies, or build tooling.
++
+ ## Near-Term Priorities
+ 
+ 1. V8.1 Copilot: improve natural language intent, cross-page search, and report generation from copilot answers.
+@@ -136,7 +148,7 @@ V8.1-V9 now includes the browser-side company framework for KMM, KM, and TS. The
+ 
+ ### Future Cloud Authentication
+ 
+-The current security platform is a static front-end framework, not a backend authentication service. Future cloud authentication should add a real identity provider, server-side session validation, token refresh, audit logging, password policy, tenant-aware authorization, and secure secrets handling. Any cloud authentication design must explicitly preserve or replace the current GitHub Pages hosting model.
++The current security platform is a static front-end framework, not a backend authentication service. V8.1 uses static local credentials only as temporary protection for casual access. Future cloud authentication should add Firebase Auth, Microsoft Entra ID, Google Workspace, or server-side authentication with real identity provider validation, server-side session validation, token refresh, audit logging, password policy, tenant-aware authorization, and secure secrets handling. Any cloud authentication design must explicitly preserve or replace the current GitHub Pages hosting model.
+ 
+ ## Release Principles
+ 
+diff --git a/index.html b/index.html
+index 5048337..28b590b 100644
+--- a/index.html
++++ b/index.html
+@@ -1,7 +1,9 @@
+ <!DOCTYPE html>
+-<html>
++<html lang="th">
+   <head>
+     <meta http-equiv="refresh" content="0; url=./dashboard/login.html" />
+   </head>
+-  <body></body>
++  <body>
++    <a href="./dashboard/login.html">KMM Sales Intelligence Platform</a>
++  </body>
+ </html>

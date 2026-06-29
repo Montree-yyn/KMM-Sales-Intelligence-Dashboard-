@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KMM Sales Intelligence Platform Login</title>
   <link rel="stylesheet" href="css/bi-core.css">
+  <script src="js/i18n.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/permission.js"></script>
   <script src="js/company.js"></script>
@@ -13,35 +14,42 @@
 </head>
 <body class="login-body">
   <main class="login-shell">
-    <section class="login-brand" aria-label="KMM Sales Intelligence Platform">
+    <section class="login-brand" data-i18n-aria="app.name" aria-label="KMM Sales Intelligence Platform">
       <div class="login-brand-mark">KMM</div>
-      <h1>KMM Sales Intelligence Platform</h1>
-      <p>Enterprise AI Copilot, role-aware dashboard access, session control, and multi-company readiness for executive sales operations.</p>
+      <h1 data-i18n="app.name">KMM Sales Intelligence Platform</h1>
+      <p data-i18n="app.tagline">Enterprise AI Copilot, role-aware dashboard access, session control, and multi-company readiness for executive sales operations.</p>
     </section>
 
-    <section class="login-panel" aria-label="Login form">
-      <h2>Secure Login</h2>
-      <p>Use your dashboard username and password to continue.</p>
-      <form id="loginForm" class="login-form">
+    <section class="login-panel" data-i18n-aria="login.formLabel" aria-label="Login form">
+      <div class="language-switch">
+        <label for="loginLanguage" data-i18n="language">Language</label>
+        <select id="loginLanguage" data-language-selector>
+          <option value="th" data-i18n="lang.th">ไทย</option>
+          <option value="en" data-i18n="lang.en">English</option>
+        </select>
+      </div>
+      <h2 data-i18n="login.title">Secure Login</h2>
+      <p data-i18n="login.subtitle">Use your dashboard username and password to continue.</p>
+      <form id="loginForm" class="login-form" novalidate>
         <div class="login-field">
-          <label for="username">Username</label>
+          <label for="username" data-i18n="login.username">Username</label>
           <input id="username" name="username" type="text" autocomplete="username" required>
         </div>
         <div class="login-field">
-          <label for="password">Password</label>
+          <label for="password" data-i18n="login.password">Password</label>
           <input id="password" name="password" type="password" autocomplete="current-password" required>
         </div>
-        <button class="login-button" type="submit">Login</button>
+        <button class="login-button" type="submit" data-i18n="login.button">Login</button>
         <div id="loginHint" class="login-hint" role="status"></div>
       </form>
     </section>
   </main>
 
   <dialog id="sessionExpiredDialog" class="session-dialog">
-    <h2>Session Expired</h2>
-    <p>Your session timed out because of inactivity. Please log in again.</p>
+    <h2 data-i18n="login.sessionExpired">Session Expired</h2>
+    <p data-i18n="login.sessionExpiredBody">Your session timed out because of inactivity. Please log in again.</p>
     <form method="dialog">
-      <button class="login-button" type="submit">OK</button>
+      <button class="login-button" type="submit" data-i18n="login.ok">OK</button>
     </form>
   </dialog>
 
@@ -49,19 +57,49 @@
     document.addEventListener("DOMContentLoaded", () => {
       const form = document.getElementById("loginForm");
       const hint = document.getElementById("loginHint");
+      const languageSelector = document.getElementById("loginLanguage");
+
+      if (languageSelector && window.KMMI18n) {
+        languageSelector.value = window.KMMI18n.getLanguage();
+        languageSelector.addEventListener("change", event => {
+          window.KMMI18n.setLanguage(event.target.value);
+          event.target.value = window.KMMI18n.getLanguage();
+          hint.textContent = "";
+        });
+      }
+
+      function safeReturnTo() {
+        const params = new URLSearchParams(window.location.search);
+        const requested = params.get("returnTo");
+        if (!requested) return "executive.html";
+
+        try {
+          const target = new URL(requested, window.location.href);
+          const loginUrl = new URL("login.html", window.location.href);
+          const isSameOrigin = target.origin === window.location.origin;
+          const isDashboardHtml = /^[a-z0-9_-]+\.html$/i.test(target.pathname.split("/").pop() || "");
+          const isNotLogin = target.pathname !== loginUrl.pathname;
+          return isSameOrigin && isDashboardHtml && isNotLogin
+            ? target.pathname.split("/").pop() + target.search + target.hash
+            : "executive.html";
+        } catch (error) {
+          return "executive.html";
+        }
+      }
 
       form.addEventListener("submit", event => {
         event.preventDefault();
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value;
+        const result = window.KMMSecurity.auth.authenticate(username, password);
 
-        if (!username || !password) {
-          hint.textContent = "Username and password are required.";
+        if (!result.ok) {
+          hint.textContent = result.error;
           return;
         }
 
-        window.KMMSecurity.auth.createSession(username);
-        window.location.href = "executive.html";
+        hint.textContent = "";
+        window.location.href = safeReturnTo();
       });
     });
   </script>

@@ -5,16 +5,23 @@
   const DEFAULT_TIMEOUT_MINUTES = 15;
   const VERSION = "V8.1-V9 Security Platform";
 
-  const ROLE_BY_USERNAME = {
-    superadmin: "SuperAdmin",
-    executive: "Executive",
-    manager: "Manager",
-    sales: "Sales",
-    viewer: "Viewer"
+  // V8.1 temporary protection only: static local credentials protect casual
+  // access in GitHub Pages, but they are visible in browser source and must be
+  // replaced by real identity-provider or server-side authentication in V10.
+  const LOCAL_USERS = {
+    superadmin: { password: "KMM@2026!", role: "SuperAdmin" },
+    executive: { password: "Exec@2026", role: "Executive" },
+    manager: { password: "Manager@2026", role: "Manager" },
+    sales: { password: "Sales@2026", role: "Sales" },
+    viewer: { password: "Viewer@2026", role: "Viewer" }
   };
 
   function now() {
     return Date.now();
+  }
+
+  function translate(key) {
+    return window.KMMI18n ? window.KMMI18n.t(key) : key;
   }
 
   function readSession() {
@@ -46,11 +53,11 @@
   function createSession(username, options) {
     const cleanUser = String(username || "").trim();
     if (!cleanUser) {
-      throw new Error("Username is required.");
+      throw new Error(translate("error.usernameRequired"));
     }
 
     const selectedOptions = options || {};
-    const role = normalizeRole(selectedOptions.role || ROLE_BY_USERNAME[cleanUser.toLowerCase()] || "Viewer");
+    const role = normalizeRole(selectedOptions.role || "Viewer");
     const timeoutMinutes = Number(selectedOptions.timeoutMinutes) || DEFAULT_TIMEOUT_MINUTES;
     const timestamp = now();
 
@@ -59,7 +66,7 @@
       role,
       company: selectedOptions.company || "KMM",
       theme: selectedOptions.theme || "default",
-      language: selectedOptions.language || "en",
+      language: selectedOptions.language || (window.KMMI18n ? window.KMMI18n.getLanguage() : "th"),
       timeoutMinutes,
       loginAt: timestamp,
       lastActivityAt: timestamp,
@@ -68,6 +75,31 @@
 
     writeSession(session);
     return session;
+  }
+
+  function authenticate(username, password, options) {
+    const cleanUser = String(username || "").trim();
+    const suppliedPassword = String(password || "");
+
+    if (!cleanUser) {
+      return { ok: false, error: translate("error.usernameRequired") };
+    }
+
+    if (!suppliedPassword) {
+      return { ok: false, error: translate("error.passwordRequired") };
+    }
+
+    const user = LOCAL_USERS[cleanUser.toLowerCase()];
+    if (!user) {
+      return { ok: false, error: translate("error.usernameNotFound") };
+    }
+
+    if (suppliedPassword !== user.password) {
+      return { ok: false, error: translate("error.passwordIncorrect") };
+    }
+
+    const session = createSession(cleanUser, Object.assign({}, options, { role: user.role }));
+    return { ok: true, session };
   }
 
   function touchSession() {
@@ -95,8 +127,8 @@
     SESSION_KEY,
     DEFAULT_TIMEOUT_MINUTES,
     VERSION,
+    authenticate,
     clearSession,
-    createSession,
     getLogoutReason,
     isExpired,
     readSession,

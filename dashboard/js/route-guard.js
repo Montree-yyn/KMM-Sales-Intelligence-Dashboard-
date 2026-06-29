@@ -4,11 +4,16 @@
   const LOGIN_PAGE = "login.html";
   const ACTIVITY_EVENTS = ["click", "keydown", "mousemove", "scroll", "touchstart"];
 
+  function t(key) {
+    return window.KMMI18n ? window.KMMI18n.t(key) : key;
+  }
+
   function redirectToLogin(reason) {
     window.KMMSecurity.auth.clearSession(reason);
     const currentPage = window.location.pathname.split("/").pop();
     if (currentPage !== LOGIN_PAGE) {
-      window.location.href = LOGIN_PAGE;
+      const requestedPath = currentPage + window.location.search + window.location.hash;
+      window.location.href = `${LOGIN_PAGE}?returnTo=${encodeURIComponent(requestedPath)}`;
     }
   }
 
@@ -41,35 +46,72 @@
   }
 
   function renderSecurityBar(session) {
+    if (!session) return;
     const header = document.querySelector(".page-head, .topbar");
     if (!header || document.getElementById("securityBar")) return;
 
     const company = window.KMMSecurity.company.getSelectedCompany();
+    const language = window.KMMI18n ? window.KMMI18n.getLanguage() : (session.language || "th");
     const bar = document.createElement("div");
     bar.id = "securityBar";
     bar.className = "security-bar";
     bar.innerHTML = `
       <label class="security-company">
-        <span>Company</span>
-        <select id="companySelector" aria-label="Company selector">
-          ${window.KMMSecurity.company.getCompanies().map(item => option(item.code, item.code, company.code)).join("")}
+        <span data-i18n="security.company">Company</span>
+        <select id="companySelector" data-i18n-aria="security.companySelector" aria-label="Company selector">
+          ${window.KMMSecurity.company.getCompanies().map(item => option(item.code, window.KMMSecurity.company.getCompanyLabel(item.code), company.code)).join("")}
         </select>
       </label>
-      <a class="security-settings" href="settings.html">Settings</a>
-      <button type="button" id="logoutButton" class="security-profile" aria-label="Logout">
-        <span>${session.role}</span>
+      <label class="security-company">
+        <span data-i18n="language">Language</span>
+        <select id="languageSelector" data-i18n-aria="language" aria-label="Language">
+          ${option("th", t("lang.th"), language)}
+          ${option("en", t("lang.en"), language)}
+        </select>
+      </label>
+      <a class="security-settings" href="settings.html" data-i18n="security.settings">Settings</a>
+      <button type="button" id="logoutButton" class="security-profile" data-i18n-aria="security.logout" aria-label="Logout">
+        <span>${t(`role.${session.role}`)}</span>
         <strong>${session.username}</strong>
       </button>
     `;
     header.appendChild(bar);
+    if (window.KMMI18n) window.KMMI18n.applyTranslations(bar);
 
     document.getElementById("companySelector").addEventListener("change", event => {
       window.KMMSecurity.company.setSelectedCompany(event.target.value);
+      const currentSession = window.KMMSecurity.auth.readSession();
+      if (currentSession) {
+        renderSecurityBar(currentSession);
+      }
+    });
+
+    document.getElementById("languageSelector").addEventListener("change", event => {
+      const selected = window.KMMI18n ? window.KMMI18n.setLanguage(event.target.value) : event.target.value;
+      const currentSession = window.KMMSecurity.auth.readSession();
+      if (currentSession) {
+        currentSession.language = selected;
+        window.KMMSecurity.auth.writeSession(currentSession);
+      }
+      event.target.value = selected;
     });
 
     document.getElementById("logoutButton").addEventListener("click", () => {
       redirectToLogin("logout");
     });
+  }
+
+  function keepSecurityBarMounted(session) {
+    renderSecurityBar(session);
+    window.setTimeout(() => renderSecurityBar(window.KMMSecurity.auth.readSession()), 0);
+    window.addEventListener("load", () => renderSecurityBar(window.KMMSecurity.auth.readSession()));
+
+    const observer = new MutationObserver(() => {
+      const currentSession = window.KMMSecurity.auth.readSession();
+      if (!currentSession || document.getElementById("securityBar")) return;
+      renderSecurityBar(currentSession);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 
   function showSessionExpiredDialogIfNeeded() {
@@ -79,7 +121,7 @@
       dialog.showModal();
       return;
     }
-    window.alert("Session expired. Please log in again.");
+    window.alert(t("error.sessionExpired"));
   }
 
   function bindActivityTracking() {
@@ -118,7 +160,7 @@
     if (!session) return;
     window.KMMSecurity.company.applyCompanyTheme();
     document.documentElement.dataset.theme = session.theme || "default";
-    renderSecurityBar(session);
+    keepSecurityBarMounted(session);
     bindActivityTracking();
   }
 

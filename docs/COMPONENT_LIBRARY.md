@@ -34,20 +34,23 @@ Primary page content area. It offsets itself from the fixed sidebar on desktop a
 
 Shared dashboard navigation list. Current primary pages:
 
-- Executive Overview
-- Sales Performance
-- Sales Analytics
-- Product Intelligence
-- Dealer Intelligence
-- Sales Forecast AI
+- Executive Overview / ภาพรวมผู้บริหาร
+- Sales Performance / วิเคราะห์พนักงานขาย
+- Sales Analytics / ยอดขายรายงวด
+- Product Intelligence / รุ่นสินค้าและ GP
+- Dealer Intelligence / ผลงานรายสาขา
+- Sales Forecast AI / คาดการณ์ยอดขาย
 
 `bi-core.js` marks the current page link as active through `initNavigation()`.
+
+Navigation labels should use `data-i18n` where practical. `dashboard/js/i18n.js` also translates known static navigation text on generated pages, with Thai as the default and English as fallback.
 
 ### `.security-bar`
 
 Injected by `route-guard.js` into `.page-head` or `.topbar` on protected pages. It contains:
 
 - Company selector for KMM, KM, and TS.
+- Language selector for Thai and English.
 - Settings link.
 - Profile/logout button showing role and username.
 
@@ -89,11 +92,15 @@ Two-column login layout with platform branding on the left and the login panel o
 
 ### `.login-panel`
 
-Professional login card with username, password, and login button.
+Professional login card with username, password, and login button. The form calls `KMMSecurity.auth.authenticate(username, password)` and shows clean validation errors for missing username, missing password, unknown user, or incorrect password.
+
+The login panel includes a Thai/English language selector. Changing language calls `KMMI18n.setLanguage()` and updates visible labels without a page reload.
 
 ### `.settings-panel`
 
-Protected settings card used by `dashboard/settings.html` for theme, company, session timeout, language, readonly role, and version.
+Protected settings card used by `dashboard/settings.html` for current user, role, company, session timeout, language, theme, and version. It never displays or stores the user's password.
+
+The settings language selector supports only Thai and English. Thai is the default dashboard UX, and the selected language is stored for the current browser session.
 
 ### `.settings-grid`
 
@@ -102,6 +109,23 @@ Responsive two-column settings form layout.
 ### `.session-dialog`
 
 Dialog style used for the Session Expired message shown after inactivity logout.
+
+V8.1 security note: the dashboard uses static local credentials in JavaScript as temporary access control for GitHub Pages. This protects casual access only. V10 should replace it with Firebase Auth, Microsoft Entra ID, Google Workspace, or server-side authentication.
+
+## Internationalization
+
+### `window.KMMI18n`
+
+Browser-only i18n framework loaded from `dashboard/js/i18n.js`. Public functions:
+
+- `t(key)` returns the selected language value with English fallback.
+- `setLanguage(lang)` stores `th` or `en` in `sessionStorage` and reapplies labels.
+- `getLanguage()` returns the active language, defaulting to `th`.
+- `applyTranslations(root)` updates keyed and known static text inside a DOM root.
+
+### Thai UI Rules
+
+The core CSS imports Noto Sans Thai and applies Thai-friendly line height. Buttons, sidebar labels, security controls, and export/report actions allow wrapping so Thai business labels remain readable on mobile and desktop.
 
 ## Filters
 

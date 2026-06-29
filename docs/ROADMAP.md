@@ -75,7 +75,7 @@ V8 builds on V7.1 Production Ready with a practical executive copilot on `dashbo
 
 V8.1-V9 adds an Enterprise Security Platform on top of the V8 Enterprise AI Copilot while preserving the static GitHub Pages deployment model.
 
-1. Login screen with `sessionStorage` session state.
+1. Login screen with username and password validation before `sessionStorage` session state is created.
 2. Route guard for Executive, Sales, Salesman, Product, Dealer, Forecast, and Settings pages.
 3. Configurable inactivity timeout, defaulting to 15 minutes.
 4. Top-right session profile control with logout.
@@ -85,6 +85,18 @@ V8.1-V9 adds an Enterprise Security Platform on top of the V8 Enterprise AI Copi
 8. Better natural language intent handling with richer synonym coverage and confidence scoring.
 9. Cross-page data search that can answer questions spanning Executive, Sales, Salesman, Product, Dealer, and Forecast views.
 10. Optional future OpenAI/API integration after an approved static-safe or service-backed architecture decision.
+
+V8.1 security limitation: credentials are stored in static JavaScript as temporary local access control for GitHub Pages. This protects casual access only because delivered browser code can be inspected. V10 should replace this with Firebase Auth, Microsoft Entra ID, Google Workspace, or server-side authentication with secure token/session validation, audit logging, and tenant-aware authorization.
+
+## V8.1 Thai-First Dashboard UX
+
+V8.1-V9 adds full Thai language support while preserving English as fallback and keeping the platform static and GitHub Pages compatible.
+
+- `dashboard/js/i18n.js` provides the shared Thai/English dictionary, `sessionStorage` language persistence, and `window.KMMI18n` helpers.
+- Thai is the default language for login, settings, navigation, dashboard headers, filters, KPI labels, export/report controls, security messages, role/company labels, and safe AI/report labels.
+- Login, settings, and the enterprise dashboard header expose Thai/English selectors where the user naturally expects them.
+- Noto Sans Thai, Thai-friendly line height, wrapping buttons, and readable sidebar labels are part of the shared CSS baseline.
+- The implementation does not change `dashboard/data/dashboard_data.json`, `tools/update_dashboard.py`, backend behavior, npm dependencies, or build tooling.
 
 ## Near-Term Priorities
 
@@ -136,7 +148,7 @@ V8.1-V9 now includes the browser-side company framework for KMM, KM, and TS. The
 
 ### Future Cloud Authentication
 
-The current security platform is a static front-end framework, not a backend authentication service. Future cloud authentication should add a real identity provider, server-side session validation, token refresh, audit logging, password policy, tenant-aware authorization, and secure secrets handling. Any cloud authentication design must explicitly preserve or replace the current GitHub Pages hosting model.
+The current security platform is a static front-end framework, not a backend authentication service. V8.1 uses static local credentials only as temporary protection for casual access. Future cloud authentication should add Firebase Auth, Microsoft Entra ID, Google Workspace, or server-side authentication with real identity provider validation, server-side session validation, token refresh, audit logging, password policy, tenant-aware authorization, and secure secrets handling. Any cloud authentication design must explicitly preserve or replace the current GitHub Pages hosting model.
 
 ## Release Principles
 

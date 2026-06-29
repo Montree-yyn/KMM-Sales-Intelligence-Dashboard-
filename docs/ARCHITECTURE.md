@@ -27,6 +27,7 @@ dashboard/
     bi-modules.css
   js/
     chart.umd.min.js
+    i18n.js
     bi-utils.js
     bi-filters.js
     bi-charts.js
@@ -54,19 +55,28 @@ data/
 ## Runtime Flow
 
 1. The browser opens `dashboard/login.html` or a static dashboard HTML file.
-2. Protected dashboard files load `auth.js`, `permission.js`, `company.js`, `settings.js`, and `route-guard.js`.
-3. `route-guard.js` verifies the `sessionStorage` session, checks role permissions, validates inactivity timeout, applies the selected company theme placeholder, and redirects unauthenticated users to `login.html`.
-4. The page loads `css/bi-core.css`.
-5. `bi-core.css` imports the shared design system, layout, components, modules, enterprise styles, and security styles.
-6. The page loads local `js/chart.umd.min.js`.
-7. The page loads shared BI modules:
+2. Protected dashboard files load `i18n.js` before security scripts so Thai labels, English fallback text, and language selectors are available during login, route guard, settings, and dashboard rendering.
+3. Protected dashboard files load `auth.js`, `permission.js`, `company.js`, `settings.js`, and `route-guard.js`.
+4. `route-guard.js` verifies the `sessionStorage` session, checks role permissions, validates inactivity timeout, applies the selected company theme placeholder, injects company/language/settings/profile controls, and redirects unauthenticated users to `login.html`.
+5. The page loads `css/bi-core.css`.
+6. `bi-core.css` imports Noto Sans Thai plus the shared design system, layout, components, modules, enterprise styles, and security styles.
+7. The page loads local `js/chart.umd.min.js`.
+8. The page loads shared BI modules:
    - `js/bi-utils.js`
    - `js/bi-filters.js`
    - `js/bi-charts.js`
    - `js/bi-core.js`
-8. The page loads its page-specific script, such as `js/executive.js`.
-9. On `DOMContentLoaded`, the page fetches `data/dashboard_data.json`.
-10. Shared utilities normalize product types, filter core product rows, calculate KPI values, and render charts/tables.
+9. The page loads its page-specific script, such as `js/executive.js`.
+10. On `DOMContentLoaded`, the page fetches `data/dashboard_data.json`.
+11. Shared utilities normalize product types, filter core product rows, calculate KPI values, and render charts/tables.
+
+## Thai-First I18n Framework
+
+`dashboard/js/i18n.js` provides the browser-only localization layer. It supports `th` and `en`, defaults to Thai, stores the selected language in `sessionStorage` under `kmm.i18n.language`, and exposes `window.KMMI18n.t(key)`, `setLanguage(lang)`, `getLanguage()`, and `applyTranslations(root)`.
+
+The framework translates explicit `data-i18n`, `data-i18n-placeholder`, and `data-i18n-aria` attributes and also maps known static dashboard text to dictionary keys. This keeps generated one-line dashboard pages usable without changing the data contract or adding a build step. English remains the fallback for missing keys.
+
+Thai-first UX is applied to navigation, login, settings, filters, KPI labels, export/report controls, security bar labels, role labels, company labels, and safe AI/report status text. Longer calculated insight sentences can still include English business terms when they combine live dealer/product names and computed values.
 
 ## V8.1-V9 Enterprise Security Platform
 
@@ -74,13 +84,22 @@ The security platform is browser-only and GitHub Pages compatible. It does not a
 
 - `dashboard/login.html` creates a professional login surface for KMM Sales Intelligence Platform.
 - `dashboard/js/auth.js` owns session creation, session reads/writes, inactivity timestamps, logout reason, default 15-minute timeout, and version metadata.
+- `dashboard/js/auth.js` also owns the V8.1 static local credential store and validates username plus password before any session is created.
 - `dashboard/js/route-guard.js` protects dashboard routes, redirects unauthenticated users to `login.html`, injects the top-right company selector/settings/profile controls, handles logout, and checks timeout every 30 seconds.
 - `dashboard/js/permission.js` maps routes to permission keys and maps roles to permissions without hardcoding checks inside page files.
 - `dashboard/js/company.js` defines KMM, KM, and TS company metadata with theme and dataset placeholders.
 - `dashboard/js/settings.js` reads and writes session-scoped settings for theme, company, timeout, language, readonly role, and version.
 - `dashboard/settings.html` exposes the settings framework as a protected static page.
 
-The current login validates only that username and password fields are present, then stores the session in `sessionStorage`. This is intentional for the static platform phase and should not be treated as production-grade cloud authentication.
+The current login validates username and password against static local credentials, then stores only non-password session metadata in `sessionStorage`. This is V8.1 temporary protection only: it protects casual access, but credentials are visible in delivered JavaScript and must not be treated as production-grade cloud authentication. V10 should replace this with Firebase Auth, Microsoft Entra ID, Google Workspace, or server-side authentication with secure token/session validation.
+
+Default V8.1 static users:
+
+- `superadmin` / `KMM@2026!` maps to SuperAdmin.
+- `executive` / `Exec@2026` maps to Executive.
+- `manager` / `Manager@2026` maps to Manager.
+- `sales` / `Sales@2026` maps to Sales.
+- `viewer` / `Viewer@2026` maps to Viewer.
 
 ## Role Platform
 

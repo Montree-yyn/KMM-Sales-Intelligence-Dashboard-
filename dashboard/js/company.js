@@ -30,6 +30,11 @@
     return COMPANIES[code] || COMPANIES.KMM;
   }
 
+  function getCompanyLabel(code) {
+    const company = getCompany(code);
+    return window.KMMI18n ? window.KMMI18n.t(`company.${company.code}`) : company.name;
+  }
+
   function getSelectedCompany() {
     const auth = window.KMMSecurity && window.KMMSecurity.auth;
     const session = auth ? auth.readSession() : null;
@@ -66,6 +71,7 @@
     datasetPath,
     getCompanies,
     getCompany,
+    getCompanyLabel,
     getSelectedCompany,
     setSelectedCompany
   };

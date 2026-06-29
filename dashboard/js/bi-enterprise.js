@@ -64,12 +64,91 @@
   const kpiIcons = ["◒", "◈", "◐", "%", "◇", "↔"];
   const exportKinds = ["PDF", "PowerPoint", "Excel", "PNG"];
   const exportLabels = {
-    PDF: "Export PDF",
-    PowerPoint: "Export PowerPoint",
-    Excel: "Export CSV",
-    PNG: "Export PNG"
+    PDF: "export.pdf",
+    PowerPoint: "export.powerpoint",
+    Excel: "export.csv",
+    PNG: "export.png"
   };
   let latestRows = [];
+
+  const moduleLabels = {
+    Executive: ["Executive", "ผู้บริหาร"],
+    Sales: ["Sales", "ยอดขาย"],
+    Product: ["Product", "สินค้า"],
+    Dealer: ["Dealer", "Dealer"],
+    Salesman: ["Salesman", "พนักงานขาย"],
+    Coaching: ["Coaching", "โค้ชทีมขาย"],
+    Achievement: ["Achievement", "ผลงานเทียบเป้า"],
+    Activity: ["Activity", "กิจกรรม"],
+    Channel: ["Channel", "ช่องทาง"],
+    Payment: ["Payment", "การชำระเงิน"],
+    Trend: ["Trend", "แนวโน้ม"],
+    Inventory: ["Inventory", "สต็อก"],
+    Margin: ["Margin", "กำไร"],
+    Heatmap: ["Heatmap", "Heatmap"],
+    Health: ["Health", "สุขภาพ"],
+    Collection: ["Collection", "การเก็บเงิน"],
+    Coverage: ["Coverage", "พื้นที่"],
+    Forecast: ["Forecast", "คาดการณ์"],
+    Pipeline: ["Pipeline", "Pipeline"],
+    Target: ["Target", "เป้าหมาย"],
+    Scenario: ["Scenario", "Scenario"]
+  };
+
+  const pageEyebrows = {
+    executive: ["V7.1 Production Ready Executive Cockpit", "V7.1 ห้องควบคุมผู้บริหารพร้อมใช้งาน"],
+    salesman: ["V5.2 Performance Coaching", "V5.2 โค้ชผลงานพนักงานขาย"],
+    sales: ["V5.2 Commercial Analytics", "V5.2 วิเคราะห์ยอดขายเชิงพาณิชย์"],
+    product: ["V5.2 Product Intelligence", "V5.2 วิเคราะห์สินค้า"],
+    dealer: ["V5.2 Dealer Network Health", "V5.2 สุขภาพเครือข่าย Dealer"],
+    forecast: ["V5.2 Forecast AI Foundation", "V5.2 พื้นฐานคาดการณ์ AI"]
+  };
+
+  function t(key) {
+    return window.KMMI18n ? window.KMMI18n.t(key) : key;
+  }
+
+  function isThai() {
+    return window.KMMI18n ? window.KMMI18n.getLanguage() === "th" : true;
+  }
+
+  function unitText(value) {
+    return isThai() ? `${Number(value || 0).toLocaleString()} คัน` : `${Number(value || 0).toLocaleString()} units`;
+  }
+
+  function local(en, th) {
+    return isThai() ? th : en;
+  }
+
+  function labelForInsight(title) {
+    const labels = {
+      "Sales Performance": local("Sales Performance", "ผลงานยอดขาย"),
+      "Dealer Performance": local("Dealer Performance", "ผลงาน Dealer"),
+      "Product Performance": local("Product Performance", "ผลงานสินค้า"),
+      "Forecast Risk": local("Forecast Risk", "ความเสี่ยงคาดการณ์"),
+      "Low GP Warning": local("Low GP Warning", "แจ้งเตือน GP ต่ำ"),
+      "Top Performer": local("Top Performer", "ผู้ทำผลงานสูงสุด")
+    };
+    return labels[title] || title;
+  }
+
+  function severityLabel(value) {
+    const labels = {
+      Strong: "แข็งแรง",
+      Review: "ต้องทบทวน",
+      Dependency: "พึ่งพาสูง",
+      Balanced: "สมดุล",
+      Concentrated: "กระจุกตัว",
+      Healthy: "สุขภาพดี",
+      Gap: "มีส่วนต่าง",
+      "On Track": "ตามแผน",
+      High: "สูง",
+      Stable: "มั่นคง",
+      Leader: "ผู้นำ",
+      Ready: "พร้อม"
+    };
+    return isThai() ? (labels[value] || value) : value;
+  }
 
   function el(tag, className, html) {
     const node = document.createElement(tag);
@@ -115,22 +194,22 @@
   function emptyInsight(title) {
     return {
       title,
-      severity: "Waiting",
-      headline: "No data for current filters",
-      detail: "Adjust filters to generate this rule-based insight from dashboard_data.json.",
-      action: "Safe placeholder. No external AI API is used."
+      severity: t("message.loading"),
+      headline: t("message.noDataCurrent"),
+      detail: t("message.adjustFilters"),
+      action: t("message.safePlaceholder")
     };
   }
 
   function insightSet(rows) {
     if (!rows.length) {
       return [
-        emptyInsight("Sales Performance"),
-        emptyInsight("Dealer Performance"),
-        emptyInsight("Product Performance"),
-        emptyInsight("Forecast Risk"),
-        emptyInsight("Low GP Warning"),
-        emptyInsight("Top Performer")
+        emptyInsight(labelForInsight("Sales Performance")),
+        emptyInsight(labelForInsight("Dealer Performance")),
+        emptyInsight(labelForInsight("Product Performance")),
+        emptyInsight(labelForInsight("Forecast Risk")),
+        emptyInsight(labelForInsight("Low GP Warning")),
+        emptyInsight(labelForInsight("Top Performer"))
       ];
     }
 
@@ -149,46 +228,46 @@
 
     return [
       {
-        title: "Sales Performance",
-        severity: kpi.units >= 400 ? "Strong" : "Review",
-        headline: `${kpi.units.toLocaleString()} units sold`,
-        detail: `${monthly[0]?.name || "-"} is the strongest month with ${utils.formatMoney(kpi.sales)} total sales value.`,
-        action: kpi.units >= 400 ? "Maintain close rhythm and protect margin quality." : "Use dealer and salesman follow-up to close the volume gap."
+        title: labelForInsight("Sales Performance"),
+        severity: severityLabel(kpi.units >= 400 ? "Strong" : "Review"),
+        headline: local(`${kpi.units.toLocaleString()} units sold`, `ขายแล้ว ${unitText(kpi.units)}`),
+        detail: local(`${monthly[0]?.name || "-"} is the strongest month with ${utils.formatMoney(kpi.sales)} total sales value.`, `${monthly[0]?.name || "-"} เป็นเดือนที่แข็งแรงที่สุด มูลค่ายอดขายรวม ${utils.formatMoney(kpi.sales)}`),
+        action: kpi.units >= 400 ? local("Maintain close rhythm and protect margin quality.", "รักษาจังหวะปิดการขายและปกป้องคุณภาพกำไร") : local("Use dealer and salesman follow-up to close the volume gap.", "ใช้การติดตาม Dealer และพนักงานขายเพื่อปิดส่วนต่างจำนวนขาย")
       },
       {
-        title: "Dealer Performance",
-        severity: dealer.share > 45 ? "Dependency" : "Balanced",
-        headline: `${dealer.name} leads dealer contribution`,
-        detail: `${dealer.units.toLocaleString()} units and ${utils.formatPercent(dealer.share)} share. Lowest filtered contribution: ${weakDealer.name}.`,
-        action: dealer.share > 45 ? "Lift secondary dealer activity to reduce dependency risk." : "Keep weekly dealer scorecards active."
+        title: labelForInsight("Dealer Performance"),
+        severity: severityLabel(dealer.share > 45 ? "Dependency" : "Balanced"),
+        headline: local(`${dealer.name} leads dealer contribution`, `${dealer.name} เป็น Dealer ที่มีสัดส่วนสูงสุด`),
+        detail: local(`${dealer.units.toLocaleString()} units and ${utils.formatPercent(dealer.share)} share. Lowest filtered contribution: ${weakDealer.name}.`, `${unitText(dealer.units)} และสัดส่วน ${utils.formatPercent(dealer.share)} โดยผลงานต่ำสุดในตัวกรองคือ ${weakDealer.name}`),
+        action: dealer.share > 45 ? local("Lift secondary dealer activity to reduce dependency risk.", "เพิ่มกิจกรรม Dealer รองเพื่อลดความเสี่ยงการพึ่งพา") : local("Keep weekly dealer scorecards active.", "ติดตาม scorecard Dealer รายสัปดาห์ต่อเนื่อง")
       },
       {
-        title: "Product Performance",
-        severity: productType.share > 60 ? "Concentrated" : "Healthy",
-        headline: `${product.name} is the top model`,
-        detail: `${productType.name} contributes ${utils.formatPercent(productType.share)} of filtered units.`,
-        action: productType.share > 60 ? "Prepare substitute model offers and watch concentration risk." : "Use top-model demand to open adjacent product conversations."
+        title: labelForInsight("Product Performance"),
+        severity: severityLabel(productType.share > 60 ? "Concentrated" : "Healthy"),
+        headline: local(`${product.name} is the top model`, `${product.name} เป็นรุ่นขายสูงสุด`),
+        detail: local(`${productType.name} contributes ${utils.formatPercent(productType.share)} of filtered units.`, `${productType.name} คิดเป็น ${utils.formatPercent(productType.share)} ของจำนวนขายตามตัวกรอง`),
+        action: productType.share > 60 ? local("Prepare substitute model offers and watch concentration risk.", "เตรียมข้อเสนอรุ่นทดแทนและติดตามความเสี่ยงการกระจุกตัว") : local("Use top-model demand to open adjacent product conversations.", "ใช้ความต้องการรุ่นหลักเพื่อเปิดการขายสินค้าที่เกี่ยวข้อง")
       },
       {
-        title: "Forecast Risk",
-        severity: gap < 0 ? "Gap" : "On Track",
-        headline: `${forecast.toLocaleString()} unit rule-based forecast`,
-        detail: `Static target placeholder is ${target.toLocaleString()} units, leaving ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units gap.`,
-        action: gap < 0 ? "Prioritize high-probability deals and top dealer follow-up." : "Forecast is above baseline; protect GP while closing."
+        title: labelForInsight("Forecast Risk"),
+        severity: severityLabel(gap < 0 ? "Gap" : "On Track"),
+        headline: local(`${forecast.toLocaleString()} unit rule-based forecast`, `คาดการณ์ตามกฎ ${unitText(forecast)}`),
+        detail: local(`Static target placeholder is ${target.toLocaleString()} units, leaving ${gap >= 0 ? "+" : ""}${gap.toLocaleString()} units gap.`, `เป้าหมาย Static คือ ${unitText(target)} เหลือส่วนต่าง ${gap >= 0 ? "+" : ""}${unitText(gap)}`),
+        action: gap < 0 ? local("Prioritize high-probability deals and top dealer follow-up.", "ให้ความสำคัญกับดีลโอกาสสูงและการติดตาม Dealer หลัก") : local("Forecast is above baseline; protect GP while closing.", "คาดการณ์สูงกว่า baseline ให้ปกป้อง GP ระหว่างปิดการขาย")
       },
       {
-        title: "Low GP Warning",
-        severity: lowGp ? "High" : "Stable",
-        headline: `${utils.formatPercent(kpi.gpPct)} GP margin`,
-        detail: `${lowMarginProduct.name} is the lowest-margin model at ${utils.formatPercent(lowMarginProduct.gpPct)}.`,
-        action: lowGp ? "Review discounts, campaigns, and cost leakage before adding volume pressure." : "Margin is stable. Keep price discipline visible."
+        title: labelForInsight("Low GP Warning"),
+        severity: severityLabel(lowGp ? "High" : "Stable"),
+        headline: local(`${utils.formatPercent(kpi.gpPct)} GP margin`, `GP margin ${utils.formatPercent(kpi.gpPct)}`),
+        detail: local(`${lowMarginProduct.name} is the lowest-margin model at ${utils.formatPercent(lowMarginProduct.gpPct)}.`, `${lowMarginProduct.name} เป็นรุ่นกำไรต่ำสุดที่ ${utils.formatPercent(lowMarginProduct.gpPct)}`),
+        action: lowGp ? local("Review discounts, campaigns, and cost leakage before adding volume pressure.", "ทบทวนส่วนลด แคมเปญ และต้นทุนรั่วไหลก่อนเร่งจำนวนขาย") : local("Margin is stable. Keep price discipline visible.", "กำไรมั่นคง ให้รักษาวินัยด้านราคา")
       },
       {
-        title: "Top Performer",
-        severity: "Leader",
-        headline: `${salesman.name} leads filtered performance`,
-        detail: `${salesman.units.toLocaleString()} units, ${utils.formatPercent(salesman.share)} share, and ${utils.formatPercent(salesman.gpPct)} GP margin.`,
-        action: "Turn top performer behavior into a coaching reference for the team."
+        title: labelForInsight("Top Performer"),
+        severity: severityLabel("Leader"),
+        headline: local(`${salesman.name} leads filtered performance`, `${salesman.name} นำผลงานตามตัวกรอง`),
+        detail: local(`${salesman.units.toLocaleString()} units, ${utils.formatPercent(salesman.share)} share, and ${utils.formatPercent(salesman.gpPct)} GP margin.`, `${unitText(salesman.units)}, สัดส่วน ${utils.formatPercent(salesman.share)} และ GP margin ${utils.formatPercent(salesman.gpPct)}`),
+        action: local("Turn top performer behavior into a coaching reference for the team.", "นำพฤติกรรมของผู้ทำผลงานสูงสุดไปใช้เป็นแนวทางโค้ชทีม")
       }
     ];
   }
@@ -317,31 +396,31 @@
       cards: [
         {
           type: "kpi",
-          label: "KPI summary",
-          title: "No sales records available",
+          label: t("ai.kpiSummary"),
+          title: t("message.noDataCurrent"),
           text: "The copilot cannot calculate sales units, value, or GP margin until the current filters return records."
         },
         {
           type: "dealer",
-          label: "Dealer insight",
+          label: t("ai.dealerInsight"),
           title: "Dealer signal unavailable",
           text: "Dealer leadership and attention signals will appear when filtered dealer records are available."
         },
         {
           type: "product",
-          label: "Product insight",
+          label: t("ai.productInsight"),
           title: "Product signal unavailable",
           text: "Product push guidance needs filtered model and product type records."
         },
         {
           type: "forecast",
-          label: "Forecast insight",
-          title: "Forecast risk pending",
+          label: t("ai.forecastInsight"),
+          title: t("ai.forecastRisk"),
           text: "The rule-based forecast placeholder will update after sales records are available."
         },
         {
           type: "action",
-          label: "Recommended action",
+          label: t("ai.recommendedAction"),
           title: "Reset or broaden filters",
           text: rows && rows.length === 0 ? "Use broader filters before making an executive decision." : "Load dashboard_data.json to activate local copilot answers."
         }
@@ -393,32 +472,32 @@
       cards: [
         {
           type: "kpi",
-          label: "KPI summary",
+          label: t("ai.kpiSummary"),
           title: `${kpi.units.toLocaleString()} units | ${utils.formatMoney(kpi.sales)} sales`,
           text: `Gross profit is ${utils.formatMoney(kpi.gp)} and GP margin is ${utils.formatPercent(kpi.gpPct)}, indicating ${marginRisk}.`
         },
         {
           type: "dealer",
-          label: "Dealer insight",
+          label: t("ai.dealerInsight"),
           title: `${weakDealer.name} needs attention`,
           text: `${topDealer.name} leads with ${topDealer.units.toLocaleString()} units and ${utils.formatPercent(topDealer.share)} share. ${weakDealer.name} is lowest in the current filter; dealer risk signal is ${dealerRisk}.`
         },
         {
           type: "product",
-          label: "Product insight",
+          label: t("ai.productInsight"),
           title: `${productPush.name} is the push candidate`,
           text: `${topProduct.name} leads volume with ${topProduct.units.toLocaleString()} units. ${topType.name} leads product type mix, while ${lowGpProduct.name} should be watched for GP quality.`
         },
         {
           type: "forecast",
-          label: "Forecast insight",
+          label: t("ai.forecastInsight"),
           title: `${gap >= 0 ? "+" : ""}${gap.toLocaleString()} unit forecast gap`,
           text: `Rule-based forecast is ${forecast.toLocaleString()} units against ${target.toLocaleString()} baseline target, showing ${forecastRisk}.`
         },
         {
           type: "action",
-          label: "Recommended action",
-          title: "Next best action",
+          label: t("ai.recommendedAction"),
+          title: t("ai.nextBestAction"),
           text: nextAction
         }
       ]
@@ -442,10 +521,10 @@
   function reportLines(kind, rows) {
     const summary = executiveSummary(rows);
     const titleMap = {
-      weekly: "Weekly Sales Intelligence Report",
-      monthly: "Monthly Sales Intelligence Report",
-      executive: "Executive Summary",
-      dealer: "Dealer Review"
+      weekly: t("report.weeklyTitle"),
+      monthly: t("report.monthlyTitle"),
+      executive: t("report.executive"),
+      dealer: t("report.dealer")
     };
     const title = titleMap[kind] || titleMap.executive;
     const kpi = utils.kpi(rows);
@@ -460,7 +539,7 @@
     if (!rows.length) {
       return {
         title,
-        meta: "Current filter has no matching rows.",
+        meta: t("message.noDataFilters"),
         lines: [
           summary.overall,
           summary.leadingDealer,
@@ -501,7 +580,7 @@
 
     return {
       title,
-      meta: `Generated from ${rows.length.toLocaleString()} filtered local records. Last refresh ${utils.lastRefresh()}.`,
+      meta: `Generated from ${rows.length.toLocaleString()} filtered local records. ${t("kpi.lastRefresh")} ${utils.lastRefresh()}.`,
       lines: reportSpecific[kind] || reportSpecific.executive
     };
   }
@@ -515,20 +594,21 @@
     header.dataset.enterpriseReady = "true";
     header.innerHTML = `
       <div class="enterprise-title-block">
-        <div class="enterprise-eyebrow">${config.eyebrow}</div>
-        <h1>${config.title}</h1>
-        <p>${config.subtitle}</p>
-        <div class="enterprise-refresh">Last refresh <strong id="enterpriseLastRefresh">Loading...</strong></div>
+        <div class="enterprise-eyebrow">${local(pageEyebrows[config.module]?.[0] || config.eyebrow, pageEyebrows[config.module]?.[1] || config.eyebrow)}</div>
+        <h1 data-i18n="page.${config.module}.title">${t(`page.${config.module}.title`)}</h1>
+        <p data-i18n="page.${config.module}.subtitle">${t(`page.${config.module}.subtitle`)}</p>
+        <div class="enterprise-refresh"><span data-i18n="kpi.lastRefresh">Last Refresh</span> <strong id="enterpriseLastRefresh">${t("message.loading")}</strong></div>
       </div>
-      <div class="enterprise-actions" aria-label="Dashboard actions">
-        <button type="button" class="enterprise-action primary" data-enterprise-action="ai">AI Summary</button>
-        ${config.module === "executive" ? '<button type="button" class="enterprise-action" data-enterprise-action="presentation">Presentation Mode</button>' : ""}
-        <button type="button" class="enterprise-action" data-enterprise-action="refresh">Refresh View</button>
-        <button type="button" class="enterprise-action" data-enterprise-export="PDF">Export PDF</button>
-        <button type="button" class="enterprise-action" data-enterprise-export="PowerPoint">Export PowerPoint</button>
-        <button type="button" class="enterprise-action" data-enterprise-export="Excel">Export CSV</button>
-        <button type="button" class="enterprise-action" data-enterprise-export="PNG">Export PNG</button>
+      <div class="enterprise-actions" aria-label="${local("Dashboard actions", "การดำเนินการแดชบอร์ด")}">
+        <button type="button" class="enterprise-action primary" data-enterprise-action="ai" data-i18n="button.aiSummary">AI Summary</button>
+        ${config.module === "executive" ? '<button type="button" class="enterprise-action" data-enterprise-action="presentation" data-i18n="button.presentationMode">Presentation Mode</button>' : ""}
+        <button type="button" class="enterprise-action" data-enterprise-action="refresh" data-i18n="button.refreshView">Refresh View</button>
+        <button type="button" class="enterprise-action" data-enterprise-export="PDF" data-i18n="export.pdf">Export PDF</button>
+        <button type="button" class="enterprise-action" data-enterprise-export="PowerPoint" data-i18n="export.powerpoint">Export PowerPoint</button>
+        <button type="button" class="enterprise-action" data-enterprise-export="Excel" data-i18n="export.csv">Export CSV</button>
+        <button type="button" class="enterprise-action" data-enterprise-export="PNG" data-i18n="export.png">Export PNG</button>
       </div>`;
+    if (window.KMMI18n) window.KMMI18n.applyTranslations(header);
   }
 
   function ensureInsightPanel() {
@@ -538,17 +618,17 @@
     const config = pageConfig();
     panel = el("section", "enterprise-insight-panel");
     panel.id = "enterpriseInsightPanel";
-    panel.setAttribute("aria-label", "Executive summary and AI insight");
+    panel.setAttribute("aria-label", t("ai.executiveInsight"));
     panel.innerHTML = `
       <div class="insight-orb">${config.icon}</div>
       <div class="insight-copy">
-        <div class="enterprise-eyebrow">Executive Summary / AI Insight</div>
-        <h2 id="enterpriseInsightHeadline">Loading insight...</h2>
-        <p id="enterpriseInsightDetail">Rule-based analysis will appear after dashboard data loads.</p>
+        <div class="enterprise-eyebrow" data-i18n="ai.executiveInsight">Executive Summary / AI Insight</div>
+        <h2 id="enterpriseInsightHeadline" data-i18n="ai.loadingInsight">Loading insight...</h2>
+        <p id="enterpriseInsightDetail" data-i18n="ai.ruleBasedLoading">Rule-based analysis will appear after dashboard data loads.</p>
       </div>
       <div class="insight-action-card">
-        <span id="enterpriseInsightRisk">Local data only</span>
-        <strong id="enterpriseInsightAction">No external AI API is connected.</strong>
+        <span id="enterpriseInsightRisk" data-i18n="message.localDataOnly">Local data only</span>
+        <strong id="enterpriseInsightAction" data-i18n="ai.noExternalApi">No external AI API is connected.</strong>
       </div>`;
 
     const header = document.querySelector(".enterprise-header");
@@ -564,15 +644,15 @@
     panel.id = "enterpriseFoundation";
     panel.innerHTML = `
       <div class="enterprise-block">
-        <div class="enterprise-eyebrow">Dashboard Modules</div>
-        <h2>V5 Enterprise Coverage</h2>
+        <div class="enterprise-eyebrow" data-i18n="label.dashboardModules">${t("label.dashboardModules")}</div>
+        <h2 data-i18n="label.enterpriseCoverage">${t("label.enterpriseCoverage")}</h2>
         <div id="enterpriseModuleList" class="module-pills"></div>
       </div>
       <div class="enterprise-block export-card">
-        <div class="enterprise-eyebrow">Export Foundation</div>
-        <h2>Prepared Outputs</h2>
+        <div class="enterprise-eyebrow" data-i18n="export.foundation">Export Foundation</div>
+        <h2 data-i18n="export.preparedOutputs">Prepared Outputs</h2>
         <div class="export-actions" id="enterpriseExportActions"></div>
-        <p id="enterpriseExportStatus" class="export-status">V7.1 Export Center prepared.</p>
+        <p id="enterpriseExportStatus" class="export-status" data-i18n="export.ready">V7.1 Export Center prepared.</p>
       </div>`;
 
     const anchor = document.querySelector(".ai-strip");
@@ -590,10 +670,10 @@
     panel.innerHTML = `
       <div class="enterprise-ai-heading">
         <div>
-          <div class="enterprise-eyebrow">AI Insight Engine</div>
-          <h2>V6 Rule-Based Insights</h2>
+          <div class="enterprise-eyebrow" data-i18n="ai.engine">AI Insight Engine</div>
+          <h2 data-i18n="ai.ruleBased">V6 Rule-Based Insights</h2>
         </div>
-        <span>Local dashboard_data.json only</span>
+        <span data-i18n="ai.localOnly">Local dashboard_data.json only</span>
       </div>
       <div id="enterpriseInsightGrid" class="enterprise-insight-grid"></div>`;
 
@@ -607,7 +687,10 @@
     const config = pageConfig();
     const target = document.getElementById("enterpriseModuleList");
     if (!target) return;
-    target.innerHTML = config.modules.map((module) => `<span class="module-pill is-active">${module}<small>ready</small></span>`).join("");
+    target.innerHTML = config.modules.map((module) => {
+      const labels = moduleLabels[module] || [module, module];
+      return `<span class="module-pill is-active">${local(labels[0], labels[1])}<small>${t("message.ready")}</small></span>`;
+    }).join("");
   }
 
   function toast(message) {
@@ -665,7 +748,7 @@
 
   async function exportPng() {
     const target = document.querySelector(".main-content");
-    if (!target) throw new Error("Dashboard area is not available.");
+    if (!target) throw new Error(t("error.dashboardUnavailable"));
 
     const clone = target.cloneNode(true);
     clone.querySelectorAll("canvas").forEach((canvasClone, index) => {
@@ -716,7 +799,7 @@
     await new Promise((resolve, reject) => {
       canvas.toBlob((blob) => {
         if (!blob) {
-          reject(new Error("PNG export failed."));
+          reject(new Error(t("error.pngFailed")));
           return;
         }
         downloadFile("kmm-v7-1-dashboard.png", "image/png", blob);
@@ -726,20 +809,20 @@
   }
 
   async function handleExport(kind) {
-    let message = "Export action completed.";
+    let message = t("export.completed");
     const status = document.getElementById("enterpriseExportStatus");
-    if (kind === "PDF") message = "PDF export is prepared for V7.2.";
-    if (kind === "PowerPoint") message = "PowerPoint export is prepared for V7.2.";
+    if (kind === "PDF") message = t("export.pdfPrepared");
+    if (kind === "PowerPoint") message = t("export.pptPrepared");
     if (kind === "Excel") {
       exportCsv();
-      message = "CSV summary downloaded from the current filtered dashboard data.";
+      message = t("export.csvDownloaded");
     }
     if (kind === "PNG") {
       try {
         await exportPng();
-        message = "PNG export attempted for the current dashboard area.";
+        message = t("export.pngAttempted");
       } catch (error) {
-        message = "PNG export could not be completed safely in this browser.";
+        message = t("export.pngFailed");
       }
     }
     if (status) status.textContent = message;
@@ -756,8 +839,8 @@
       modal.setAttribute("aria-modal", "true");
       modal.innerHTML = `
         <section class="enterprise-modal-panel">
-          <button type="button" class="enterprise-modal-close" data-enterprise-modal-close aria-label="Close report">Close</button>
-          <div class="enterprise-eyebrow">V7.1 Production Report</div>
+          <button type="button" class="enterprise-modal-close" data-enterprise-modal-close data-i18n-aria="button.close" aria-label="Close report" data-i18n="button.close">Close</button>
+          <div class="enterprise-eyebrow" data-i18n="report.production">V7.1 Production Report</div>
           <h2 id="enterpriseReportTitle"></h2>
           <p id="enterpriseReportMeta"></p>
           <div id="enterpriseReportBody" class="enterprise-report-body"></div>
@@ -775,9 +858,9 @@
     const enabled = !document.body.classList.contains("presentation-mode");
     document.body.classList.toggle("presentation-mode", enabled);
     document.querySelectorAll("[data-enterprise-action='presentation']").forEach((button) => {
-      button.textContent = enabled ? "Exit Presentation" : "Presentation Mode";
+      button.textContent = enabled ? t("button.exitPresentation") : t("button.presentationMode");
     });
-    toast(enabled ? "Presentation Mode enabled." : "Presentation Mode disabled.");
+    toast(enabled ? t("message.presentationEnabled") : t("message.presentationDisabled"));
   }
 
   function renderAiInsight(targetId, insight) {
@@ -987,7 +1070,7 @@
     const target = document.getElementById("enterpriseExportActions");
     if (!target || target.dataset.ready === "true") return;
     exportKinds.forEach((kind) => {
-      const button = el("button", "export-button", exportLabels[kind] || `Export ${kind}`);
+      const button = el("button", "export-button", t(exportLabels[kind]) || `Export ${kind}`);
       button.type = "button";
       button.dataset.enterpriseExport = kind;
       target.appendChild(button);
@@ -1028,11 +1111,11 @@
       const action = event.target.closest("[data-enterprise-action]")?.dataset.enterpriseAction;
       if (action === "ai") {
         const summary = executiveSummary(rowsForInsight(latestRows));
-        toast(`AI Summary: ${summary.overall} ${summary.nextAction}`);
+        toast(`${t("ai.summary")}: ${summary.overall} ${summary.nextAction}`);
       }
       if (action === "refresh") {
         BI.enterprise.refresh();
-        toast("Dashboard view refreshed from current filters.");
+        toast(t("message.viewRefreshed"));
       }
       if (action === "presentation") {
         togglePresentationMode();
@@ -1046,7 +1129,7 @@
       const label = card.querySelector("span")?.textContent || "KPI";
       const mini = card.querySelector("small")?.textContent || "Current filter";
       card.dataset.enterpriseReady = "true";
-      card.insertAdjacentHTML("afterbegin", `<div class="kpi-icon" aria-hidden="true">${kpiIcons[index % kpiIcons.length]}</div><div class="kpi-mini">Live KPI</div>`);
+      card.insertAdjacentHTML("afterbegin", `<div class="kpi-icon" aria-hidden="true">${kpiIcons[index % kpiIcons.length]}</div><div class="kpi-mini">${t("message.liveKpi")}</div>`);
       let delta = card.querySelector(".kpi-delta");
       if (!delta) {
         delta = el("em", "kpi-delta", mini);
@@ -1065,7 +1148,7 @@
         const wrap = el("div", "panel-title-row");
         heading.parentNode.insertBefore(wrap, heading);
         wrap.appendChild(heading);
-        wrap.insertAdjacentHTML("beforeend", '<span class="panel-status">Live</span>');
+        wrap.insertAdjacentHTML("beforeend", `<span class="panel-status">${t("message.ready")}</span>`);
       }
       const note = panel.querySelector("p");
       if (note) note.classList.add("panel-note");
@@ -1078,7 +1161,7 @@
       if (!rows.length) {
         panel.classList.add("is-empty");
         if (!empty) {
-          empty = el("div", "enterprise-empty-state", "No data for the current filter selection.");
+          empty = el("div", "enterprise-empty-state", t("message.noDataFilters"));
           panel.appendChild(empty);
         }
       } else {
@@ -1115,7 +1198,7 @@
     if (document.getElementById("enterpriseFooter")) return;
     const footer = el("footer", "enterprise-footer");
     footer.id = "enterpriseFooter";
-    footer.innerHTML = "<strong>KMM Sales Intelligence V7.1 Production Ready</strong><span>Static GitHub Pages dashboard | Local data only | CSV/PNG export foundation | V7.2 PDF/PPT roadmap</span>";
+    footer.innerHTML = `<strong>KMM Sales Intelligence V7.1 Production Ready</strong><span>Static GitHub Pages dashboard | ${t("message.localDataOnly")} | CSV/PNG export foundation | V7.2 PDF/PPT roadmap</span>`;
     document.querySelector(".main-content")?.appendChild(footer);
   }
 
@@ -1132,6 +1215,7 @@
     enhancePanels();
     ensureFooter();
     refresh();
+    if (window.KMMI18n) window.KMMI18n.applyTranslations(document);
   }
 
   BI.enterprise = {

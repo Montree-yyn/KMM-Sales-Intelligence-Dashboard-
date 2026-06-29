@@ -28,6 +28,11 @@
     return ROLE_PERMISSIONS[role] || ROLE_PERMISSIONS.Viewer;
   }
 
+  function roleLabel(role) {
+    const selectedRole = ROLE_PERMISSIONS[role] ? role : "Viewer";
+    return window.KMMI18n ? window.KMMI18n.t(`role.${selectedRole}`) : selectedRole;
+  }
+
   function canAccess(role, permission) {
     if (!permission) return true;
     const permissions = permissionsForRole(role);
@@ -45,6 +50,7 @@
     canAccess,
     canAccessPath,
     permissionForPath,
-    permissionsForRole
+    permissionsForRole,
+    roleLabel
   };
 })(window);
