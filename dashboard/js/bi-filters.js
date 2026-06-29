@@ -6,6 +6,10 @@
 
   const DEFAULT_FILTERS = ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "salesmanFilter"];
 
+  function t(key) {
+    return window.KMMI18n ? window.KMMI18n.t(key) : key;
+  }
+
   function fillSelect(id, values, label, formatter) {
     const element = document.getElementById(id);
     if (!element) return;
@@ -26,12 +30,12 @@
 
   function fillFilters(data, options = {}) {
     const includeType = Boolean(document.getElementById("typeFilter")) || options.includeType;
-    fillSelect("yearFilter", utils.unique(data.map((item) => item.year)).sort(), options.yearLabel || "This Year");
-    fillSelect("monthFilter", utils.unique(data.map((item) => item.month)).sort((a, b) => utils.number(a) - utils.number(b)), options.monthLabel || "All Months", utils.monthName);
-    fillSelect("weekFilter", utils.unique(data.map((item) => item.week)).sort((a, b) => utils.weekNumber(a) - utils.weekNumber(b)), options.weekLabel || "All Weeks", (value) => "W" + String(utils.weekNumber(value)).padStart(2, "0"));
-    fillSelect("dealerFilter", utils.unique(data.map((item) => item.dealer)).sort(), options.dealerLabel || "All Dealers");
-    fillSelect("salesmanFilter", utils.unique(data.map(utils.salesmanName)).sort(), options.salesmanLabel || "All Salesmen");
-    if (includeType) fillSelect("typeFilter", utils.unique(data.map((item) => item.type)).sort(), options.typeLabel || "All Types");
+    fillSelect("yearFilter", utils.unique(data.map((item) => item.year)).sort(), options.yearLabel || t("filter.thisYear"));
+    fillSelect("monthFilter", utils.unique(data.map((item) => item.month)).sort((a, b) => utils.number(a) - utils.number(b)), options.monthLabel || t("filter.allMonths"), utils.monthName);
+    fillSelect("weekFilter", utils.unique(data.map((item) => item.week)).sort((a, b) => utils.weekNumber(a) - utils.weekNumber(b)), options.weekLabel || t("filter.allWeeks"), (value) => "W" + String(utils.weekNumber(value)).padStart(2, "0"));
+    fillSelect("dealerFilter", utils.unique(data.map((item) => item.dealer)).sort(), options.dealerLabel || t("filter.allDealers"));
+    fillSelect("salesmanFilter", utils.unique(data.map(utils.salesmanName)).sort(), options.salesmanLabel || t("filter.allSalesmen"));
+    if (includeType) fillSelect("typeFilter", utils.unique(data.map((item) => item.type)).sort(), options.typeLabel || t("filter.allTypes"));
   }
 
   function getFilterValues() {

@@ -6,9 +6,25 @@
   const C = BI.charts;
   const ids = ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "salesmanFilter", "typeFilter"];
 
+  function t(key) {
+    return window.KMMI18n ? window.KMMI18n.t(key) : key;
+  }
+
+  function isThai() {
+    return window.KMMI18n ? window.KMMI18n.getLanguage() === "th" : true;
+  }
+
+  function unitText(value) {
+    return isThai() ? `${Number(value || 0).toLocaleString()} คัน` : `${Number(value || 0).toLocaleString()} units`;
+  }
+
+  function monthLabels() {
+    return ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"].map((month) => t(`label.${month}`));
+  }
+
   window.addEventListener("DOMContentLoaded", async () => {
     await U.loadDashboardData();
-    F.fillFilters(U.getCoreProductData(), { includeType: true, yearLabel: "All years" });
+    F.fillFilters(U.getCoreProductData(), { includeType: true, yearLabel: t("filter.allYears") });
     F.bindFilters(update, ids);
     update();
   });
@@ -31,9 +47,9 @@
     U.setText("kpiAch", ((forecast / target) * 100).toFixed(1) + "%");
     U.setText("kpiGap", gap);
     U.setText("kpiValue", U.formatMoney(value));
-    U.setText("aiMonthForecast", "57 Units");
+    U.setText("aiMonthForecast", unitText(57));
     U.setText("aiRevenue", "7.8B MMK");
-    U.setText("aiRiskLevel", gap >= 0 ? "Low" : "Medium");
+    U.setText("aiRiskLevel", gap >= 0 ? t("label.low") : t("label.medium"));
     BI.enterprise?.refresh(rows);
 
     renderForecastTrend(rows);
@@ -56,12 +72,12 @@
           <div class="clean-rank">${index + 1}</div>
           <div>
             <div class="clean-name">${row.name}</div>
-            <div class="clean-meta">Forecast ${forecast} | Achievement ${achievement.toFixed(1)}% | Gap ${forecast - Math.round(target / 3)}</div>
+            <div class="clean-meta">${t("kpi.forecast")} ${forecast} | ${t("label.achievement")} ${achievement.toFixed(1)}% | ${t("label.gap")} ${forecast - Math.round(target / 3)}</div>
             <div class="clean-bar"><div class="clean-fill" style="width:${(row.units / max) * 100}%"></div></div>
           </div>
           <div class="clean-value">${forecast}</div>
         </div>`;
-    }).join("") || "<p>No data</p>";
+    }).join("") || `<p>${t("message.noDataCurrent")}</p>`;
   }
 
   function monthly(rows) {
@@ -87,11 +103,11 @@
     C.renderChart("forecastTrendChart", {
       type: "line",
       data: {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        labels: monthLabels(),
         datasets: [
-          { label: "Actual", data: values.map((item) => item.actual), borderColor: "#222b3f", backgroundColor: "#222b3f" },
-          { label: "Forecast", data: values.map((item) => item.forecast), borderColor: "#ff5a00", backgroundColor: "rgba(255,90,0,.12)", fill: true },
-          { label: "Target", data: values.map((item) => item.target), borderColor: "#9aa3af", borderDash: [6, 6] }
+          { label: t("label.actual"), data: values.map((item) => item.actual), borderColor: "#222b3f", backgroundColor: "#222b3f" },
+          { label: t("kpi.forecast"), data: values.map((item) => item.forecast), borderColor: "#ff5a00", backgroundColor: "rgba(255,90,0,.12)", fill: true },
+          { label: t("kpi.target"), data: values.map((item) => item.target), borderColor: "#9aa3af", borderDash: [6, 6] }
         ]
       },
       options: { plugins: { legend: { position: "top" } } }
@@ -101,7 +117,7 @@
   function renderFunnel() {
     const element = document.getElementById("forecastFunnel");
     if (!element) return;
-    element.innerHTML = ["Lead|4,852", "Quotation|2,986", "Booking|1,986", "Delivery|2,842"].map((row) => {
+    element.innerHTML = [`Lead|4,852`, `Quotation|2,986`, `Booking|1,986`, `${isThai() ? "ส่งมอบ" : "Delivery"}|2,842`].map((row) => {
       const [label, value] = row.split("|");
       return `<div class="funnel-step"><span>${label}</span><strong>${value}</strong></div>`;
     }).join("");
@@ -112,15 +128,15 @@
       type: "bubble",
       data: {
         datasets: [{
-          label: "Deals",
+          label: t("label.deals"),
           data: [{ x: 5, y: 70, r: 18 }, { x: 9, y: 55, r: 15 }, { x: 14, y: 35, r: 22 }, { x: 18, y: 78, r: 12 }],
           backgroundColor: ["#c7d2fe", "#bfdbfe", "#ddd6fe", "#fed7aa"]
         }]
       },
       options: {
         scales: {
-          x: { title: { display: true, text: "Forecast Value (MMK)" } },
-          y: { min: 0, max: 100, title: { display: true, text: "Probability %" } }
+          x: { title: { display: true, text: t("label.forecastValueMmk") } },
+          y: { min: 0, max: 100, title: { display: true, text: t("label.probability") } }
         }
       }
     });
@@ -131,10 +147,10 @@
     C.renderChart("projectionChart", {
       type: "bar",
       data: {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        labels: monthLabels(),
         datasets: [
-          { label: "Actual", data: values.map((item) => item.actual), backgroundColor: "#222b3f" },
-          { label: "Forecast", data: values.map((item) => item.forecast), backgroundColor: "#ff5a00" }
+          { label: t("label.actual"), data: values.map((item) => item.actual), backgroundColor: "#222b3f" },
+          { label: t("kpi.forecast"), data: values.map((item) => item.forecast), backgroundColor: "#ff5a00" }
         ]
       },
       options: { plugins: { legend: { position: "top" } } }

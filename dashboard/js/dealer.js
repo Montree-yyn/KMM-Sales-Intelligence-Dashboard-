@@ -6,9 +6,21 @@
   const C = BI.charts;
   const ids = ["yearFilter", "monthFilter", "weekFilter", "dealerFilter", "salesmanFilter", "typeFilter"];
 
+  function t(key) {
+    return window.KMMI18n ? window.KMMI18n.t(key) : key;
+  }
+
+  function isThai() {
+    return window.KMMI18n ? window.KMMI18n.getLanguage() === "th" : true;
+  }
+
+  function unitText(value) {
+    return isThai() ? `${Number(value || 0).toLocaleString()} คัน` : `${Number(value || 0).toLocaleString()} units`;
+  }
+
   window.addEventListener("DOMContentLoaded", async () => {
     await U.loadDashboardData();
-    F.fillFilters(U.getCoreProductData(), { includeType: true, yearLabel: "All years" });
+    F.fillFilters(U.getCoreProductData(), { includeType: true, yearLabel: t("filter.allYears") });
     F.bindFilters(update, ids);
     update();
   });
@@ -38,8 +50,8 @@
 
     U.setText("aiBestDealer", dealers[0]?.name || "-");
     U.setText("aiWarningDealer", dealers.at(-1)?.name || "-");
-    U.setText("aiStockAction", "Balance Stock");
-    U.setText("aiDealerAction", "Focus Top Dealer");
+    U.setText("aiStockAction", t("label.balanceStock"));
+    U.setText("aiDealerAction", t("label.focusTopDealer"));
   }
 
   function renderList(id, rows) {
@@ -51,18 +63,18 @@
         <div class="clean-rank">${index + 1}</div>
         <div>
           <div class="clean-name">${row.name}</div>
-          <div class="clean-meta">${row.units} units | GP ${U.formatPercent(row.gpPct)} | ${U.formatMoney(row.value)}</div>
+          <div class="clean-meta">${unitText(row.units)} | GP ${U.formatPercent(row.gpPct)} | ${U.formatMoney(row.value)}</div>
           <div class="clean-bar"><div class="clean-fill" style="width:${(row.units / max) * 100}%"></div></div>
         </div>
         <div class="clean-value">${row.units}</div>
-      </div>`).join("") || "<p>No data</p>";
+      </div>`).join("") || `<p>${t("message.noDataCurrent")}</p>`;
   }
 
   function renderRadar(rows) {
     C.renderChart("dealerRadarChart", {
       type: "radar",
       data: {
-        labels: ["Sales", "Stock", "Service", "Customer", "Training"],
+        labels: isThai() ? ["ยอดขาย", "สต็อก", "บริการ", "ลูกค้า", "อบรม"] : ["Sales", "Stock", "Service", "Customer", "Training"],
         datasets: rows.slice(0, 3).map((row, index) => ({
           label: row.name,
           data: [row.units % 100, 60 + index * 10, 70 - index * 8, 65 + index * 7, 55 + index * 12],
@@ -77,7 +89,7 @@
   function renderFunnel() {
     const target = document.getElementById("dealerFunnel");
     if (!target) return;
-    target.innerHTML = ["Lead|4,852", "Quotation|2,986", "Booking|1,986", "Delivery|2,842"].map((row) => {
+    target.innerHTML = [`Lead|4,852`, `Quotation|2,986`, `Booking|1,986`, `${isThai() ? "ส่งมอบ" : "Delivery"}|2,842`].map((row) => {
       const [label, value] = row.split("|");
       return `<div class="funnel-step"><span>${label}</span><strong>${value}</strong></div>`;
     }).join("");
@@ -86,11 +98,11 @@
   function renderHealth(rows) {
     const target = document.getElementById("dealerHealth");
     if (!target) return;
-    target.innerHTML = rows.slice(0, 4).map((row, index) => `<div class="score-row"><strong>${row.name}</strong><span class="status ${index === 0 ? "good" : index === 1 ? "warn" : "bad"}">${index === 0 ? "Healthy" : index === 1 ? "Warning" : "Critical"}</span></div>`).join("");
+    target.innerHTML = rows.slice(0, 4).map((row, index) => `<div class="score-row"><strong>${row.name}</strong><span class="status ${index === 0 ? "good" : index === 1 ? "warn" : "bad"}">${index === 0 ? t("label.healthy") : index === 1 ? t("label.warning") : t("label.critical")}</span></div>`).join("");
   }
 
   function renderCollections() {
-    U.setHtml("collectionList", '<div class="score-row"><strong>Outstanding</strong><span>22.6M MMK</span></div><div class="score-row"><strong>Overdue</strong><span>3.2M MMK</span></div><div class="score-row"><strong>Collection Rate</strong><span>92.4%</span></div>');
+    U.setHtml("collectionList", `<div class="score-row"><strong>${t("label.outstanding")}</strong><span>22.6M MMK</span></div><div class="score-row"><strong>${t("label.overdue")}</strong><span>3.2M MMK</span></div><div class="score-row"><strong>${t("kpi.collectionRate")}</strong><span>92.4%</span></div>`);
   }
 
   function renderCoverage(rows) {
