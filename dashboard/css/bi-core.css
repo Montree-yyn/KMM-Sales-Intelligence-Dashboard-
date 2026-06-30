@@ -5,7 +5,7 @@
 @import url("bi-components.css");
 @import url("bi-modules.css");
 @import url("bi-enterprise.css");
-@import url("security.css");
+@import url("security.css?v=v16-login-2");
 
 html,
 body,

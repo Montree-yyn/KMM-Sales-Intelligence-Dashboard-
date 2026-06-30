@@ -2,8 +2,13 @@
   "use strict";
 
   const ROUTES = {
+    "focus.html": "executive",
     "executive.html": "executive",
     "sales.html": "sales",
+    "market.html": "sales",
+    "stock.html": "product",
+    "team.html": "salesman",
+    "reports.html": "executive",
     "salesman.html": "salesman",
     "salesman_capability.html": "salesman",
     "product.html": "product",
@@ -21,7 +26,7 @@
   };
 
   function permissionForPath(pathname) {
-    const page = String(pathname || "").split("/").pop() || "executive.html";
+    const page = String(pathname || "").split("/").pop() || "focus.html";
     return ROUTES[page] || null;
   }
 

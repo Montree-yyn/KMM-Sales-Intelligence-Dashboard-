@@ -1,145 +1,28 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KMM V11 Enterprise Edition Settings</title>
-  <link rel="stylesheet" href="css/bi-core.css">
+  <title>KMM Sales Intelligence - Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/v16-design-system.css">
+  <link rel="stylesheet" href="css/v16-layout.css">
+  <link rel="stylesheet" href="css/v16-components.css">
+  <link rel="stylesheet" href="css/v16-charts.css">
   <script src="js/i18n.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/permission.js"></script>
   <script src="js/company.js"></script>
   <script src="js/settings.js"></script>
   <script src="js/route-guard.js"></script>
+  <script src="js/chart.umd.min.js"></script>
+  <script defer src="js/v16-components.js"></script>
+  <script defer src="js/v16-data-adapter.js"></script>
+  <script defer src="js/v16-charts.js"></script>
+  <script defer src="js/v16-ui.js"></script>
 </head>
-<body>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand"><div class="brand-logo">KMM</div><div class="brand-name">Sales Intelligence</div></div>
-      <nav class="nav-menu">
-        <a href="executive.html"><span class="nav-icon">E</span><span><strong data-i18n="nav.executive">Executive Overview</strong><small data-i18n="nav.executive.small">Leadership cockpit</small></span></a>
-        <a href="salesman.html"><span class="nav-icon">P</span><span><strong data-i18n="nav.salesman">Sales Performance</strong><small data-i18n="nav.salesman.small">Salesman analysis</small></span></a>
-        <a href="sales.html"><span class="nav-icon">S</span><span><strong data-i18n="nav.sales">Sales Analytics</strong><small data-i18n="nav.sales.small">Sales trends</small></span></a>
-        <a href="product.html"><span class="nav-icon">M</span><span><strong data-i18n="nav.product">Product Intelligence</strong><small data-i18n="nav.product.small">Model and GP</small></span></a>
-        <a href="dealer.html"><span class="nav-icon">D</span><span><strong data-i18n="nav.dealer">Dealer Intelligence</strong><small data-i18n="nav.dealer.small">Branch performance</small></span></a>
-        <a href="forecast.html"><span class="nav-icon">F</span><span><strong data-i18n="nav.forecast">Sales Forecast AI</strong><small data-i18n="nav.forecast.small">Forecast signals</small></span></a>
-        <a href="settings.html"><span class="nav-icon">C</span><span><strong data-i18n="nav.settings">Settings</strong><small data-i18n="nav.settings.small">Security session</small></span></a>
-      </nav>
-      <div class="sidebar-footer"><strong>KUBOTA</strong><span>For Earth, For Life</span></div>
-    </aside>
-
-    <main class="main-content settings-main">
-      <header class="page-head">
-        <div class="page-title"><h1 data-i18n="settings.title">Security Settings</h1><p data-i18n="settings.subtitle">Session, company, language, and role framework controls.</p></div>
-      </header>
-
-      <section class="settings-panel">
-        <h2 data-i18n="settings.section">Session Settings</h2>
-        <p data-i18n="settings.note">Changes are stored in sessionStorage for the current browser session.</p>
-        <div class="settings-security-note" role="note">
-          <span data-i18n="settings.adminArea">Admin / Security Area</span>
-          <strong data-i18n="settings.securityWarningTitle">Internal-use security note</strong>
-          <p data-i18n="settings.securityWarningBody">Static credentials are temporary protection only. V11 should move to real authentication before broader rollout.</p>
-          <small data-i18n="settings.securityWarningDetail">Use this release only inside trusted internal workflows. Do not publish credentials outside the approved team.</small>
-        </div>
-        <form id="settingsForm" class="settings-form">
-          <div class="settings-grid">
-            <div class="settings-field">
-              <label for="settingsTheme" data-i18n="settings.theme">Theme</label>
-              <select id="settingsTheme">
-                <option value="default" data-i18n="settings.theme.default">Default</option>
-                <option value="kubota" data-i18n="settings.theme.kubota">Kubota</option>
-                <option value="compact" data-i18n="settings.theme.compact">Compact</option>
-              </select>
-            </div>
-            <div class="settings-field">
-              <label for="settingsCompany" data-i18n="settings.company">Company</label>
-              <select id="settingsCompany">
-                <option value="KMM">KMM</option>
-                <option value="KM">KM</option>
-                <option value="TS">TS</option>
-              </select>
-            </div>
-            <div class="settings-field">
-              <label for="settingsTimeout" data-i18n="settings.timeout">Session timeout</label>
-              <select id="settingsTimeout">
-                <option value="5" data-i18n="settings.minutes5">5 minutes</option>
-                <option value="15" data-i18n="settings.minutes15">15 minutes</option>
-                <option value="30" data-i18n="settings.minutes30">30 minutes</option>
-                <option value="60" data-i18n="settings.minutes60">60 minutes</option>
-              </select>
-            </div>
-            <div class="settings-field">
-              <label for="settingsLanguage" data-i18n="language">Language</label>
-              <select id="settingsLanguage">
-                <option value="th" data-i18n="lang.th">ไทย</option>
-                <option value="en" data-i18n="lang.en">English</option>
-              </select>
-            </div>
-            <div class="settings-field">
-              <label for="settingsUsername" data-i18n="settings.currentUser">Current user</label>
-              <input id="settingsUsername" type="text" readonly>
-            </div>
-            <div class="settings-field">
-              <label for="settingsRole" data-i18n="settings.role">Role</label>
-              <input id="settingsRole" type="text" readonly>
-            </div>
-            <div class="settings-field">
-              <label for="settingsVersion" data-i18n="settings.version">Version</label>
-              <input id="settingsVersion" type="text" readonly>
-            </div>
-          </div>
-          <div class="settings-actions">
-            <button class="settings-save" type="submit" data-i18n="settings.save">Save Settings</button>
-            <span id="settingsStatus" class="settings-status" role="status"></span>
-          </div>
-        </form>
-      </section>
-
-      <section class="settings-panel settings-enterprise-panel">
-        <h2 data-i18n="settings.systemSnapshot">ข้อมูลระบบปัจจุบัน</h2>
-        <div class="settings-summary-grid">
-          <article><span data-i18n="settings.currentUser">ผู้ใช้ปัจจุบัน</span><strong id="summaryUser">-</strong></article>
-          <article><span data-i18n="settings.role">สิทธิ์ผู้ใช้</span><strong id="summaryRole">-</strong></article>
-          <article><span data-i18n="settings.company">บริษัท</span><strong id="summaryCompany">-</strong></article>
-          <article><span data-i18n="settings.version">เวอร์ชัน</span><strong id="summaryVersion">-</strong></article>
-          <article><span data-i18n="settings.timeout">เวลาหมดอายุการใช้งาน</span><strong id="summaryTimeout">-</strong></article>
-        </div>
-      </section>
-
-      <section class="settings-panel settings-enterprise-panel">
-        <h2 data-i18n="settings.userFoundation">โครงสร้างจัดการผู้ใช้</h2>
-        <p data-i18n="settings.userFoundationBody">เตรียมพื้นที่สำหรับจัดการผู้ใช้ สิทธิ์ บริษัท และ permission ในอนาคต เวอร์ชัน static นี้ยังไม่มี backend authentication</p>
-        <div class="settings-placeholder-list">
-          <span data-i18n="role.SuperAdmin">ผู้ดูแลระบบสูงสุด</span>
-          <span data-i18n="role.Executive">ผู้บริหาร</span>
-          <span data-i18n="role.Manager">ผู้จัดการ</span>
-          <span data-i18n="role.Sales">ฝ่ายขาย</span>
-          <span data-i18n="role.Viewer">ผู้ดูข้อมูล</span>
-        </div>
-      </section>
-
-      <section class="settings-panel settings-enterprise-panel">
-        <h2 data-i18n="settings.aboutTitle">เกี่ยวกับ V11 Enterprise Edition</h2>
-        <p data-i18n="settings.aboutBody">แดชบอร์ดวิเคราะห์ยอดขายแบบ static ที่เน้นภาษาไทยสำหรับผู้บริหาร พร้อมศูนย์รายงาน โครงสร้างสิทธิ์ผู้ใช้ และการใช้งานบนมือถือ/แท็บเล็ต</p>
-      </section>
-
-      <section class="settings-panel settings-enterprise-panel">
-        <h2 data-i18n="settings.releaseNotes">Release Notes</h2>
-        <p data-i18n="settings.releaseNotesBody">V11 เน้นปรับ UX ภาษาไทย ข้อความช่วยอ่าน KPI รายงาน การตั้งค่า และ responsive stability โดยคงสถาปัตยกรรม V10.1 เดิม</p>
-      </section>
-
-      <section class="settings-panel settings-enterprise-panel">
-        <h2 data-i18n="settings.helpCenter">ศูนย์ช่วยเหลือ</h2>
-        <p data-i18n="settings.helpCenterBody">เริ่มจากตัวกรอง อ่าน KPI พร้อมคำอธิบาย ดู AI Summary สำหรับ action ของผู้บริหาร แล้วเปิดรายงานรายสัปดาห์ รายเดือน สรุปผู้บริหาร หรือรีวิวสาขา</p>
-      </section>
-    </main>
-  </div>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      window.KMMSecurity.settings.bindSettingsPage();
-      window.KMMSecurity.settings.renderEnterpriseSummary();
-    });
-  </script>
+<body class="v16-enterprise-body" data-v16-page="settings">
 </body>
 </html>
