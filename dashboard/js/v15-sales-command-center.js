@@ -2,16 +2,16 @@
   "use strict";
 
   const ORANGE = "#ff6a00";
-  const DARK = "#202733";
-  const GREEN = "#1f9d55";
-  const YELLOW = "#f4b400";
-  const RED = "#dc3545";
+  const DARK = "#111827";
+  const GREEN = "#16a34a";
+  const YELLOW = "#f59e0b";
+  const RED = "#ef4444";
   const BLUE = "#2f80ed";
 
   const PAGE_COPY = {
     focus: {
-      title: "KMM SALES INTELLIGENCE",
-      subtitle: "SALES COMMAND CENTER",
+      title: "KMM Sales Intelligence",
+      subtitle: "Sales Command Center",
       eyebrow: "Today's Focus",
       note: "Executive focus, dealer priorities, daily actions, and reporting shortcuts."
     },
@@ -242,8 +242,8 @@
         <article class="v15-card"><h2>Focus Direction</h2><div class="v15-stack" id="v15FocusDirection"></div></article>
         <article class="v15-card"><h2>Target vs Actual</h2><div class="v15-stack" id="v15TargetActual"></div></article>
         <article class="v15-card"><h2>Key Alert</h2><div class="v15-alert-list" id="v15Alerts"></div></article>
+        <article class="v15-card"><h2>Action Required Today</h2><div class="v15-actions" id="v15Actions"></div></article>
       </section>
-      <section class="v15-actions" id="v15Actions"></section>
       <section class="v15-analysis-grid">
         <article class="v15-panel"><h2>Sales Trend</h2><p>Monthly delivery movement</p><div class="v15-chart-box"><canvas id="salesTrendChart"></canvas></div></article>
         <article class="v15-panel"><h2>Sales by Dealer</h2><p>Ranking by unit contribution</p><div class="v15-ranking" id="dealerRanking"></div></article>

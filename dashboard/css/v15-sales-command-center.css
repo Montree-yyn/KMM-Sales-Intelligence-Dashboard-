@@ -1,16 +1,16 @@
 :root {
-  --v15-sidebar: #101820;
-  --v15-sidebar-soft: #17232e;
+  --v15-sidebar: #07111d;
+  --v15-sidebar-soft: #101b29;
   --v15-orange: #ff6a00;
   --v15-orange-soft: #fff2e8;
-  --v15-bg: #f6f7f9;
+  --v15-bg: #f6f7fa;
   --v15-card: #ffffff;
-  --v15-line: #e6e9ee;
-  --v15-text: #202733;
-  --v15-muted: #737b88;
-  --v15-green: #1f9d55;
-  --v15-yellow: #f4b400;
-  --v15-red: #dc3545;
+  --v15-line: #e6e9ef;
+  --v15-text: #111827;
+  --v15-muted: #6b7280;
+  --v15-green: #16a34a;
+  --v15-yellow: #f59e0b;
+  --v15-red: #ef4444;
   --v15-blue: #2f80ed;
   --v15-shadow: 0 12px 30px rgba(16, 24, 32, 0.08);
   --v15-radius: 16px;
@@ -470,8 +470,9 @@ body.v15-body {
 
 .v15-focus-grid {
   display: grid;
-  grid-template-columns: 1.15fr 1fr 0.85fr;
+  grid-template-columns: 1.1fr 1fr 0.85fr 1fr;
   gap: 18px;
+  align-items: stretch;
 }
 
 .v15-card {
@@ -544,25 +545,25 @@ body.v15-body {
 
 .v15-actions {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  gap: 10px;
+  margin-top: 16px;
 }
 
 .v15-action-card {
   display: grid;
-  grid-template-columns: 42px 1fr 22px;
-  gap: 12px;
+  grid-template-columns: 34px 1fr 18px;
+  gap: 10px;
   align-items: center;
-  padding: 16px;
+  min-height: 64px;
+  padding: 10px;
   border: 1px solid var(--v15-line);
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: var(--v15-shadow);
+  border-radius: 14px;
+  background: #fbfcfe;
 }
 
 .v15-action-icon {
-  width: 42px;
-  height: 42px;
+  width: 34px;
+  height: 34px;
   background: var(--v15-orange-soft);
   color: var(--v15-orange);
 }
@@ -570,7 +571,7 @@ body.v15-body {
 .v15-action-card strong,
 .v15-report-card strong {
   display: block;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .v15-action-card span,

@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = "kmm.i18n.language";
   const DEFAULT_LANGUAGE = "th";
-  const SUPPORTED = ["th", "en"];
+  const SUPPORTED = ["th", "en", "my"];
 
   const translations = {
     en: {
@@ -12,6 +12,7 @@
       "app.tagline": "V11 Enterprise Edition with Thai-first executive sales intelligence, role-aware session controls, report foundation, and export placeholders.",
       "lang.th": "Thai",
       "lang.en": "English",
+      "lang.my": "Myanmar",
       "language": "Language",
       "brand.kubotaTagline": "For Earth, For Life",
       "ui.dashboard": "Dashboard",
@@ -46,9 +47,18 @@
 
       "login.title": "Secure Login",
       "login.subtitle": "Use your dashboard username and password to continue.",
+      "login.heroTagline": "Data Driven. Insight Led. Result Focused.",
       "login.username": "Username",
       "login.password": "Password",
       "login.button": "Login",
+      "login.remember": "Remember me",
+      "login.forgot": "Forgot password?",
+      "login.socialDivider": "or sign in with",
+      "login.securityNote": "Protected by enterprise-grade security standards",
+      "login.badge.secure": "Secure",
+      "login.badge.reliable": "Reliable",
+      "login.badge.fast": "Fast",
+      "login.badge.global": "Global",
       "login.formLabel": "Login form",
       "login.sessionExpired": "Session Expired",
       "login.sessionExpiredBody": "Your session timed out because of inactivity. Please log in again.",
@@ -440,6 +450,7 @@
       "app.tagline": "V11 Enterprise Edition สำหรับวิเคราะห์ยอดขายผู้บริหารแบบภาษาไทย พร้อมกรอบสิทธิ์ผู้ใช้ รายงาน และตัวเตรียมส่งออก",
       "lang.th": "ไทย",
       "lang.en": "English",
+      "lang.my": "မြန်မာ",
       "language": "ภาษา",
       "brand.kubotaTagline": "เพื่อโลก เพื่อชีวิต",
       "ui.dashboard": "แดชบอร์ด",
@@ -472,11 +483,20 @@
       "nav.settings": "ตั้งค่า",
       "nav.settings.small": "ความปลอดภัยและเซสชัน",
 
-      "login.title": "เข้าสู่ระบบอย่างปลอดภัย",
+      "login.title": "เข้าสู่ระบบ",
       "login.subtitle": "กรอกชื่อผู้ใช้และรหัสผ่านของแดชบอร์ดเพื่อดำเนินการต่อ",
+      "login.heroTagline": "Data Driven. Insight Led. Result Focused.",
       "login.username": "ชื่อผู้ใช้",
       "login.password": "รหัสผ่าน",
       "login.button": "เข้าสู่ระบบ",
+      "login.remember": "จดจำฉัน",
+      "login.forgot": "ลืมรหัสผ่าน?",
+      "login.socialDivider": "หรือเข้าสู่ระบบด้วย",
+      "login.securityNote": "ปลอดภัยด้วยมาตรฐานระดับองค์กร",
+      "login.badge.secure": "Secure",
+      "login.badge.reliable": "Reliable",
+      "login.badge.fast": "Fast",
+      "login.badge.global": "Global",
       "login.formLabel": "ฟอร์มเข้าสู่ระบบ",
       "login.sessionExpired": "หมดอายุการใช้งาน",
       "login.sessionExpiredBody": "เซสชันหมดอายุเนื่องจากไม่มีการใช้งาน กรุณาเข้าสู่ระบบอีกครั้ง",
@@ -861,6 +881,40 @@
       "error.sessionExpired": "เซสชันหมดอายุ กรุณาเข้าสู่ระบบอีกครั้ง",
       "error.dashboardUnavailable": "ไม่พบพื้นที่แดชบอร์ด",
       "error.pngFailed": "ส่งออก PNG ไม่สำเร็จ"
+    },
+    my: {
+      "app.name": "KMM Sales Intelligence Platform",
+      "app.shortName": "Sales Intelligence",
+      "app.tagline": "Enterprise sales intelligence for KMM",
+      "lang.th": "ไทย",
+      "lang.en": "English",
+      "lang.my": "မြန်မာ",
+      "language": "ဘာသာစကား",
+      "login.title": "လော့ဂ်အင်ဝင်ရန်",
+      "login.subtitle": "Dashboard username and password ဖြင့် ဆက်လက်ဝင်ရောက်ပါ။",
+      "login.heroTagline": "Data Driven. Insight Led. Result Focused.",
+      "login.username": "အသုံးပြုသူအမည်",
+      "login.password": "စကားဝှက်",
+      "login.button": "လော့ဂ်အင်",
+      "login.remember": "မှတ်ထားရန်",
+      "login.forgot": "စကားဝှက်မေ့နေပါသလား?",
+      "login.socialDivider": "သို့မဟုတ် ဤနည်းလမ်းဖြင့် ဝင်ရန်",
+      "login.securityNote": "Enterprise-grade security standards ဖြင့် ကာကွယ်ထားသည်",
+      "login.badge.secure": "Secure",
+      "login.badge.reliable": "Reliable",
+      "login.badge.fast": "Fast",
+      "login.badge.global": "Global",
+      "login.formLabel": "Login form",
+      "login.sessionExpired": "Session Expired",
+      "login.sessionExpiredBody": "Your session timed out because of inactivity. Please log in again.",
+      "login.ok": "OK",
+      "error.usernameRequired": "Username is required.",
+      "error.passwordRequired": "Password is required.",
+      "error.usernameNotFound": "Username was not found.",
+      "error.passwordIncorrect": "Password is incorrect.",
+      "error.sessionExpired": "Session expired. Please log in again.",
+      "error.dashboardUnavailable": "Dashboard area is not available.",
+      "error.pngFailed": "PNG export failed."
     }
   };
 

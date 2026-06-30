@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KMM Sales Intelligence Platform Login</title>
-  <link rel="stylesheet" href="css/bi-core.css">
+  <link rel="stylesheet" href="css/bi-core.css?v=v16-login-2">
   <script src="js/i18n.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/permission.js"></script>
@@ -15,33 +15,79 @@
 <body class="login-body">
   <main class="login-shell">
     <section class="login-brand" data-i18n-aria="app.name" aria-label="KMM Sales Intelligence Platform">
-      <div class="login-brand-mark">KMM</div>
-      <h1 data-i18n="app.name">KMM Sales Intelligence Platform</h1>
-      <p data-i18n="app.tagline">Enterprise AI Copilot, role-aware dashboard access, session control, and multi-company readiness for executive sales operations.</p>
+      <div class="login-orbit" aria-hidden="true"></div>
+      <div class="login-brand-top">
+        <div class="login-brand-mark">KMM</div>
+        <div>
+          <strong>KMM</strong>
+          <span>KUBOTA MAESOD MYANMAR</span>
+        </div>
+      </div>
+      <p class="login-kicker">KUBOTA MAESOD MYANMAR</p>
+      <h1><span>SALES</span><span>INTELLIGENCE</span></h1>
+      <p class="login-tagline" data-i18n="login.heroTagline">Data Driven. Insight Led. Result Focused.</p>
+      <div class="login-badges" aria-label="Platform qualities">
+        <span data-i18n="login.badge.secure">Secure</span>
+        <span data-i18n="login.badge.reliable">Reliable</span>
+        <span data-i18n="login.badge.fast">Fast</span>
+        <span data-i18n="login.badge.global">Global</span>
+      </div>
     </section>
 
     <section class="login-panel" data-i18n-aria="login.formLabel" aria-label="Login form">
       <div class="language-switch">
         <label for="loginLanguage" data-i18n="language">Language</label>
         <select id="loginLanguage" data-language-selector>
-          <option value="th" data-i18n="lang.th">ไทย</option>
           <option value="en" data-i18n="lang.en">English</option>
+          <option value="th" data-i18n="lang.th">ไทย</option>
+          <option value="my" data-i18n="lang.my">မြန်မာ</option>
         </select>
       </div>
-      <h2 data-i18n="login.title">Secure Login</h2>
-      <p data-i18n="login.subtitle">Use your dashboard username and password to continue.</p>
+      <div class="login-card-mark">KMM</div>
+      <h2 data-i18n="login.title">เข้าสู่ระบบ</h2>
       <form id="loginForm" class="login-form" novalidate>
         <div class="login-field">
           <label for="username" data-i18n="login.username">Username</label>
-          <input id="username" name="username" type="text" autocomplete="username" required>
+          <div class="login-input-wrap">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+            <input id="username" name="username" type="text" autocomplete="username" required>
+          </div>
         </div>
         <div class="login-field">
           <label for="password" data-i18n="login.password">Password</label>
-          <input id="password" name="password" type="password" autocomplete="current-password" required>
+          <div class="login-input-wrap">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+            <button class="password-toggle" type="button" aria-label="Show password" data-show-label="Show password" data-hide-label="Hide password">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
         </div>
-        <button class="login-button" type="submit" data-i18n="login.button">Login</button>
+        <div class="login-options">
+          <label class="remember-check">
+            <input id="rememberMe" type="checkbox">
+            <span data-i18n="login.remember">Remember me</span>
+          </label>
+          <a href="#" data-i18n="login.forgot">Forgot password?</a>
+        </div>
+        <button class="login-button" type="submit">
+          <span data-i18n="login.button">เข้าสู่ระบบ</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </button>
         <div id="loginHint" class="login-hint" role="status"></div>
       </form>
+      <div class="login-divider"><span data-i18n="login.socialDivider">หรือเข้าสู่ระบบด้วย</span></div>
+      <div class="social-login-row" aria-label="Alternative sign in providers">
+        <button type="button" aria-disabled="true">
+          <span>G</span>
+          <b>Google</b>
+        </button>
+        <button type="button" aria-disabled="true">
+          <span>M</span>
+          <b>Microsoft</b>
+        </button>
+      </div>
+      <p class="login-security-note" data-i18n="login.securityNote">ปลอดภัยด้วยมาตรฐานระดับองค์กร</p>
     </section>
   </main>
 
@@ -58,6 +104,33 @@
       const form = document.getElementById("loginForm");
       const hint = document.getElementById("loginHint");
       const languageSelector = document.getElementById("loginLanguage");
+      const usernameInput = document.getElementById("username");
+      const passwordInput = document.getElementById("password");
+      const rememberMe = document.getElementById("rememberMe");
+      const passwordToggle = document.querySelector(".password-toggle");
+      const forgotPasswordLink = document.querySelector(".login-options a");
+      const rememberedUser = localStorage.getItem("kmm.login.rememberedUser");
+
+      if (rememberedUser && usernameInput && rememberMe) {
+        usernameInput.value = rememberedUser;
+        rememberMe.checked = true;
+      }
+
+      if (passwordToggle && passwordInput) {
+        passwordToggle.addEventListener("click", () => {
+          const showPassword = passwordInput.type === "password";
+          passwordInput.type = showPassword ? "text" : "password";
+          passwordToggle.classList.toggle("is-visible", showPassword);
+          passwordToggle.setAttribute(
+            "aria-label",
+            showPassword ? passwordToggle.dataset.hideLabel : passwordToggle.dataset.showLabel
+          );
+        });
+      }
+
+      if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener("click", event => event.preventDefault());
+      }
 
       if (languageSelector && window.KMMI18n) {
         languageSelector.value = window.KMMI18n.getLanguage();
@@ -95,8 +168,7 @@
 
       form.addEventListener("submit", event => {
         event.preventDefault();
-        const username = document.getElementById("username").value.trim();
-        const passwordInput = document.getElementById("password");
+        const username = usernameInput.value.trim();
         const password = passwordInput.value;
         const result = window.KMMSecurity.auth.authenticate(username, password);
         passwordInput.value = "";
@@ -107,6 +179,11 @@
         }
 
         hint.textContent = "";
+        if (rememberMe && rememberMe.checked) {
+          localStorage.setItem("kmm.login.rememberedUser", username);
+        } else {
+          localStorage.removeItem("kmm.login.rememberedUser");
+        }
         window.location.href = safeReturnTo();
       });
     });
